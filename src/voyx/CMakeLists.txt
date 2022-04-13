@@ -16,6 +16,22 @@ target_include_directories(voyx
   PRIVATE "${CMAKE_CURRENT_LIST_DIR}/.."
 )
 
+target_link_libraries(voyx
+  PRIVATE cxxopts
+          dr_libs
+          pocketfft
+          qcustomplot
+          qt
+          readerwriterqueue
+          rtaudio
+          rtmidi
+)
+
+if (UNIX)
+  target_link_libraries(voyx
+    PRIVATE pthread)
+endif()
+
 target_compile_features(voyx
   PRIVATE cxx_std_11
 )
