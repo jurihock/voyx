@@ -17,11 +17,11 @@ target_compile_features(rtmidi
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
   target_compile_definitions(rtmidi
-    PRIVATE -D__UNIX_JACK__
+    PUBLIC -D__UNIX_JACK__
   )
 
   target_link_libraries(rtmidi
-    INTERFACE jack
+    PUBLIC jack
   )
 
 endif()
@@ -29,11 +29,11 @@ endif()
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 
   target_compile_definitions(rtmidi
-    PRIVATE -D__MACOSX_CORE__
+    PUBLIC -D__MACOSX_CORE__
   )
 
   target_link_libraries(rtmidi
-    INTERFACE "-framework CoreMIDI"
+    PUBLIC "-framework CoreMIDI"
   )
 
 endif()

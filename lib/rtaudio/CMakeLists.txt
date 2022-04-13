@@ -17,11 +17,11 @@ target_compile_features(rtaudio
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
   target_compile_definitions(rtaudio
-    PRIVATE -D__UNIX_JACK__
+    PUBLIC -D__UNIX_JACK__
   )
 
   target_link_libraries(rtaudio
-    INTERFACE jack
+    PUBLIC jack
   )
 
 endif()
@@ -29,11 +29,11 @@ endif()
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 
   target_compile_definitions(rtaudio
-    PRIVATE -D__MACOSX_CORE__
+    PUBLIC -D__MACOSX_CORE__
   )
 
   target_link_libraries(rtaudio
-    INTERFACE "-framework CoreAudio"
+    PUBLIC "-framework CoreAudio"
   )
 
 endif()
