@@ -1,3 +1,4 @@
+#include <voyx/Voyx.h>
 #include <voyx/IO/Probe.h>
 
 #include <cxxopts/cxxopts.hpp>

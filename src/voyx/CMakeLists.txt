@@ -19,6 +19,8 @@ target_include_directories(voyx
 target_link_libraries(voyx
   PRIVATE cxxopts
           dr_libs
+          easyloggingpp
+          fmt
           pocketfft
           qcustomplot
           qt

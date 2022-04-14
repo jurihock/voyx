@@ -13,3 +13,7 @@ target_include_directories(easyloggingpp
 target_compile_features(easyloggingpp
   PRIVATE cxx_std_11
 )
+
+target_compile_definitions(easyloggingpp
+  PUBLIC -DELPP_NO_DEFAULT_LOG_FILE
+)
