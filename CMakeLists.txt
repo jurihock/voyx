@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.1...3.18)
 
 project(voyx)
 
@@ -10,6 +10,7 @@ endif()
 
 include("${CMAKE_CURRENT_LIST_DIR}/lib/cxxopts/CMakeLists.txt")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/dr_libs/CMakeLists.txt")
+include("${CMAKE_CURRENT_LIST_DIR}/lib/fmt/CMakeLists.txt")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/pocketfft/CMakeLists.txt")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/qcustomplot/CMakeLists.txt")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/qt/CMakeLists.txt")
