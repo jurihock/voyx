@@ -4,10 +4,11 @@
 #include <cxxopts/cxxopts.hpp>
 
 #include <cstdlib>
-#include <iostream>
 
 const int OK = EXIT_SUCCESS;
 const int NOK = EXIT_FAILURE;
+
+INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char** argv)
 {

@@ -1,5 +1,8 @@
 #pragma once
 
-#include <easyloggingpp/easylogging++.h>
+#include <iostream>
 
-INITIALIZE_EASYLOGGINGPP
+#include <voyx/Convert.h>
+#include <voyx/Format.h>
+
+#include <easyloggingpp/easylogging++.h>
