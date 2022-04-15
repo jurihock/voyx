@@ -1,4 +1,4 @@
-#include <voyx/IO/Probe.h>
+#include <voyx/IO/AudioProbe.h>
 
 #include <rtaudio/RtAudio.h>
 
@@ -7,7 +7,7 @@
 #include <sstream>
 #include <vector>
 
-std::string Probe::operator()()
+std::string AudioProbe::operator()()
 {
   const std::map<std::string, RtAudioFormat> well_known_formats
   {

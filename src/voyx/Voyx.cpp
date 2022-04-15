@@ -1,6 +1,3 @@
-#include <voyx/Voyx.h>
-#include <voyx/IO/Probe.h>
-
 // TEST
 #include <voyx/DSP/BypassPipeline.h>
 #include <voyx/IO/AudioSource.h>
@@ -10,6 +7,9 @@
 #include <voyx/IO/NullSource.h>
 #include <voyx/IO/NullSink.h>
 #include <voyx/IO/SineSource.h>
+
+#include <voyx/Voyx.h>
+#include <voyx/IO/AudioProbe.h>
 
 #include <cxxopts/cxxopts.hpp>
 
@@ -63,7 +63,7 @@ int main(int argc, char** argv)
 
   if (args.count("list"))
   {
-    Probe probe;
+    AudioProbe probe;
 
     std::cout << probe();
 

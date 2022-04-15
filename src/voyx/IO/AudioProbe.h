@@ -2,7 +2,7 @@
 
 #include <string>
 
-class Probe
+class AudioProbe
 {
 
 public:
