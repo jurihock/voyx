@@ -27,7 +27,6 @@ target_link_libraries(voyx
           readerwriterqueue
           rtaudio
           rtmidi
-          wildcards
 )
 
 if (UNIX)

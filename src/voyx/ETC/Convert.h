@@ -1,11 +1,10 @@
 #pragma once
 
-#include <wildcards/wildcards.hpp>
-
 #include <algorithm>
 #include <cctype>
 #include <iomanip>
 #include <map>
+#include <regex>
 #include <sstream>
 #include <string>
 #include <typeinfo>
@@ -35,12 +34,16 @@ namespace $$
 
   static inline bool match(const std::string& value, const std::string& pattern)
   {
-    return wildcards::match(value, pattern);
+    const auto regex = std::regex(pattern);
+
+    return std::regex_match(value, regex);
   }
 
   static inline bool imatch(const std::string& value, const std::string& pattern)
   {
-    return wildcards::match($$::lower(value), $$::lower(pattern));
+    const auto regex = std::regex(pattern, std::regex_constants::icase);
+
+    return std::regex_match(value, regex);
   }
 
   static inline std::string trim(const std::string& value)

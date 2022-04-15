@@ -61,7 +61,7 @@ void AudioSource::open()
         continue;
       }
 
-      if (!$$::imatch(device.name, "*" + audio_device_name + "*"))
+      if (!$$::imatch(device.name, ".*" + audio_device_name + ".*"))
       {
         continue;
       }

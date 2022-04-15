@@ -88,7 +88,7 @@ int main(int argc, char** argv)
   {
     source = std::make_shared<NullSource>(samplerate, framesize, buffersize);
   }
-  else if ($$::imatch(input, "*.wav"))
+  else if ($$::imatch(input, ".*.wav"))
   {
     source = std::make_shared<FileSource>(input, samplerate, framesize, buffersize);
   }
@@ -101,7 +101,7 @@ int main(int argc, char** argv)
   {
     sink = std::make_shared<NullSink>(samplerate, framesize, buffersize);
   }
-  else if ($$::imatch(output, "*.wav"))
+  else if ($$::imatch(output, ".*.wav"))
   {
     sink = std::make_shared<FileSink>(output, samplerate, framesize, buffersize);
   }
