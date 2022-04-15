@@ -47,7 +47,14 @@ if (UNIX)
 
   target_compile_options(rtaudio
     PUBLIC -Wno-deprecated-declarations
-           -Wno-undef-prefix
   )
+
+  if (APPLE)
+
+    target_compile_options(rtaudio
+      PUBLIC -Wno-undef-prefix
+    )
+
+  endif()
 
 endif()
