@@ -18,7 +18,7 @@ public:
   void start() override;
   void stop() override;
 
-  void write(const std::vector<float>& frame) override;
+  bool write(const std::vector<float>& frame) override;
 
 private:
 

@@ -27,13 +27,13 @@ public:
   size_t buffersize() const { return sink_buffersize; }
   const std::chrono::milliseconds& timeout() const { return sink_timeout; }
 
-  virtual void open() = 0;
-  virtual void close() = 0;
+  virtual void open() {};
+  virtual void close() {};
 
-  virtual void start() = 0;
-  virtual void stop() = 0;
+  virtual void start() {};
+  virtual void stop() {};
 
-  virtual void write(const std::vector<T>& frame) = 0;
+  virtual bool write(const std::vector<T>& frame) = 0;
 
 private:
 

@@ -27,13 +27,13 @@ public:
   size_t buffersize() const { return source_buffersize; }
   const std::chrono::milliseconds& timeout() const { return source_timeout; }
 
-  virtual void open() = 0;
-  virtual void close() = 0;
+  virtual void open() {};
+  virtual void close() {};
 
-  virtual void start() = 0;
-  virtual void stop() = 0;
+  virtual void start() {};
+  virtual void stop() {};
 
-  virtual void read(std::function<void(const std::vector<T>& frame)> callback) = 0;
+  virtual bool read(std::function<void(const std::vector<T>& frame)> callback) = 0;
 
 private:
 

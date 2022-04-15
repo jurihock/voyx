@@ -18,7 +18,7 @@ public:
   void start() override;
   void stop() override;
 
-  void read(std::function<void(const std::vector<float>& frame)> callback) override;
+  bool read(std::function<void(const std::vector<float>& frame)> callback) override;
 
 private:
 

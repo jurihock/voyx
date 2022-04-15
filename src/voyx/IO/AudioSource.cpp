@@ -148,17 +148,19 @@ void AudioSource::stop()
   audio.stopStream();
 }
 
-void AudioSource::read(std::function<void(const std::vector<float>& frame)> callback)
+bool AudioSource::read(std::function<void(const std::vector<float>& frame)> callback)
 {
-  const auto ok = audio_frame_buffer.read(timeout(), [&](InputFrame& input)
+  const bool ok = audio_frame_buffer.read(timeout(), [&](InputFrame& input)
   {
     callback(input.frame);
   });
 
   if (!ok)
   {
-    LOG(WARNING) << "UNABLE TO READ FROM INPUT FRAME FIFO!";
+    LOG(WARNING) << $("Audio source fifo underflow!");
   }
+
+  return ok;
 }
 
 int AudioSource::callback(void* output_frame_data, void* input_frame_data, uint32_t framesize, double timestamp, RtAudioStreamStatus status, void* $this)
@@ -167,27 +169,25 @@ int AudioSource::callback(void* output_frame_data, void* input_frame_data, uint3
 
   const auto ok = audio_frame_buffer.write([&](InputFrame& input)
   {
-    if (input.frame.size() != framesize)
+    if (framesize != input.frame.size())
     {
-      LOG(WARNING) << "UNEXPECTED INPUT FRAME SIZE!";
+      LOG(WARNING) << $("Unexpected input frame size {0} != {1}!", framesize, input.frame.size());
     }
 
-    const size_t bytes = std::min(
-      input.frame.size(),
-      static_cast<size_t>(framesize)) *
-      sizeof(input.frame.front());
+    const size_t size = std::min(input.frame.size(), static_cast<size_t>(framesize));
+    const size_t bytes = size * sizeof(input.frame.front());
 
     std::memcpy(input.frame.data(), input_frame_data, bytes);
   });
 
   if (!ok)
   {
-    LOG(WARNING) << "UNABLE TO WRITE TO INPUT FRAME FIFO!";
+    LOG(WARNING) << $("Audio source fifo overflow!");
   }
 
-  if (status != 0)
+  if (status)
   {
-    LOG(WARNING) << "AUDIO SOURCE STREAM STATUS " << status;
+    LOG(WARNING) << $("Audio source stream status {0}!", status);
   }
 
   return 0;

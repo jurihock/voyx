@@ -1,8 +1,6 @@
 #pragma once
 
-#include <iostream>
-
-#include <voyx/Convert.h>
-#include <voyx/Format.h>
+#include <voyx/ETC/Convert.h>
+#include <voyx/ETC/Format.h>
 
 #include <easyloggingpp/easylogging++.h>

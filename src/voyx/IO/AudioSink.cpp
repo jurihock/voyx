@@ -143,20 +143,24 @@ void AudioSink::stop()
     return;
   }
 
+  while(!audio_frame_buffer.empty()) {}
+
   audio.stopStream();
 }
 
-void AudioSink::write(const std::vector<float>& frame)
+bool AudioSink::write(const std::vector<float>& frame)
 {
-  const auto ok = audio_frame_buffer.write([&](OutputFrame& output)
+  const bool ok = audio_frame_buffer.write([&](OutputFrame& output)
   {
     output.frame = frame;
   });
 
   if (!ok)
   {
-    std::cout << "UNABLE TO WRITE TO OUTPUT FRAME FIFO!" << std::endl;
+    LOG(WARNING) << $("Audio sink fifo overflow!");
   }
+
+  return ok;
 }
 
 int AudioSink::callback(void* output_frame_data, void* input_frame_data, uint32_t framesize, double timestamp, RtAudioStreamStatus status, void* $this)
@@ -165,27 +169,25 @@ int AudioSink::callback(void* output_frame_data, void* input_frame_data, uint32_
 
   const auto ok = audio_frame_buffer.read([&](OutputFrame& output)
   {
-    if (output.frame.size() != framesize)
+    if (framesize != output.frame.size())
     {
-      std::cout << "UNEXPECTED OUTPUT FRAME SIZE!" << std::endl;
+      LOG(WARNING) << $("Unexpected output frame size {0} != {1}!", framesize, output.frame.size());
     }
 
-    const size_t bytes = std::min(
-      output.frame.size(),
-      static_cast<size_t>(framesize) *
-      sizeof(output.frame.front()));
+    const size_t size = std::min(output.frame.size(), static_cast<size_t>(framesize));
+    const size_t bytes = size * sizeof(output.frame.front());
 
     std::memcpy(output_frame_data, output.frame.data(), bytes);
   });
 
   if (!ok)
   {
-    std::cout << "UNABLE TO READ FROM OUTPUT FRAME FIFO!" << std::endl;
+    LOG(WARNING) << $("Audio sink fifo underflow!");
   }
 
-  if (status != 0)
+  if (status)
   {
-    std::cout << "AUDIO SINK STREAM STATUS " << status << std::endl;
+    LOG(WARNING) << $("Audio sink stream status {0}!", status);
   }
 
   return 0;
