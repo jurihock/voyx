@@ -5,6 +5,8 @@
 #include <voyx/DSP/BypassPipeline.h>
 #include <voyx/IO/AudioSource.h>
 #include <voyx/IO/AudioSink.h>
+#include <voyx/IO/FileSource.h>
+#include <voyx/IO/FileSink.h>
 #include <voyx/IO/NullSource.h>
 #include <voyx/IO/NullSink.h>
 #include <voyx/IO/SineSource.h>
@@ -74,18 +76,25 @@ int main(int argc, char** argv)
     const size_t framesize = 1024;
     const size_t buffersize = 1000;
 
-
     // auto source = std::make_shared<NullSource>(samplerate, framesize, buffersize);
-    auto source = std::make_shared<SineSource>(0.5, 250, samplerate, framesize, buffersize);
+    // auto source = std::make_shared<SineSource>(0.5, 250, samplerate, framesize, buffersize);
+    auto source = std::make_shared<FileSource>("angela.wav", samplerate, framesize, buffersize);
     // auto source = std::make_shared<AudioSource>("microphone", samplerate, framesize, buffersize);
 
     // auto sink = std::make_shared<NullSink>(samplerate, framesize, buffersize);
+    // auto sink = std::make_shared<FileSink>("test.wav", samplerate, framesize, buffersize);
     auto sink = std::make_shared<AudioSink>("speakers", samplerate, framesize, buffersize);
 
     auto pipe = std::make_shared<BypassPipeline>(source, sink);
 
     pipe->open();
+
     pipe->start(std::chrono::seconds(3));
+    // pipe->start();
+
+    std::unique_lock lock(mutex);
+    shutdown.wait(lock);
+
     pipe->close();
 
     return OK;
