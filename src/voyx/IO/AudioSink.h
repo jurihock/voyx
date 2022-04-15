@@ -1,7 +1,7 @@
 #pragma once
 
-#include <voyx/IO/FIFO.h>
 #include <voyx/IO/Sink.h>
+#include <voyx/ETC/FIFO.h>
 
 #include <rtaudio/RtAudio.h>
 
