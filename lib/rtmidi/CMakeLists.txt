@@ -36,8 +36,17 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     PUBLIC "-framework CoreMIDI"
   )
 
+endif()
+
+#####################
+# DISABLED WARNINGS #
+#####################
+
+if (UNIX)
+
   target_compile_options(rtmidi
-    PRIVATE -Wno-undef-prefix
+    PRIVATE -Wno-deprecated-declarations
+            -Wno-undef-prefix
   )
 
 endif()

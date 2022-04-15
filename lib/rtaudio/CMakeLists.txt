@@ -36,9 +36,17 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     PUBLIC "-framework CoreAudio"
   )
 
+endif()
+
+#####################
+# DISABLED WARNINGS #
+#####################
+
+if (UNIX)
+
   target_compile_options(rtaudio
-    PRIVATE -Wno-undef-prefix
-            -Wno-deprecated-declarations
+    PRIVATE -Wno-deprecated-declarations
+            -Wno-undef-prefix
   )
 
 endif()
