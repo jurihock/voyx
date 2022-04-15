@@ -36,4 +36,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     PUBLIC "-framework CoreMIDI"
   )
 
+  target_compile_options(rtmidi
+    PRIVATE -Wno-undef-prefix
+  )
+
 endif()
