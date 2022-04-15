@@ -21,7 +21,7 @@ target_link_libraries(qcustomplot PUBLIC
 if (UNIX)
 
   target_compile_options(qcustomplot
-    PRIVATE -Wno-deprecated-declarations
+    PUBLIC -Wno-deprecated-declarations
   )
 
 endif()

@@ -46,8 +46,8 @@ endif()
 if (UNIX)
 
   target_compile_options(rtaudio
-    PRIVATE -Wno-deprecated-declarations
-            -Wno-undef-prefix
+    PUBLIC -Wno-deprecated-declarations
+           -Wno-undef-prefix
   )
 
 endif()
