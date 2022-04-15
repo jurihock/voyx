@@ -14,7 +14,7 @@ StftPipeline::StftPipeline(size_t framesize, size_t hopsize, std::shared_ptr<Sou
   if (source->framesize() != framesize)
   {
     throw std::runtime_error(
-      $("Invalid source frame size {0} != {1}!",
+      $("Incompatible source frame size {0} != {1}!",
         source->framesize(),
         framesize));
   }
@@ -22,7 +22,7 @@ StftPipeline::StftPipeline(size_t framesize, size_t hopsize, std::shared_ptr<Sou
   if (sink->framesize() != framesize)
   {
     throw std::runtime_error(
-      $("Invalid sink frame size {0} != {1}!",
+      $("Incompatible sink frame size {0} != {1}!",
         sink->framesize(),
         framesize));
   }
