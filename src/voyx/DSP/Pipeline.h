@@ -73,6 +73,11 @@ public:
 
     if (frames > 0)
     {
+      if (thread->joinable())
+      {
+        thread->join();
+      }
+
       stop();
     }
   }
@@ -109,6 +114,7 @@ private:
   void loop(const size_t frames)
   {
     std::vector<T> output(sink->framesize());
+
     size_t index = 0;
 
     if (frames > 0)
