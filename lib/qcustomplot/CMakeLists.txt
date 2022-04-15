@@ -13,3 +13,15 @@ target_include_directories(qcustomplot
 target_link_libraries(qcustomplot PUBLIC
   PUBLIC qt
 )
+
+#####################
+# DISABLED WARNINGS #
+#####################
+
+if (UNIX)
+
+  target_compile_options(qcustomplot
+    PRIVATE -Wno-deprecated-declarations
+  )
+
+endif()
