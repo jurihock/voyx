@@ -22,7 +22,7 @@ std::string AudioProbe::operator()()
   const std::vector<std::string> columns =
   {
     "#",
-    "Device Name",
+    "Audio Device Name",
     "Inputs",
     "Outputs",
     "Duplex",
@@ -33,7 +33,7 @@ std::string AudioProbe::operator()()
   std::map<std::string, std::vector<std::string>> table
   {
     { "#", {} },
-    { "Device Name", {} },
+    { "Audio Device Name", {} },
     { "Inputs", {} },
     { "Outputs", {} },
     { "Duplex", {} },
@@ -93,7 +93,7 @@ std::string AudioProbe::operator()()
 
     table["#"][offset - 1] = "-";
     table["#"][offset] = std::to_string(index);
-    table["Device Name"][offset] = name;
+    table["Audio Device Name"][offset] = name;
     table["Inputs"][offset] = inputs;
     table["Outputs"][offset] = outputs;
     table["Duplex"][offset] = duplex;

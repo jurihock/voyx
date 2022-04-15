@@ -24,12 +24,12 @@ INITIALIZE_EASYLOGGINGPP
 const int OK = EXIT_SUCCESS;
 const int NOK = EXIT_FAILURE;
 
-std::condition_variable shutdown;
+std::condition_variable terminate;
 std::mutex mutex;
 
 void onsignal(int value)
 {
-  shutdown.notify_one();
+  terminate.notify_one();
 }
 
 int main(int argc, char** argv)
@@ -38,12 +38,14 @@ int main(int argc, char** argv)
 
   cxxopts::Options options("voyx");
 
+  options.set_width(80);
+
   options.add_options()
-    ("t,test",   "Run test routine")
     ("h,help",   "Print this help")
-    ("l,list",   "List available audio devices")
-    ("i,input",  "Input audio device or .wav file")
-    ("o,output", "Output audio device or .wav file");
+    ("l,list",   "List available audio devices for -i and -o")
+    ("t,term",   "Terminate after specified number of seconds", cxxopts::value<int>()->default_value("0"))
+    ("i,input",  "Input audio device name or .wav file", cxxopts::value<std::string>()->default_value(""))
+    ("o,output", "Output audio device name or .wav file", cxxopts::value<std::string>()->default_value(""));
 
   const auto args = options.parse(argc, argv);
 
@@ -70,38 +72,61 @@ int main(int argc, char** argv)
     return OK;
   }
 
-  if (args.count("test"))
+  const std::string input = args["input"].as<std::string>();
+  const std::string output = args["output"].as<std::string>();
+
+  const int seconds = args["term"].as<int>();
+
+  const size_t samplerate = 44100;
+  const size_t framesize = 1024;
+  const size_t buffersize = 1000;
+
+  std::shared_ptr<Source<float>> source;
+  std::shared_ptr<Sink<float>> sink;
+
+  if (input.empty())
   {
-    const size_t samplerate = 44100;
-    const size_t framesize = 1024;
-    const size_t buffersize = 1000;
+    source = std::make_shared<NullSource>(samplerate, framesize, buffersize);
+  }
+  else if ($$::imatch(input, "*.wav"))
+  {
+    source = std::make_shared<FileSource>(input, samplerate, framesize, buffersize);
+  }
+  else
+  {
+    source = std::make_shared<AudioSource>(input, samplerate, framesize, buffersize);
+  }
 
-    // auto source = std::make_shared<NullSource>(samplerate, framesize, buffersize);
-    // auto source = std::make_shared<SineSource>(0.5, 250, samplerate, framesize, buffersize);
-    auto source = std::make_shared<FileSource>("angela.wav", samplerate, framesize, buffersize);
-    // auto source = std::make_shared<AudioSource>("microphone", samplerate, framesize, buffersize);
+  if (output.empty())
+  {
+    sink = std::make_shared<NullSink>(samplerate, framesize, buffersize);
+  }
+  else if ($$::imatch(output, "*.wav"))
+  {
+    sink = std::make_shared<FileSink>(output, samplerate, framesize, buffersize);
+  }
+  else
+  {
+    sink = std::make_shared<AudioSink>(output, samplerate, framesize, buffersize);
+  }
 
-    // auto sink = std::make_shared<NullSink>(samplerate, framesize, buffersize);
-    // auto sink = std::make_shared<FileSink>("test.wav", samplerate, framesize, buffersize);
-    auto sink = std::make_shared<AudioSink>("speakers", samplerate, framesize, buffersize);
+  auto pipe = std::make_shared<BypassPipeline>(source, sink);
 
-    auto pipe = std::make_shared<BypassPipeline>(source, sink);
+  pipe->open();
 
-    pipe->open();
-
-    // pipe->start(std::chrono::seconds(3));
+  if (seconds > 0)
+  {
+    pipe->start(std::chrono::seconds(seconds));
+  }
+  else
+  {
     pipe->start();
 
     std::unique_lock lock(mutex);
-    shutdown.wait(lock);
-
-    pipe->close();
-
-    return OK;
+    terminate.wait(lock);
   }
 
-  std::unique_lock lock(mutex);
-  shutdown.wait(lock);
+  pipe->close();
 
   return OK;
 }
