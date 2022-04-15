@@ -2,6 +2,7 @@
 
 #include <rtaudio/RtAudio.h>
 
+#include <algorithm>
 #include <iomanip>
 #include <map>
 #include <sstream>
