@@ -1,5 +1,6 @@
 // TEST
 #include <voyx/DSP/BypassPipeline.h>
+#include <voyx/DSP/StftPipeline.h>
 #include <voyx/IO/AudioSource.h>
 #include <voyx/IO/AudioSink.h>
 #include <voyx/IO/FileSource.h>
@@ -79,6 +80,7 @@ int main(int argc, char** argv)
 
   const size_t samplerate = 44100;
   const size_t framesize = 1024;
+  const size_t hopsize = framesize / 4;
   const size_t buffersize = 1000;
 
   std::shared_ptr<Source<float>> source;
@@ -110,7 +112,8 @@ int main(int argc, char** argv)
     sink = std::make_shared<AudioSink>(output, samplerate, framesize, buffersize);
   }
 
-  auto pipe = std::make_shared<BypassPipeline>(source, sink);
+  // auto pipe = std::make_shared<BypassPipeline>(source, sink);
+  auto pipe = std::make_shared<StftPipeline>(framesize, hopsize, source, sink);
 
   pipe->open();
 
