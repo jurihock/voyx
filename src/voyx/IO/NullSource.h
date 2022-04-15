@@ -7,17 +7,9 @@ class NullSource : public Source<float>
 
 public:
 
-  NullSource(size_t samplerate, size_t framesize, size_t buffersize) :
-    Source(samplerate, framesize, buffersize),
-    frame(framesize)
-  {
-  }
+  NullSource(size_t samplerate, size_t framesize, size_t buffersize);
 
-  bool read(std::function<void(const std::vector<float>& frame)> callback) override
-  {
-    callback(frame);
-    return true;
-  }
+  bool read(const size_t index, std::function<void(const std::vector<float>& frame)> callback) override;
 
 private:
 

@@ -5,7 +5,7 @@ BypassPipeline::BypassPipeline(std::shared_ptr<Source<float>> source, std::share
 {
 }
 
-void BypassPipeline::operator()(const std::vector<float>& input, std::vector<float>& output)
+void BypassPipeline::operator()(const size_t index, const std::vector<float>& input, std::vector<float>& output)
 {
   output = input;
 }

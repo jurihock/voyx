@@ -18,7 +18,7 @@ public:
   void start() override;
   void stop() override;
 
-  bool read(std::function<void(const std::vector<float>& frame)> callback) override;
+  bool read(const size_t index, std::function<void(const std::vector<float>& frame)> callback) override;
 
 private:
 

@@ -14,7 +14,7 @@ SineSource::SineSource(float amplitude, float frequency, size_t samplerate, size
 {
 }
 
-bool SineSource::read(std::function<void(const std::vector<float>& frame)> callback)
+bool SineSource::read(const size_t index, std::function<void(const std::vector<float>& frame)> callback)
 {
   const float phaseinc = frequency / samplerate();
 

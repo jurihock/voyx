@@ -10,7 +10,7 @@ public:
   SineSource(float frequency, size_t samplerate, size_t framesize, size_t buffersize);
   SineSource(float amplitude, float frequency, size_t samplerate, size_t framesize, size_t buffersize);
 
-  bool read(std::function<void(const std::vector<float>& frame)> callback) override;
+  bool read(const size_t index, std::function<void(const std::vector<float>& frame)> callback) override;
 
 private:
 

@@ -33,7 +33,7 @@ public:
   virtual void start() {};
   virtual void stop() {};
 
-  virtual bool write(const std::vector<T>& frame) = 0;
+  virtual bool write(const size_t index, const std::vector<T>& frame) = 0;
 
 private:
 

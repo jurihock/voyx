@@ -7,14 +7,8 @@ class NullSink : public Sink<float>
 
 public:
 
-  NullSink(size_t samplerate, size_t framesize, size_t buffersize) :
-    Sink(samplerate, framesize, buffersize)
-  {
-  }
+  NullSink(size_t samplerate, size_t framesize, size_t buffersize);
 
-  bool write(const std::vector<float>& frame) override
-  {
-    return true;
-  }
+  bool write(const size_t index, const std::vector<float>& frame) override;
 
 };

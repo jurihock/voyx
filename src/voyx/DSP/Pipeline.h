@@ -97,7 +97,7 @@ public:
     }
   }
 
-  virtual void operator()(const std::vector<T>& input, std::vector<T>& output) = 0;
+  virtual void operator()(const size_t index, const std::vector<T>& input, std::vector<T>& output) = 0;
 
 private:
 
@@ -111,37 +111,40 @@ private:
   void loop(const size_t frames)
   {
     std::vector<T> output(sink->framesize());
+    size_t index = 0;
 
     if (frames > 0)
     {
-      for (size_t frame = 0; frame < frames && doloop;)
+      while (doloop && index < frames)
       {
-        const bool ok = source->read([&](const std::vector<T>& input)
+        const bool ok = source->read(index, [&](const std::vector<T>& input)
         {
-          (*this)(input, output);
+          (*this)(index, input, output);
         });
 
         if (ok)
         {
-          sink->write(output);
+          sink->write(index, output);
         }
 
-        frame += ok ? 1 : 0;
+        index += ok ? 1 : 0;
       }
     }
     else
     {
       while(doloop)
       {
-        const bool ok = source->read([&](const std::vector<T>& input)
+        const bool ok = source->read(index, [&](const std::vector<T>& input)
         {
-          (*this)(input, output);
+          (*this)(index, input, output);
         });
 
         if (ok)
         {
-          sink->write(output);
+          sink->write(index, output);
         }
+
+        index += ok ? 1 : 0;
       }
     }
   }
