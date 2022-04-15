@@ -89,8 +89,8 @@ int main(int argc, char** argv)
 
     pipe->open();
 
-    pipe->start(std::chrono::seconds(3));
-    // pipe->start();
+    // pipe->start(std::chrono::seconds(3));
+    pipe->start();
 
     std::unique_lock lock(mutex);
     shutdown.wait(lock);

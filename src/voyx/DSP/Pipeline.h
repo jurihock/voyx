@@ -3,6 +3,9 @@
 #include <voyx/IO/Source.h>
 #include <voyx/IO/Sink.h>
 
+#include <voyx/IO/AudioSource.h>
+#include <voyx/IO/AudioSink.h>
+
 #include <chrono>
 #include <memory>
 #include <thread>
@@ -70,20 +73,12 @@ public:
 
     if (frames > 0)
     {
-      if (thread->joinable())
-      {
-        thread->join();
-      }
-
       stop();
     }
   }
 
   void stop()
   {
-    source->stop();
-    sink->stop();
-
     doloop = false;
 
     if (thread != nullptr)
@@ -95,6 +90,9 @@ public:
 
       thread = nullptr;
     }
+
+    source->stop();
+    sink->stop();
   }
 
   virtual void operator()(const size_t index, const std::vector<T>& input, std::vector<T>& output) = 0;
@@ -141,6 +139,15 @@ private:
 
         if (ok)
         {
+          const bool sync = (index & 1)
+            && (std::dynamic_pointer_cast<AudioSource>(source) == nullptr)
+            && (std::dynamic_pointer_cast<AudioSink>(sink) != nullptr);
+
+          if (sync)
+          {
+            std::this_thread::sleep_for(sink->timeout());
+          }
+
           sink->write(index, output);
         }
 
