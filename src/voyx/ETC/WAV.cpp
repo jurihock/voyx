@@ -1,7 +1,6 @@
 #include <voyx/ETC/WAV.h>
 #include <voyx/Voyx.h>
 
-#define DR_WAV_IMPLEMENTATION
 #include <dr_libs/dr_wav.h>
 
 void WAV::read(const std::string& path, std::vector<float>& data, const size_t samplerate)
@@ -50,6 +49,8 @@ void WAV::read(const std::string& path, std::vector<float>& data, const size_t s
   {
     for (size_t i = 0; i < samples; ++i)
     {
+      data[i] = data[i * channels];
+
       for (size_t j = 1; j < channels; ++j)
       {
         data[i] += data[i * channels + j];
@@ -80,7 +81,7 @@ void WAV::write(const std::string& path, const std::vector<float>& data, const s
   format.container = drwav_container_riff;
   format.format = DR_WAVE_FORMAT_IEEE_FLOAT;
   format.bitsPerSample = sizeof(float) * 8;
-  format.channels = 1;
+  format.channels = channels;
   format.sampleRate = samplerate;
 
   if (drwav_init_file_write(&wav, path.c_str(), &format, nullptr) != DRWAV_TRUE)
