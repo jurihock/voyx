@@ -1,4 +1,5 @@
 #include <voyx/IO/FileSink.h>
+
 #include <voyx/ETC/WAV.h>
 
 FileSink::FileSink(const std::string& path, size_t samplerate, size_t framesize, size_t buffersize) :

@@ -136,6 +136,10 @@ private:
     }
     else
     {
+      const bool sync =
+        (std::dynamic_pointer_cast<AudioSource>(source) == nullptr) &&
+        (std::dynamic_pointer_cast<AudioSink>(sink) != nullptr);
+
       while(doloop)
       {
         const bool ok = source->read(index, [&](const std::vector<T>& input)
@@ -145,11 +149,7 @@ private:
 
         if (ok)
         {
-          const bool sync = (index & 1)
-            && (std::dynamic_pointer_cast<AudioSource>(source) == nullptr)
-            && (std::dynamic_pointer_cast<AudioSink>(sink) != nullptr);
-
-          if (sync)
+          if (sync && (index & 1))
           {
             std::this_thread::sleep_for(sink->timeout());
           }
