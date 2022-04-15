@@ -33,7 +33,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   )
 
   target_link_libraries(rtmidi
-    PUBLIC "-framework CoreMIDI"
+    PUBLIC "-framework CoreFoundation"
+           "-framework CoreMIDI"
   )
 
 endif()

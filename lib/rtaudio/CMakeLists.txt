@@ -33,7 +33,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   )
 
   target_link_libraries(rtaudio
-    PUBLIC "-framework CoreAudio"
+    PUBLIC "-framework CoreFoundation"
+           "-framework CoreAudio"
   )
 
 endif()
