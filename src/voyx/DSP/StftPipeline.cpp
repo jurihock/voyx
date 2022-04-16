@@ -27,6 +27,11 @@ StftPipeline::StftPipeline(size_t framesize, size_t hopsize, std::shared_ptr<Sou
         framesize));
   }
 
+  for (size_t hop = 0; (hop + framesize) < (framesize * 2); hop += hopsize)
+  {
+    hops.push_back(hop);
+  }
+
   buffers.input.resize(framesize * 2);
   buffers.output.resize(framesize * 2);
 
@@ -60,7 +65,7 @@ void StftPipeline::operator()(const size_t index, const std::vector<float>& inpu
     buffers.output[i + framesize] = 0;
   }
 
-  for (size_t hop = 0; (hop + framesize) < (framesize * 2); hop += hopsize)
+  for (size_t hop : hops)
   {
     reject(hop, buffers.input.data(), frame, windows.analysis);
     fft(frame, dft);

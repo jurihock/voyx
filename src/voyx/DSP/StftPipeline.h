@@ -27,6 +27,8 @@ private:
   const size_t framesize;
   const size_t hopsize;
 
+  std::vector<size_t> hops;
+
   std::vector<float> frame;
   std::vector<std::complex<float>> dft;
 
