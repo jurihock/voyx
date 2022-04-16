@@ -6,6 +6,10 @@
 #include <voyx/IO/AudioSource.h>
 #include <voyx/IO/AudioSink.h>
 
+#include <voyx/ETC/Timer.h>
+
+#include <voyx/Voyx.h>
+
 #include <chrono>
 #include <memory>
 #include <thread>
@@ -84,6 +88,8 @@ public:
 
   void stop()
   {
+    const bool log = doloop;
+
     doloop = false;
 
     if (thread != nullptr)
@@ -98,6 +104,17 @@ public:
 
     source->stop();
     sink->stop();
+
+    if (log)
+    {
+      LOG(INFO)
+        << "Timing: "
+        << "inner " << timers.inner.str() << ", "
+        << "outer " << timers.outer.str();
+
+      timers.inner.cls();
+      timers.outer.cls();
+    }
   }
 
   virtual void operator()(const size_t index, const std::vector<T>& input, std::vector<T>& output) = 0;
@@ -109,7 +126,14 @@ private:
 
   std::shared_ptr<std::thread> thread;
 
-  bool doloop;
+  struct
+  {
+    Timer<std::chrono::milliseconds> inner;
+    Timer<std::chrono::milliseconds> outer;
+  }
+  timers;
+
+  bool doloop = false;
 
   void loop(const size_t frames)
   {
@@ -117,13 +141,20 @@ private:
 
     size_t index = 0;
 
+    timers.outer.tic();
+
     if (frames > 0)
     {
       while (doloop && index < frames)
       {
         const bool ok = source->read(index, [&](const std::vector<T>& input)
         {
+          timers.outer.toc();
+          timers.outer.tic();
+
+          timers.inner.tic();
           (*this)(index, input, output);
+          timers.inner.toc();
         });
 
         if (ok)
@@ -144,7 +175,12 @@ private:
       {
         const bool ok = source->read(index, [&](const std::vector<T>& input)
         {
+          timers.outer.toc();
+          timers.outer.tic();
+
+          timers.inner.tic();
           (*this)(index, input, output);
+          timers.inner.toc();
         });
 
         if (ok)

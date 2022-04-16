@@ -1,7 +1,5 @@
 #include <voyx/DSP/StftPipeline.h>
 
-#include <voyx/Voyx.h>
-
 #include <pocketfft/pocketfft_hdronly.h>
 
 StftPipeline::StftPipeline(size_t framesize, size_t hopsize, std::shared_ptr<Source<float>> source, std::shared_ptr<Sink<float>> sink) :
@@ -65,7 +63,7 @@ void StftPipeline::operator()(const size_t index, const std::vector<float>& inpu
     buffers.output[i + framesize] = 0;
   }
 
-  for (size_t hop : hops)
+  for (const size_t hop : hops)
   {
     reject(hop, buffers.input.data(), frame, windows.analysis);
     fft(frame, dft);
