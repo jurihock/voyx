@@ -18,26 +18,29 @@ public:
 
 protected:
 
+  void warmup() override;
+
   virtual void operator()(std::vector<std::complex<float>>& dft) {}
 
 private:
 
   const float PI2 = 2.0f * std::acos(-1.0f);
 
+  const bool parallelize = true;
+
   const size_t framesize;
   const size_t hopsize;
 
   std::vector<size_t> hops;
 
-  std::vector<float> frame;
-  std::vector<std::complex<float>> dft;
-
   struct
   {
     std::vector<float> input;
     std::vector<float> output;
+    std::vector<std::vector<float>> frames;
+    std::vector<std::vector<std::complex<float>>> dfts;
   }
-  buffers;
+  data;
 
   struct
   {

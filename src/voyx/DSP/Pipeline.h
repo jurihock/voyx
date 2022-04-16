@@ -66,6 +66,7 @@ public:
   void start(const size_t frames)
   {
     stop();
+    warmup();
 
     source->start();
     sink->start();
@@ -119,10 +120,14 @@ public:
 
   virtual void operator()(const size_t index, const std::vector<T>& input, std::vector<T>& output) = 0;
 
-private:
+protected:
 
   std::shared_ptr<Source<T>> source;
   std::shared_ptr<Sink<T>> sink;
+
+  virtual void warmup() {}
+
+private:
 
   std::shared_ptr<std::thread> thread;
 

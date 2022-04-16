@@ -5,9 +5,7 @@
 StftPipeline::StftPipeline(size_t framesize, size_t hopsize, std::shared_ptr<Source<float>> source, std::shared_ptr<Sink<float>> sink) :
   Pipeline(source, sink),
   framesize(framesize),
-  hopsize(hopsize),
-  frame(framesize),
-  dft(framesize / 2 + 1)
+  hopsize(hopsize)
 {
   if (source->framesize() != framesize)
   {
@@ -30,8 +28,17 @@ StftPipeline::StftPipeline(size_t framesize, size_t hopsize, std::shared_ptr<Sou
     hops.push_back(hop);
   }
 
-  buffers.input.resize(framesize * 2);
-  buffers.output.resize(framesize * 2);
+  data.frames.resize(hops.size());
+  data.dfts.resize(hops.size());
+
+  for (size_t i = 0; i < hops.size(); ++i)
+  {
+    data.frames[i].resize(framesize);
+    data.dfts[i].resize(framesize / 2 + 1);
+  }
+
+  data.input.resize(framesize * 2);
+  data.output.resize(framesize * 2);
 
   std::vector<float> window(framesize);
 
@@ -50,28 +57,114 @@ StftPipeline::StftPipeline(size_t framesize, size_t hopsize, std::shared_ptr<Sou
     [&](float value) { return value * unitygain; });
 }
 
+void StftPipeline::warmup()
+{
+  if (parallelize)
+  {
+    const size_t frames = 60 * sink->samplerate() / sink->framesize();
+
+    LOG(INFO) << "Begin warmup (" << frames << " frames)";
+
+    Timer<std::chrono::seconds> timer;
+
+    std::vector<float> input(framesize);
+    std::vector<float> output(framesize);
+
+    timer.tic();
+    for (size_t index = 0; index < frames; ++index)
+    {
+      (*this)(index, input, output);
+    }
+    timer.toc();
+
+    LOG(INFO) << "Finish warmup (" << timer.str() << ")";
+  }
+}
+
 void StftPipeline::operator()(const size_t index, const std::vector<float>& input, std::vector<float>& output)
 {
   for (size_t i = 0; i < framesize; ++i)
   {
-    buffers.input[i] = buffers.input[i + framesize];
-    buffers.input[i + framesize] = input[i];
+    data.input[i] = data.input[i + framesize];
+    data.input[i + framesize] = input[i];
 
-    output[i] = buffers.output[i];
-
-    buffers.output[i] = buffers.output[i + framesize];
-    buffers.output[i + framesize] = 0;
+    data.output[i] = data.output[i + framesize];
+    data.output[i + framesize] = 0;
   }
 
-  for (const size_t hop : hops)
+  if (parallelize)
   {
-    reject(hop, buffers.input.data(), frame, windows.analysis);
-    fft(frame, dft);
+    const float* input = data.input.data();
+    float* const output = data.output.data();
 
-    (*this)(dft);
+    for (size_t i = 0; i < hops.size(); ++i)
+    {
+      const size_t hop = hops[i];
 
-    ifft(dft, frame);
-    inject(hop, buffers.output.data(), frame, windows.synthesis);
+      std::vector<float>& frame = data.frames[i];
+
+      reject(hop, input, frame, windows.analysis);
+    }
+
+    #pragma omp parallel for
+    for (size_t i = 0; i < hops.size(); ++i)
+    {
+      std::vector<float>& frame = data.frames[i];
+      std::vector<std::complex<float>>& dft = data.dfts[i];
+
+      fft(frame, dft);
+    }
+
+    for (size_t i = 0; i < hops.size(); ++i)
+    {
+      std::vector<std::complex<float>>& dft = data.dfts[i];
+
+      (*this)(dft);
+    }
+
+    #pragma omp parallel for
+    for (size_t i = 0; i < hops.size(); ++i)
+    {
+      std::vector<float>& frame = data.frames[i];
+      std::vector<std::complex<float>>& dft = data.dfts[i];
+
+      ifft(dft, frame);
+    }
+
+    for (size_t i = 0; i < hops.size(); ++i)
+    {
+      const size_t hop = hops[i];
+
+      std::vector<float>& frame = data.frames[i];
+
+      inject(hop, output, frame, windows.synthesis);
+    }
+  }
+  else
+  {
+    const float* input = data.input.data();
+    float* const output = data.output.data();
+
+    std::vector<float>& frame = data.frames.front();
+    std::vector<std::complex<float>>& dft = data.dfts.front();
+
+    for (size_t i = 0; i < hops.size(); ++i)
+    {
+      const size_t hop = hops[i];
+
+      reject(hop, input, frame, windows.analysis);
+      fft(frame, dft);
+
+      (*this)(dft);
+
+      ifft(dft, frame);
+      inject(hop, output, frame, windows.synthesis);
+    }
+  }
+
+  for (size_t i = 0; i < framesize; ++i)
+  {
+    output[i] = data.output[i];
   }
 }
 

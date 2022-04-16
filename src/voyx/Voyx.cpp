@@ -80,7 +80,7 @@ int main(int argc, char** argv)
 
   const size_t samplerate = 44100;
   const size_t framesize = 1024;
-  const size_t hopsize = framesize / 4;
+  const size_t hopsize = framesize / 32;
   const size_t buffersize = 1000;
 
   std::shared_ptr<Source<float>> source;
