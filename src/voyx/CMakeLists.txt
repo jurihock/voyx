@@ -21,6 +21,7 @@ target_link_libraries(voyx
           dr_libs
           easyloggingpp
           fmt
+          openmp
           pocketfft
           qcustomplot
           qt
@@ -37,9 +38,3 @@ endif()
 target_compile_features(voyx
   PRIVATE cxx_std_17
 )
-
-find_package(OpenMP)
-if(OpenMP_CXX_FOUND)
-  target_link_libraries(voyx
-    PUBLIC OpenMP::OpenMP_CXX)
-endif()
