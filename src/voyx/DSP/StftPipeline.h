@@ -26,7 +26,11 @@ private:
 
   const float PI2 = 2.0f * std::acos(-1.0f);
 
-  const bool parallelize = true;
+  #ifdef _OPENMP
+  const bool parallelize = false; // temporary disabled to prevent warmup
+  #else
+  const bool parallelize = false;
+  #endif
 
   const size_t framesize;
   const size_t hopsize;
