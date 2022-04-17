@@ -1,5 +1,7 @@
 #include <voyx/DSP/BypassPipeline.h>
 
+#include <voyx/Source.h>
+
 BypassPipeline::BypassPipeline(std::shared_ptr<Source<float>> source, std::shared_ptr<Sink<float>> sink) :
   Pipeline(source, sink)
 {

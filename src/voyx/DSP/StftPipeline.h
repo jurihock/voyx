@@ -1,11 +1,7 @@
 #pragma once
 
+#include <voyx/Header.h>
 #include <voyx/DSP/Pipeline.h>
-
-#include <cmath>
-#include <complex>
-#include <numeric>
-#include <vector>
 
 class StftPipeline : public Pipeline<float>
 {

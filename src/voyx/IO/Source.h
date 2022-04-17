@@ -1,10 +1,6 @@
 #pragma once
 
-#include <chrono>
-#include <cmath>
-#include <functional>
-#include <string>
-#include <vector>
+#include <voyx/Header.h>
 
 template<typename T>
 class Source

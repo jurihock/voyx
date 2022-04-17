@@ -1,8 +1,6 @@
 #include <voyx/IO/AudioSource.h>
 
-#include <voyx/Voyx.h>
-
-#include <optional>
+#include <voyx/Source.h>
 
 AudioSource::AudioSource(const std::string& name, size_t samplerate, size_t framesize, size_t buffersize) :
   Source(samplerate, framesize, buffersize),

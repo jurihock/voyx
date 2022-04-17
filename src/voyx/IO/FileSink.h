@@ -1,5 +1,6 @@
 #pragma once
 
+#include <voyx/Header.h>
 #include <voyx/IO/Sink.h>
 
 class FileSink : public Sink<float>

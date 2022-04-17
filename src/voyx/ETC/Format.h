@@ -1,5 +1,7 @@
 #pragma once
 
+#include <voyx/Header.h>
+
 #include <fmt/format.h>
 
 template <typename... Args>

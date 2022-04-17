@@ -1,18 +1,16 @@
 #pragma once
 
+#include <voyx/Header.h>
+
 #include <voyx/IO/Source.h>
 #include <voyx/IO/Sink.h>
 
 #include <voyx/IO/AudioSource.h>
 #include <voyx/IO/AudioSink.h>
 
+// TODO run time measurements and logging
+#include <voyx/Source.h>
 #include <voyx/ETC/Timer.h>
-
-#include <voyx/Voyx.h>
-
-#include <chrono>
-#include <memory>
-#include <thread>
 
 template<typename T>
 class Pipeline

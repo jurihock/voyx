@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <voyx/Header.h>
 
 class Plot
 {

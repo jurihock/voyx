@@ -1,5 +1,6 @@
 #pragma once
 
+#include <voyx/Header.h>
 #include <voyx/UI/Plot.h>
 
 #include <qcustomplot/qcustomplot.h>
@@ -9,14 +10,6 @@
 #include <QGridLayout>
 #include <QPen>
 #include <QWidget>
-
-#include <algorithm>
-#include <array>
-#include <chrono>
-#include <memory>
-#include <mutex>
-#include <numeric>
-#include <thread>
 
 class QPlot : public Plot
 {

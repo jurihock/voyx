@@ -1,6 +1,6 @@
 #include <voyx/ETC/WAV.h>
 
-#include <voyx/Voyx.h>
+#include <voyx/Source.h>
 
 #include <dr_libs/dr_wav.h>
 

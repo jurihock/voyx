@@ -1,5 +1,6 @@
 #pragma once
 
+#include <voyx/Header.h>
 #include <voyx/IO/Source.h>
 
 class SineSource : public Source<float>

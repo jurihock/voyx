@@ -1,5 +1,7 @@
 #include <voyx/IO/SineSource.h>
 
+#include <voyx/Source.h>
+
 SineSource::SineSource(float frequency, size_t samplerate, size_t framesize, size_t buffersize) :
   SineSource(1.0f, frequency, samplerate, framesize, buffersize)
 {

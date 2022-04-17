@@ -1,5 +1,6 @@
 #pragma once
 
+#include <voyx/Header.h>
 #include <voyx/IO/Source.h>
 
 class FileSource : public Source<float>

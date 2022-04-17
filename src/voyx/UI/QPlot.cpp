@@ -1,5 +1,7 @@
 #include <voyx/UI/QPlot.h>
 
+#include <voyx/Source.h>
+
 namespace args
 {
   char arg0[] = "voyx";

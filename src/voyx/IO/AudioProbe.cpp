@@ -1,12 +1,8 @@
 #include <voyx/IO/AudioProbe.h>
 
-#include <rtaudio/RtAudio.h>
+#include <voyx/Source.h>
 
-#include <algorithm>
-#include <iomanip>
-#include <map>
-#include <sstream>
-#include <vector>
+#include <rtaudio/RtAudio.h>
 
 std::string AudioProbe::operator()()
 {

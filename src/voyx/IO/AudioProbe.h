@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <voyx/Header.h>
 
 class AudioProbe
 {

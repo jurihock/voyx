@@ -1,14 +1,6 @@
 #pragma once
 
-#include <algorithm>
-#include <cctype>
-#include <iomanip>
-#include <map>
-#include <regex>
-#include <sstream>
-#include <string>
-#include <typeinfo>
-#include <vector>
+#include <voyx/Header.h>
 
 namespace $$
 {

@@ -1,12 +1,6 @@
 #pragma once
 
-#include <chrono>
-#include <iostream>
-#include <map>
-#include <numeric>
-#include <sstream>
-#include <string>
-#include <vector>
+#include <voyx/Header.h>
 
 template<class T>
 class Timer

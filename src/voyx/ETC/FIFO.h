@@ -1,9 +1,8 @@
 #pragma once
 
-#include <readerwriterqueue/readerwriterqueue.h>
+#include <voyx/Header.h>
 
-#include <chrono>
-#include <functional>
+#include <readerwriterqueue/readerwriterqueue.h>
 
 template<typename T>
 class FIFO

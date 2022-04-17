@@ -1,5 +1,7 @@
 #include <voyx/IO/NullSource.h>
 
+#include <voyx/Source.h>
+
 NullSource::NullSource(size_t samplerate, size_t framesize, size_t buffersize) :
   Source(samplerate, framesize, buffersize),
   frame(framesize)

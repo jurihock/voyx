@@ -1,8 +1,8 @@
 #include <voyx/IO/AudioSink.h>
 
-#include <voyx/Voyx.h>
+#include <voyx/Source.h>
 
-#include <optional>
+#include <voyx/Source.h>
 
 AudioSink::AudioSink(const std::string& name, size_t samplerate, size_t framesize, size_t buffersize) :
   Sink(samplerate, framesize, buffersize),

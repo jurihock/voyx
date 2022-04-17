@@ -1,5 +1,6 @@
 #include <voyx/IO/FileSource.h>
 
+#include <voyx/Source.h>
 #include <voyx/ETC/WAV.h>
 
 FileSource::FileSource(const std::string& path, size_t samplerate, size_t framesize, size_t buffersize) :

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <voyx/Header.h>
 #include <voyx/DSP/Pipeline.h>
 
 class BypassPipeline : public Pipeline<float>

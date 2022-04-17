@@ -1,5 +1,7 @@
 #include <voyx/DSP/StftPipeline.h>
 
+#include <voyx/Source.h>
+
 #include <pocketfft/pocketfft_hdronly.h>
 
 StftPipeline::StftPipeline(size_t framesize, size_t hopsize, std::shared_ptr<Source<float>> source, std::shared_ptr<Sink<float>> sink) :

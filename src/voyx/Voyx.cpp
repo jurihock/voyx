@@ -1,4 +1,4 @@
-// TEST
+// TODO object factory
 #include <voyx/DSP/TestPipeline.h>
 #include <voyx/DSP/BypassPipeline.h>
 #include <voyx/DSP/StftPipeline.h>
@@ -10,19 +10,12 @@
 #include <voyx/IO/NullSink.h>
 #include <voyx/IO/SineSource.h>
 
-#include <voyx/Voyx.h>
+#include <voyx/Source.h>
 #include <voyx/IO/AudioProbe.h>
-
 #include <voyx/UI/Plot.h>
 #include <voyx/UI/QPlot.h>
 
 #include <cxxopts/cxxopts.hpp>
-
-#include <condition_variable>
-#include <csignal>
-#include <cstdlib>
-#include <iostream>
-#include <mutex>
 
 INITIALIZE_EASYLOGGINGPP
 
