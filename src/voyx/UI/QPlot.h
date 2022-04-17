@@ -15,6 +15,7 @@
 #include <chrono>
 #include <memory>
 #include <mutex>
+#include <numeric>
 #include <thread>
 
 class QPlot : public Plot
