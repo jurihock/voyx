@@ -1,4 +1,5 @@
 // TEST
+#include <voyx/DSP/TestPipeline.h>
 #include <voyx/DSP/BypassPipeline.h>
 #include <voyx/DSP/StftPipeline.h>
 #include <voyx/IO/AudioSource.h>
@@ -11,6 +12,9 @@
 
 #include <voyx/Voyx.h>
 #include <voyx/IO/AudioProbe.h>
+
+#include <voyx/UI/Plot.h>
+#include <voyx/UI/QPlot.h>
 
 #include <cxxopts/cxxopts.hpp>
 
@@ -112,8 +116,11 @@ int main(int argc, char** argv)
     sink = std::make_shared<AudioSink>(output, samplerate, framesize, buffersize);
   }
 
+  std::shared_ptr<Plot> plot = std::make_shared<QPlot>(source->timeout());
+
+  auto pipe = std::make_shared<TestPipeline>(plot, source, sink);
   // auto pipe = std::make_shared<BypassPipeline>(source, sink);
-  auto pipe = std::make_shared<StftPipeline>(framesize, hopsize, source, sink);
+  // auto pipe = std::make_shared<StftPipeline>(framesize, hopsize, source, sink);
 
   pipe->open();
 
@@ -125,8 +132,15 @@ int main(int argc, char** argv)
   {
     pipe->start();
 
-    std::unique_lock lock(mutex);
-    terminate.wait(lock);
+    if (plot != nullptr)
+    {
+      plot->show();
+    }
+    else
+    {
+      std::unique_lock lock(mutex);
+      terminate.wait(lock);
+    }
   }
 
   pipe->close();

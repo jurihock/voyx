@@ -1,5 +1,7 @@
 #!/bin/bash
 
+PATH="/opt/homebrew/opt/qt@5/bin:$PATH"
+
 mkdir -p build-release
 
 pushd build-release >/dev/null 2>&1
