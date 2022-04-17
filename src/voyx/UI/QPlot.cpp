@@ -154,11 +154,7 @@ void QPlot::loop()
     std::vector<double> xdata;
     {
       xdata.resize(ydata.size());
-
-      for (size_t i = 0; i < xdata.size(); ++i)
-      {
-        xdata[i] = i;
-      }
+      std::iota(xdata.begin(), xdata.end(), 0.0);
     }
 
     auto plot = getPlot(row, col);
