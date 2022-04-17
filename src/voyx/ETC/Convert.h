@@ -4,6 +4,11 @@
 
 namespace $$
 {
+  static inline bool pot(const uint64_t value)
+  {
+    return value && !(value & (value - 1));
+  }
+
   static inline std::string lower(const std::string& value)
   {
     std::string result(value);

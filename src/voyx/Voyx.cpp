@@ -95,12 +95,12 @@ int main(int argc, char** argv)
   const std::string input = args["input"].as<std::string>();
   const std::string output = args["output"].as<std::string>();
 
-  const int seconds = args["sec"].as<int>();
+  const int seconds = std::abs(args["sec"].as<int>());
 
-  const size_t samplerate = args["sr"].as<int>();
-  const size_t framesize = args["window"].as<int>();
-  const size_t hopsize = framesize / args["overlap"].as<int>();
-  const size_t buffersize = args["buffer"].as<int>();
+  const size_t samplerate = std::abs(args["sr"].as<int>());
+  const size_t framesize = std::abs(args["window"].as<int>());
+  const size_t hopsize = framesize / std::abs(args["overlap"].as<int>());
+  const size_t buffersize = std::abs(args["buffer"].as<int>());
 
   std::shared_ptr<Source<float>> source;
   std::shared_ptr<Sink<float>> sink;
