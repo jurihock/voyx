@@ -42,9 +42,10 @@ int main(int argc, char** argv)
   options.add_options()
     ("h,help",    "Print this help")
     ("l,list",    "List available audio devices for -i and -o")
+    ("m,midi",    "Input MIDI device name", cxxopts::value<std::string>()->default_value(""))
     ("i,input",   "Input audio device or .wav file name", cxxopts::value<std::string>()->default_value(""))
     ("o,output",  "Output audio device or .wav file name", cxxopts::value<std::string>()->default_value(""))
-    ("t,term",    "Terminate after specified number of seconds", cxxopts::value<int>()->default_value("0"))
+    ("s,sec",     "Abort after specified number of seconds", cxxopts::value<int>()->default_value("0"))
     ("r,sr",      "Sample rate in hertz", cxxopts::value<int>()->default_value("44100"))
     ("w,window",  "STFT window size", cxxopts::value<int>()->default_value("1024"))
     ("v,overlap", "STFT window overlap", cxxopts::value<int>()->default_value("4"))
@@ -90,10 +91,11 @@ int main(int argc, char** argv)
     return OK;
   }
 
+  const std::string midi = args["midi"].as<std::string>();
   const std::string input = args["input"].as<std::string>();
   const std::string output = args["output"].as<std::string>();
 
-  const int seconds = args["term"].as<int>();
+  const int seconds = args["sec"].as<int>();
 
   const size_t samplerate = args["sr"].as<int>();
   const size_t framesize = args["window"].as<int>();
