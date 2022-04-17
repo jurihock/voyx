@@ -14,8 +14,10 @@ TestPipeline::TestPipeline(const size_t samplerate, const size_t framesize, cons
   }
 }
 
-void TestPipeline::operator()(std::vector<std::complex<float>>& dft)
+void TestPipeline::operator()(std::vector<std::vector<std::complex<float>>>& dfts)
 {
+  const auto& dft = dfts.front();
+
   std::vector<float> abs(dft.size());
 
   for (size_t i = 0; i < dft.size(); ++i)

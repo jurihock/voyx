@@ -134,12 +134,7 @@ void StftPipeline::operator()(const size_t index, const std::vector<float>& inpu
       fft(frame, dft);
     }
 
-    for (size_t i = 0; i < hops.size(); ++i)
-    {
-      std::vector<std::complex<float>>& dft = data.dfts[i];
-
-      (*this)(dft);
-    }
+    (*this)(data.dfts);
 
     #pragma omp parallel for
     for (size_t i = 0; i < hops.size(); ++i)
@@ -164,19 +159,39 @@ void StftPipeline::operator()(const size_t index, const std::vector<float>& inpu
     const float* input = data.input.data();
     float* const output = data.output.data();
 
-    std::vector<float>& frame = data.frames.front();
-    std::vector<std::complex<float>>& dft = data.dfts.front();
+    for (size_t i = 0; i < hops.size(); ++i)
+    {
+      const size_t hop = hops[i];
+
+      std::vector<float>& frame = data.frames[i];
+
+      reject(hop, input, frame, windows.analysis);
+    }
+
+    for (size_t i = 0; i < hops.size(); ++i)
+    {
+      std::vector<float>& frame = data.frames[i];
+      std::vector<std::complex<float>>& dft = data.dfts[i];
+
+      fft(frame, dft);
+    }
+
+    (*this)(data.dfts);
+
+    for (size_t i = 0; i < hops.size(); ++i)
+    {
+      std::vector<float>& frame = data.frames[i];
+      std::vector<std::complex<float>>& dft = data.dfts[i];
+
+      ifft(dft, frame);
+    }
 
     for (size_t i = 0; i < hops.size(); ++i)
     {
       const size_t hop = hops[i];
 
-      reject(hop, input, frame, windows.analysis);
-      fft(frame, dft);
+      std::vector<float>& frame = data.frames[i];
 
-      (*this)(dft);
-
-      ifft(dft, frame);
       inject(hop, output, frame, windows.synthesis);
     }
   }

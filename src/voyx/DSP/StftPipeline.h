@@ -20,7 +20,7 @@ protected:
 
   void warmup() override;
 
-  virtual void operator()(std::vector<std::complex<float>>& dft) = 0;
+  virtual void operator()(std::vector<std::vector<std::complex<float>>>& dfts) = 0;
 
 private:
 
