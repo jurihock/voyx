@@ -8,7 +8,7 @@ class StftPipeline : public Pipeline<float>
 
 public:
 
-  StftPipeline(size_t framesize, size_t hopsize, std::shared_ptr<Source<float>> source, std::shared_ptr<Sink<float>> sink);
+  StftPipeline(const size_t framesize, const size_t hopsize, std::shared_ptr<Source<float>> source, std::shared_ptr<Sink<float>> sink);
 
   void operator()(const size_t index, const std::vector<float>& input, std::vector<float>& output) override;
 
@@ -16,7 +16,7 @@ protected:
 
   void warmup() override;
 
-  virtual void operator()(std::vector<std::complex<float>>& dft) {}
+  virtual void operator()(std::vector<std::complex<float>>& dft) = 0;
 
 private:
 

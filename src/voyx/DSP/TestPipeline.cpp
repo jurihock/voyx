@@ -2,18 +2,29 @@
 
 #include <voyx/Source.h>
 
-TestPipeline::TestPipeline(std::shared_ptr<Plot> plot, std::shared_ptr<Source<float>> source, std::shared_ptr<Sink<float>> sink) :
-  Pipeline(source, sink),
+TestPipeline::TestPipeline(const size_t framesize, const size_t hopsize, std::shared_ptr<Plot> plot, std::shared_ptr<Source<float>> source, std::shared_ptr<Sink<float>> sink) :
+  StftPipeline(framesize, hopsize, source, sink),
   plot(plot)
-{
-}
-
-void TestPipeline::operator()(const size_t index, const std::vector<float>& input, std::vector<float>& output)
 {
   if (plot != nullptr)
   {
-    plot->plot(input);
+    plot->xrange(source->samplerate() / 2);
+    plot->xlim(0, 5e3);
+    plot->ylim(-120, 0);
+  }
+}
+
+void TestPipeline::operator()(std::vector<std::complex<float>>& dft)
+{
+  std::vector<float> abs(dft.size());
+
+  for (size_t i = 0; i < dft.size(); ++i)
+  {
+    abs[i] = 20 * std::log10(std::abs(dft[i]));
   }
 
-  output = input;
+  if (plot != nullptr)
+  {
+    plot->plot(abs);
+  }
 }

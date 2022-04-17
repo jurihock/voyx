@@ -4,7 +4,7 @@
 
 #include <pocketfft/pocketfft_hdronly.h>
 
-StftPipeline::StftPipeline(size_t framesize, size_t hopsize, std::shared_ptr<Source<float>> source, std::shared_ptr<Sink<float>> sink) :
+StftPipeline::StftPipeline(const size_t framesize, const size_t hopsize, std::shared_ptr<Source<float>> source, std::shared_ptr<Sink<float>> sink) :
   Pipeline(source, sink),
   framesize(framesize),
   hopsize(hopsize)

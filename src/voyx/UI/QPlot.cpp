@@ -67,12 +67,38 @@ void QPlot::show(const size_t width, const size_t height)
   application->exec();
 }
 
-void QPlot::lim(const double min, const double max)
+void QPlot::xlim(const double min, const double max)
 {
+  std::unique_lock lock(mutex);
+  data.xauto = false;
+
+  for (auto plot : plots)
+  {
+    plot->xAxis->setRange(min, max);
+  }
+}
+
+void QPlot::ylim(const double min, const double max)
+{
+  std::unique_lock lock(mutex);
+  data.yauto = false;
+
   for (auto plot : plots)
   {
     plot->yAxis->setRange(min, max);
   }
+}
+
+void QPlot::xrange(const double max)
+{
+  std::unique_lock lock(mutex);
+  data.xrange = std::tuple<double, double>(0, max);
+}
+
+void QPlot::xrange(const double min, const double max)
+{
+  std::unique_lock lock(mutex);
+  data.xrange = std::tuple<double, double>(min, max);
 }
 
 void QPlot::plot(const std::vector<float>& y)
@@ -101,8 +127,6 @@ void QPlot::addPlot(const size_t row, const size_t col, const size_t graphs)
     pen.setWidth(getLineWidth(i));
 
     plot->graph(i)->setPen(pen);
-
-    plot->yAxis->setRange(-1, +1);
   }
 
   layout->addWidget(plot.get(), row, col);
@@ -147,21 +171,36 @@ void QPlot::loop()
 
     std::this_thread::sleep_for(delay);
 
+    bool xauto, yauto;
+    std::optional<std::pair<double, double>> xrange;
     std::vector<double> ydata;
     {
       std::unique_lock lock(mutex);
+      xauto = data.xauto;
+      yauto = data.yauto;
+      xrange = data.xrange;
       ydata = data.ydata;
     }
 
     std::vector<double> xdata;
     {
       xdata.resize(ydata.size());
+
       std::iota(xdata.begin(), xdata.end(), 0.0);
+
+      if (xrange.has_value())
+      {
+        const double foo = (xrange.value().second - xrange.value().first) / xdata.size();
+        const double bar = xrange.value().first;
+
+        std::transform(xdata.begin(), xdata.end(), xdata.begin(),
+          [foo, bar](double value) { return value * foo + bar; });
+      }
     }
 
     auto plot = getPlot(row, col);
     {
-      // data
+      // x,y data
 
       const size_t size = std::min(
         xdata.size(), ydata.size());
@@ -176,14 +215,38 @@ void QPlot::loop()
 
       plot->graph(graph)->setData(x, y);
 
-      // range
+      // auto range
 
-      if (!xdata.empty())
+      if (xauto && !xdata.empty())
       {
         const double xmin = *std::min_element(xdata.begin(), xdata.end());
         const double xmax = *std::max_element(xdata.begin(), xdata.end());
 
-        plot->xAxis->setRange(xmin, xmax);
+        // sync again
+        {
+          std::unique_lock lock(mutex);
+
+          if (data.xauto)
+          {
+            plot->xAxis->setRange(xmin, xmax);
+          }
+        }
+      }
+
+      if (yauto && !ydata.empty())
+      {
+        const double ymin = *std::min_element(ydata.begin(), ydata.end());
+        const double ymax = *std::max_element(ydata.begin(), ydata.end());
+
+        // sync again
+        {
+          std::unique_lock lock(mutex);
+
+          if (data.yauto)
+          {
+            plot->yAxis->setRange(ymin, ymax);
+          }
+        }
       }
 
       // replot

@@ -25,7 +25,11 @@ public:
   void show() override;
   void show(const size_t width, const size_t height);
 
-  void lim(const double min, const double max) override;
+  void xlim(const double min, const double max) override;
+  void ylim(const double min, const double max) override;
+
+  void xrange(const double max) override;
+  void xrange(const double min, const double max) override;
 
   void plot(const std::vector<float>& y) override;
   void plot(const std::vector<double>& y) override;
@@ -48,6 +52,9 @@ private:
 
   struct
   {
+    bool xauto = true;
+    bool yauto = true;
+    std::optional<std::pair<double, double>> xrange;
     std::vector<double> ydata;
   }
   data;

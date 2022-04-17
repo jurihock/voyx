@@ -1,17 +1,17 @@
 #pragma once
 
 #include <voyx/Header.h>
-#include <voyx/DSP/Pipeline.h>
+#include <voyx/DSP/StftPipeline.h>
 #include <voyx/UI/Plot.h>
 
-class TestPipeline : public Pipeline<float>
+class TestPipeline : public StftPipeline
 {
 
 public:
 
-  TestPipeline(std::shared_ptr<Plot> plot, std::shared_ptr<Source<float>> source, std::shared_ptr<Sink<float>> sink);
+  TestPipeline(const size_t framesize, const size_t hopsize, std::shared_ptr<Plot> plot, std::shared_ptr<Source<float>> source, std::shared_ptr<Sink<float>> sink);
 
-  void operator()(const size_t index, const std::vector<float>& input, std::vector<float>& output) override;
+  void operator()(std::vector<std::complex<float>>& dft) override;
 
 private:
 

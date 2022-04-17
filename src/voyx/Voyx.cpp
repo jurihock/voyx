@@ -111,9 +111,9 @@ int main(int argc, char** argv)
 
   std::shared_ptr<Plot> plot = std::make_shared<QPlot>(source->timeout());
 
-  auto pipe = std::make_shared<TestPipeline>(plot, source, sink);
   // auto pipe = std::make_shared<BypassPipeline>(source, sink);
   // auto pipe = std::make_shared<StftPipeline>(framesize, hopsize, source, sink);
+  auto pipe = std::make_shared<TestPipeline>(framesize, hopsize, plot, source, sink);
 
   pipe->open();
 
