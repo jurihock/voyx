@@ -12,6 +12,7 @@
 
 #include <voyx/Source.h>
 #include <voyx/IO/AudioProbe.h>
+#include <voyx/IO/MidiProbe.h>
 #include <voyx/UI/Plot.h>
 #include <voyx/UI/QPlot.h>
 
@@ -67,9 +68,24 @@ int main(int argc, char** argv)
 
   if (args.count("list"))
   {
-    AudioProbe probe;
+    AudioProbe audio;
+    MidiProbe midi;
 
-    std::cout << probe();
+    std::stringstream result;
+
+    result << "~ DETECTED AUDIO DEVICES ~"
+           << std::endl
+           << std::endl
+           << audio();
+
+    result << std::endl;
+
+    result << "~ DETECTED MIDI DEVICES ~"
+           << std::endl
+           << std::endl
+           << midi();
+
+    std::cout << result.str();
 
     return OK;
   }

@@ -38,6 +38,8 @@ std::string AudioProbe::operator()()
     { "Data Formats", {} },
   };
 
+  // POPULATE TABLE
+
   RtAudio audio;
 
   const size_t devices = audio.getDeviceCount();
@@ -106,13 +108,21 @@ std::string AudioProbe::operator()()
     }
   }
 
+  // STRINGIFY TABLE
+
   const size_t rows = table[columns.front()].size();
-  const size_t spacer = 3;
+
+  std::ostringstream stream;
+
+  if (!rows)
+  {
+    stream << "Sadly no audio devices detected! :~(" << std::endl;
+
+    return stream.str();
+  }
 
   std::map<std::string, size_t> column_widths;
   size_t total_column_width = 0;
-
-  std::ostringstream stream;
 
   for (const auto& column : columns)
   {
@@ -123,7 +133,7 @@ std::string AudioProbe::operator()()
       column_width = std::max(column_width, row.size());
     }
 
-    column_widths[column] = column_width + spacer;
+    column_widths[column] = column_width + 3;
     total_column_width += column_widths[column];
   }
 
