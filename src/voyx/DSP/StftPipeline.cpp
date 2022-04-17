@@ -134,7 +134,7 @@ void StftPipeline::operator()(const size_t index, const std::vector<float>& inpu
       fft(frame, dft);
     }
 
-    (*this)(data.dfts);
+    (*this)(index, data.input, data.dfts);
 
     #pragma omp parallel for
     for (size_t i = 0; i < hops.size(); ++i)
@@ -176,7 +176,7 @@ void StftPipeline::operator()(const size_t index, const std::vector<float>& inpu
       fft(frame, dft);
     }
 
-    (*this)(data.dfts);
+    (*this)(index, data.input, data.dfts);
 
     for (size_t i = 0; i < hops.size(); ++i)
     {
