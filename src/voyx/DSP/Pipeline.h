@@ -129,8 +129,6 @@ protected:
 
 private:
 
-  std::shared_ptr<std::thread> thread;
-
   struct
   {
     Timer<std::chrono::milliseconds> inner;
@@ -138,6 +136,7 @@ private:
   }
   timers;
 
+  std::shared_ptr<std::thread> thread;
   bool doloop = false;
 
   void loop(const size_t frames)

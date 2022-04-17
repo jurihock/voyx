@@ -65,10 +65,18 @@ void QPlot::show(const size_t width, const size_t height)
   application->exec();
 }
 
+void QPlot::lim(const double min, const double max)
+{
+  for (auto plot : plots)
+  {
+    plot->yAxis->setRange(min, max);
+  }
+}
+
 void QPlot::plot(const std::vector<float>& y)
 {
   std::unique_lock lock(mutex);
-  data = y;
+  data.ydata = y;
 }
 
 void QPlot::addPlot(const size_t row, const size_t col, const size_t graphs)
@@ -85,6 +93,8 @@ void QPlot::addPlot(const size_t row, const size_t col, const size_t graphs)
     pen.setWidth(getLineWidth(i));
 
     plot->graph(i)->setPen(pen);
+
+    plot->yAxis->setRange(-1, +1);
   }
 
   layout->addWidget(plot.get(), row, col);
@@ -112,14 +122,15 @@ int QPlot::getLineWidth(const size_t index) const
 
 void QPlot::loop()
 {
-  std::vector<std::chrono::milliseconds> delays =
-  {
-    std::chrono::milliseconds(0),
-    std::chrono::duration_cast<std::chrono::milliseconds>(delay),
-  };
+  const size_t row = 0;
+  const size_t col = 0;
+  const size_t graph = 0;
 
-  std::vector<double> xminmax(2);
-  std::vector<double> yminmax(2);
+  std::array<std::chrono::milliseconds, 2> delays =
+  {
+    std::chrono::duration_cast<std::chrono::milliseconds>(delay),
+    std::chrono::milliseconds(0)
+  };
 
   while (doloop)
   {
@@ -131,7 +142,7 @@ void QPlot::loop()
     std::vector<float> ydata;
     {
       std::unique_lock lock(mutex);
-      ydata = data;
+      ydata = data.ydata;
     }
 
     std::vector<float> xdata;
@@ -144,20 +155,16 @@ void QPlot::loop()
       }
     }
 
-    const size_t row = 0;
-    const size_t col = 0;
-    const size_t graph = 0;
+    auto plot = getPlot(row, col);
     {
-      auto plot = getPlot(row, col);
-
       // data
 
-      const size_t n = std::min(
+      const size_t size = std::min(
         xdata.size(), ydata.size());
 
-      QVector<double> x(n), y(n);
+      QVector<double> x(size), y(size);
 
-      for (size_t i = 0; i < n; ++i)
+      for (size_t i = 0; i < size; ++i)
       {
         x[i] = static_cast<double>(xdata[i]);
         y[i] = static_cast<double>(ydata[i]);
@@ -169,33 +176,17 @@ void QPlot::loop()
 
       if (!xdata.empty())
       {
-        const double xmin = static_cast<double>(*std::min_element(xdata.begin(), xdata.end()));
-        const double xmax = static_cast<double>(*std::max_element(xdata.begin(), xdata.end()));
+        const double xmin = *std::min_element(xdata.begin(), xdata.end());
+        const double xmax = *std::max_element(xdata.begin(), xdata.end());
 
-        xminmax[0] = std::min(xminmax[0], xmin);
-        xminmax[1] = std::max(xminmax[1], xmax);
+        plot->xAxis->setRange(xmin, xmax);
       }
-
-      if (!ydata.empty())
-      {
-        const double ymin = static_cast<double>(*std::min_element(ydata.begin(), ydata.end()));
-        const double ymax = static_cast<double>(*std::max_element(ydata.begin(), ydata.end()));
-
-        yminmax[0] = std::min(yminmax[0], ymin);
-        yminmax[1] = std::max(yminmax[1], ymax);
-      }
-
-      yminmax[0] = std::min(yminmax[0], -1.0);
-      yminmax[1] = std::max(yminmax[1], +1.0);
-
-      plot->xAxis->setRange(xminmax[0], xminmax[1]);
-      plot->yAxis->setRange(yminmax[0], yminmax[1]);
 
       // replot
 
       plot->replot(QCustomPlot::rpQueuedReplot);
 
-      delays[0] = std::chrono::milliseconds(
+      delays.back() = std::chrono::milliseconds(
         static_cast<int>(plot->replotTime()));
     }
   }

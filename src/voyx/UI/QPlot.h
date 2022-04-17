@@ -11,6 +11,7 @@
 #include <QWidget>
 
 #include <algorithm>
+#include <array>
 #include <chrono>
 #include <memory>
 #include <mutex>
@@ -21,7 +22,7 @@ class QPlot : public Plot
 
 public:
 
-  QPlot(const std::chrono::duration<double> delay);
+  QPlot(const std::chrono::duration<double> delay = std::chrono::duration<double>::zero());
   ~QPlot();
 
   void start();
@@ -29,6 +30,8 @@ public:
 
   void show() override;
   void show(const size_t width, const size_t height);
+
+  void lim(const double min, const double max) override;
 
   void plot(const std::vector<float>& y) override;
 
@@ -41,18 +44,23 @@ protected:
 
 private:
 
+  const std::chrono::duration<double> delay;
+
   std::shared_ptr<QApplication> application;
   std::shared_ptr<QWidget> widget;
   std::shared_ptr<QGridLayout> layout;
   std::vector<std::shared_ptr<QCustomPlot>> plots;
 
+  struct
+  {
+    std::vector<float> ydata;
+  }
+  data;
+
   std::shared_ptr<std::thread> thread;
   std::mutex mutex;
+  bool doloop = false;
 
-  std::chrono::duration<double> delay;
-  std::vector<float> data;
-
-  bool doloop;
   void loop();
 
   /*
