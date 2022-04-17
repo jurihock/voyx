@@ -41,7 +41,7 @@ int main(int argc, char** argv)
 
   options.add_options()
     ("h,help",    "Print this help")
-    ("l,list",    "List available audio devices for -i and -o")
+    ("l,list",    "List available devices for -m, -i and -o")
     ("m,midi",    "Input MIDI device name", cxxopts::value<std::string>()->default_value(""))
     ("i,input",   "Input audio device or .wav file name", cxxopts::value<std::string>()->default_value(""))
     ("o,output",  "Output audio device or .wav file name", cxxopts::value<std::string>()->default_value(""))
