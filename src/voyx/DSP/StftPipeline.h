@@ -8,11 +8,15 @@ class StftPipeline : public Pipeline<float>
 
 public:
 
-  StftPipeline(const size_t framesize, const size_t hopsize, std::shared_ptr<Source<float>> source, std::shared_ptr<Sink<float>> sink);
+  StftPipeline(const size_t samplerate, const size_t framesize, const size_t hopsize, std::shared_ptr<Source<float>> source, std::shared_ptr<Sink<float>> sink);
 
   void operator()(const size_t index, const std::vector<float>& input, std::vector<float>& output) override;
 
 protected:
+
+  const size_t samplerate;
+  const size_t framesize;
+  const size_t hopsize;
 
   void warmup() override;
 
@@ -27,9 +31,6 @@ private:
   #else
   const bool parallelize = false;
   #endif
-
-  const size_t framesize;
-  const size_t hopsize;
 
   std::vector<size_t> hops;
 

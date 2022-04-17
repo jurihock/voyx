@@ -4,11 +4,28 @@
 
 #include <pocketfft/pocketfft_hdronly.h>
 
-StftPipeline::StftPipeline(const size_t framesize, const size_t hopsize, std::shared_ptr<Source<float>> source, std::shared_ptr<Sink<float>> sink) :
+StftPipeline::StftPipeline(const size_t samplerate, const size_t framesize, const size_t hopsize, std::shared_ptr<Source<float>> source, std::shared_ptr<Sink<float>> sink) :
   Pipeline(source, sink),
+  samplerate(samplerate),
   framesize(framesize),
   hopsize(hopsize)
 {
+  if (source->samplerate() != samplerate)
+  {
+    throw std::runtime_error(
+      $("Incompatible source sample rate {0} != {1}!",
+        source->samplerate(),
+        samplerate));
+  }
+
+  if (sink->samplerate() != samplerate)
+  {
+    throw std::runtime_error(
+      $("Incompatible sink sample rate {0} != {1}!",
+        sink->samplerate(),
+        samplerate));
+  }
+
   if (source->framesize() != framesize)
   {
     throw std::runtime_error(

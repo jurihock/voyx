@@ -39,11 +39,15 @@ int main(int argc, char** argv)
   options.set_width(80);
 
   options.add_options()
-    ("h,help",   "Print this help")
-    ("l,list",   "List available audio devices for -i and -o")
-    ("t,term",   "Terminate after specified number of seconds", cxxopts::value<int>()->default_value("0"))
-    ("i,input",  "Input audio device name or .wav file", cxxopts::value<std::string>()->default_value(""))
-    ("o,output", "Output audio device name or .wav file", cxxopts::value<std::string>()->default_value(""));
+    ("h,help",    "Print this help")
+    ("l,list",    "List available audio devices for -i and -o")
+    ("i,input",   "Input audio device or .wav file name", cxxopts::value<std::string>()->default_value(""))
+    ("o,output",  "Output audio device or .wav file name", cxxopts::value<std::string>()->default_value(""))
+    ("t,term",    "Terminate after specified number of seconds", cxxopts::value<int>()->default_value("0"))
+    ("r,sr",      "Sample rate in hertz", cxxopts::value<int>()->default_value("44100"))
+    ("w,window",  "STFT window size", cxxopts::value<int>()->default_value("1024"))
+    ("v,overlap", "STFT window overlap", cxxopts::value<int>()->default_value("4"))
+    ("b,buffer",  "Audio IO buffer size", cxxopts::value<int>()->default_value("1000"));
 
   const auto args = options.parse(argc, argv);
 
@@ -75,10 +79,10 @@ int main(int argc, char** argv)
 
   const int seconds = args["term"].as<int>();
 
-  const size_t samplerate = 44100;
-  const size_t framesize = 1024;
-  const size_t hopsize = framesize / 32;
-  const size_t buffersize = 1000;
+  const size_t samplerate = args["sr"].as<int>();
+  const size_t framesize = args["window"].as<int>();
+  const size_t hopsize = framesize / args["overlap"].as<int>();
+  const size_t buffersize = args["buffer"].as<int>();
 
   std::shared_ptr<Source<float>> source;
   std::shared_ptr<Sink<float>> sink;
@@ -112,8 +116,8 @@ int main(int argc, char** argv)
   std::shared_ptr<Plot> plot = std::make_shared<QPlot>(source->timeout());
 
   // auto pipe = std::make_shared<BypassPipeline>(source, sink);
-  // auto pipe = std::make_shared<StftPipeline>(framesize, hopsize, source, sink);
-  auto pipe = std::make_shared<TestPipeline>(framesize, hopsize, plot, source, sink);
+  // auto pipe = std::make_shared<StftPipeline>(samplerate, framesize, hopsize, source, sink);
+  auto pipe = std::make_shared<TestPipeline>(samplerate, framesize, hopsize, plot, source, sink);
 
   pipe->open();
 

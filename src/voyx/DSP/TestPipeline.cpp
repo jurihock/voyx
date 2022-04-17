@@ -2,13 +2,13 @@
 
 #include <voyx/Source.h>
 
-TestPipeline::TestPipeline(const size_t framesize, const size_t hopsize, std::shared_ptr<Plot> plot, std::shared_ptr<Source<float>> source, std::shared_ptr<Sink<float>> sink) :
-  StftPipeline(framesize, hopsize, source, sink),
+TestPipeline::TestPipeline(const size_t samplerate, const size_t framesize, const size_t hopsize, std::shared_ptr<Plot> plot, std::shared_ptr<Source<float>> source, std::shared_ptr<Sink<float>> sink) :
+  StftPipeline(samplerate, framesize, hopsize, source, sink),
   plot(plot)
 {
   if (plot != nullptr)
   {
-    plot->xrange(source->samplerate() / 2);
+    plot->xrange(samplerate / 2);
     plot->xlim(0, 5e3);
     plot->ylim(-120, 0);
   }
