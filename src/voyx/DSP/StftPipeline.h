@@ -30,8 +30,6 @@ protected:
 
 private:
 
-  const float PI2 = 2.0f * std::acos(-1.0f);
-
   std::vector<size_t> hops;
 
   struct

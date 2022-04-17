@@ -1,6 +1,7 @@
 #include <voyx/DSP/StftPipeline.h>
 
 #include <voyx/Source.h>
+#include <voyx/ETC/Window.h>
 
 #include <pocketfft/pocketfft_hdronly.h>
 
@@ -59,18 +60,13 @@ StftPipeline::StftPipeline(const size_t samplerate, const size_t framesize, cons
   data.input.resize(framesize * 2);
   data.output.resize(framesize * 2);
 
-  std::vector<float> window(framesize);
-
-  std::iota(window.begin(), window.end(), 0.0f);
-
-  std::transform(window.begin(), window.end(), window.begin(),
-    [&](float value) { return 0.5f - 0.5f * std::cos(PI2 * value / window.size()); });
-
-  windows.analysis = window;
-  windows.synthesis = window;
+  const std::vector<float> window = Window<float>(framesize);
 
   const float unitygain = hopsize / std::inner_product(
     window.begin(), window.end(), window.begin(), 0.0f);
+
+  windows.analysis = window;
+  windows.synthesis = window;
 
   std::transform(windows.synthesis.begin(), windows.synthesis.end(), windows.synthesis.begin(),
     [&](float value) { return value * unitygain; });
