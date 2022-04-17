@@ -1,15 +1,14 @@
 #include <voyx/DSP/StftPipeline.h>
 
 #include <voyx/Source.h>
-#include <voyx/ETC/Window.h>
-
-#include <pocketfft/pocketfft_hdronly.h>
 
 StftPipeline::StftPipeline(const size_t samplerate, const size_t framesize, const size_t hopsize, std::shared_ptr<Source<float>> source, std::shared_ptr<Sink<float>> sink) :
   Pipeline(source, sink),
   samplerate(samplerate),
   framesize(framesize),
-  hopsize(hopsize)
+  hopsize(hopsize),
+  fft(framesize),
+  window(framesize)
 {
   if (source->samplerate() != samplerate)
   {
@@ -53,23 +52,21 @@ StftPipeline::StftPipeline(const size_t samplerate, const size_t framesize, cons
 
   for (size_t i = 0; i < hops.size(); ++i)
   {
-    data.frames[i].resize(framesize);
-    data.dfts[i].resize(framesize / 2 + 1);
+    data.frames[i].resize(fft.tdsize());
+    data.dfts[i].resize(fft.fdsize());
   }
 
   data.input.resize(framesize * 2);
   data.output.resize(framesize * 2);
 
-  const std::vector<float> window = Window<float>(framesize);
-
-  const float unitygain = hopsize / std::inner_product(
-    window.begin(), window.end(), window.begin(), 0.0f);
-
   windows.analysis = window;
   windows.synthesis = window;
 
+  const float unitygain = hopsize / std::inner_product(
+    windows.synthesis.begin(), windows.synthesis.end(), windows.synthesis.begin(), 0.0f);
+
   std::transform(windows.synthesis.begin(), windows.synthesis.end(), windows.synthesis.begin(),
-    [&](float value) { return value * unitygain; });
+    [unitygain](float value) { return value * unitygain; });
 }
 
 void StftPipeline::warmup()
@@ -127,7 +124,7 @@ void StftPipeline::operator()(const size_t index, const std::vector<float>& inpu
       std::vector<float>& frame = data.frames[i];
       std::vector<std::complex<float>>& dft = data.dfts[i];
 
-      fft(frame, dft);
+      fft.fft(frame, dft);
     }
 
     (*this)(index, data.input, data.dfts);
@@ -138,7 +135,7 @@ void StftPipeline::operator()(const size_t index, const std::vector<float>& inpu
       std::vector<float>& frame = data.frames[i];
       std::vector<std::complex<float>>& dft = data.dfts[i];
 
-      ifft(dft, frame);
+      fft.ifft(dft, frame);
     }
 
     for (size_t i = 0; i < hops.size(); ++i)
@@ -169,7 +166,7 @@ void StftPipeline::operator()(const size_t index, const std::vector<float>& inpu
       std::vector<float>& frame = data.frames[i];
       std::vector<std::complex<float>>& dft = data.dfts[i];
 
-      fft(frame, dft);
+      fft.fft(frame, dft);
     }
 
     (*this)(index, data.input, data.dfts);
@@ -179,7 +176,7 @@ void StftPipeline::operator()(const size_t index, const std::vector<float>& inpu
       std::vector<float>& frame = data.frames[i];
       std::vector<std::complex<float>>& dft = data.dfts[i];
 
-      ifft(dft, frame);
+      fft.ifft(dft, frame);
     }
 
     for (size_t i = 0; i < hops.size(); ++i)
@@ -212,30 +209,4 @@ void StftPipeline::inject(const size_t hop, float* const output, const std::vect
   {
     output[hop + i] += frame[i] * window[i];
   }
-}
-
-void StftPipeline::fft(const std::vector<float>& frame, std::vector<std::complex<float>>& dft)
-{
-  pocketfft::r2c(
-    { frame.size() },
-    { sizeof(float) },
-    { sizeof(std::complex<float>) },
-    0,
-    true,
-    frame.data(),
-    dft.data(),
-    1.0f / frame.size());
-}
-
-void StftPipeline::ifft(const std::vector<std::complex<float>>& dft, std::vector<float>& frame)
-{
-  pocketfft::c2r(
-    { frame.size() },
-    { sizeof(std::complex<float>) },
-    { sizeof(float) },
-    0,
-    false,
-    dft.data(),
-    frame.data(),
-    1.0f);
 }

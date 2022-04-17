@@ -1,6 +1,8 @@
 #pragma once
 
 #include <voyx/Header.h>
+#include <voyx/ETC/FFT.h>
+#include <voyx/ETC/Window.h>
 #include <voyx/DSP/Pipeline.h>
 
 class StftPipeline : public Pipeline<float>
@@ -30,6 +32,9 @@ protected:
 
 private:
 
+  FFT<float> fft;
+  Window<float> window;
+
   std::vector<size_t> hops;
 
   struct
@@ -50,8 +55,5 @@ private:
 
   static void reject(const size_t hop, const float* input, std::vector<float>& frame, const std::vector<float>& window);
   static void inject(const size_t hop, float* const output, const std::vector<float>& frame, const std::vector<float>& window);
-
-  static void fft(const std::vector<float>& frame, std::vector<std::complex<float>>& dft);
-  static void ifft(const std::vector<std::complex<float>>& dft, std::vector<float>& frame);
 
 };
