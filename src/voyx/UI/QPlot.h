@@ -34,6 +34,7 @@ public:
   void lim(const double min, const double max) override;
 
   void plot(const std::vector<float>& y) override;
+  void plot(const std::vector<double>& y) override;
 
 protected:
 
@@ -53,7 +54,7 @@ private:
 
   struct
   {
-    std::vector<float> ydata;
+    std::vector<double> ydata;
   }
   data;
 

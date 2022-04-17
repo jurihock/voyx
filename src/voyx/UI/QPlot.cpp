@@ -76,6 +76,12 @@ void QPlot::lim(const double min, const double max)
 void QPlot::plot(const std::vector<float>& y)
 {
   std::unique_lock lock(mutex);
+  data.ydata = std::vector<double>(y.begin(), y.end());
+}
+
+void QPlot::plot(const std::vector<double>& y)
+{
+  std::unique_lock lock(mutex);
   data.ydata = y;
 }
 
@@ -139,13 +145,13 @@ void QPlot::loop()
 
     std::this_thread::sleep_for(delay);
 
-    std::vector<float> ydata;
+    std::vector<double> ydata;
     {
       std::unique_lock lock(mutex);
       ydata = data.ydata;
     }
 
-    std::vector<float> xdata;
+    std::vector<double> xdata;
     {
       xdata.resize(ydata.size());
 
@@ -166,8 +172,8 @@ void QPlot::loop()
 
       for (size_t i = 0; i < size; ++i)
       {
-        x[i] = static_cast<double>(xdata[i]);
-        y[i] = static_cast<double>(ydata[i]);
+        x[i] = xdata[i];
+        y[i] = ydata[i];
       }
 
       plot->graph(graph)->setData(x, y);
