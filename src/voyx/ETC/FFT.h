@@ -33,7 +33,7 @@ public:
     return size / 2 + 1;
   }
 
-  void fft(const std::vector<T>& signal, std::vector<std::complex<T>>& dft)
+  void fft(const std::span<T>& signal, std::span<std::complex<T>>& dft) const
   {
     assert(signal.size() == tdsize());
     assert(dft.size() == fdsize());
@@ -49,7 +49,23 @@ public:
       T(1.0) / signal.size());
   }
 
-  void ifft(const std::vector<std::complex<T>>& dft, std::vector<T>& signal)
+  void fft(const std::vector<T>& signal, std::vector<std::complex<T>>& dft) const
+  {
+    assert(signal.size() == tdsize());
+    assert(dft.size() == fdsize());
+
+    pocketfft::r2c(
+      { signal.size() },
+      { sizeof(T) },
+      { sizeof(std::complex<T>) },
+      0,
+      true,
+      signal.data(),
+      dft.data(),
+      T(1.0) / signal.size());
+  }
+
+  void ifft(const std::span<std::complex<T>>& dft, std::span<T>& signal) const
   {
     assert(signal.size() == tdsize());
     assert(dft.size() == fdsize());
@@ -65,7 +81,23 @@ public:
       T(1.0));
   }
 
-  std::vector<std::complex<T>> fft(const std::vector<T>& signal)
+  void ifft(const std::vector<std::complex<T>>& dft, std::vector<T>& signal) const
+  {
+    assert(signal.size() == tdsize());
+    assert(dft.size() == fdsize());
+
+    pocketfft::c2r(
+      { signal.size() },
+      { sizeof(std::complex<T>) },
+      { sizeof(T) },
+      0,
+      false,
+      dft.data(),
+      signal.data(),
+      T(1.0));
+  }
+
+  std::vector<std::complex<T>> fft(const std::vector<T>& signal) const
   {
     assert(signal.size() == tdsize());
 
@@ -74,7 +106,7 @@ public:
     return fft(signal, window);
   }
 
-  std::vector<std::complex<T>> fft(const std::vector<T>& signal, const std::vector<T>& window)
+  std::vector<std::complex<T>> fft(const std::vector<T>& signal, const std::vector<T>& window) const
   {
     assert(signal.size() == tdsize());
     assert(window.size() == tdsize());
@@ -92,7 +124,7 @@ public:
     return dft;
   }
 
-  std::vector<T> ifft(const std::vector<std::complex<T>>& dft)
+  std::vector<T> ifft(const std::vector<std::complex<T>>& dft) const
   {
     assert(dft.size() == fdsize());
 

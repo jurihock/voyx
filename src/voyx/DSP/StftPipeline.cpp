@@ -7,8 +7,7 @@ StftPipeline::StftPipeline(const size_t samplerate, const size_t framesize, cons
   samplerate(samplerate),
   framesize(framesize),
   hopsize(hopsize),
-  fft(framesize),
-  window(framesize)
+  fft(framesize)
 {
   if (source->samplerate() != samplerate)
   {
@@ -47,17 +46,27 @@ StftPipeline::StftPipeline(const size_t samplerate, const size_t framesize, cons
     hops.push_back(hop);
   }
 
-  data.frames.resize(hops.size());
-  data.dfts.resize(hops.size());
+  data.frames.resize(hops.size() * fft.tdsize());
+  data.dfts.resize(hops.size() * fft.fdsize());
+
+  data.views.frames.resize(hops.size());
+  data.views.dfts.resize(hops.size());
 
   for (size_t i = 0; i < hops.size(); ++i)
   {
-    data.frames[i].resize(fft.tdsize());
-    data.dfts[i].resize(fft.fdsize());
+    data.views.frames[i] = std::span<float>(
+      data.frames.data() + i * fft.tdsize(),
+      fft.tdsize());
+
+    data.views.dfts[i] = std::span<std::complex<float>>(
+      data.dfts.data() + i * fft.fdsize(),
+      fft.fdsize());
   }
 
-  data.input.resize(framesize * 2);
-  data.output.resize(framesize * 2);
+  data.input.resize(2 * framesize);
+  data.output.resize(2 * framesize);
+
+  const std::vector<float> window = Window<float>(framesize);
 
   windows.analysis = window;
   windows.synthesis = window;
@@ -97,95 +106,63 @@ void StftPipeline::operator()(const size_t index, const std::vector<float>& inpu
 {
   for (size_t i = 0; i < framesize; ++i)
   {
-    data.input[i] = data.input[i + framesize];
-    data.input[i + framesize] = input[i];
+    const size_t j = i + framesize;
 
-    data.output[i] = data.output[i + framesize];
-    data.output[i + framesize] = 0;
+    data.input[i] = data.input[j];
+    data.input[j] = input[i];
+
+    data.output[i] = data.output[j];
+    data.output[j] = 0;
   }
 
   if (parallelize)
   {
-    const float* input = data.input.data();
-    float* const output = data.output.data();
-
     for (size_t i = 0; i < hops.size(); ++i)
     {
-      const size_t hop = hops[i];
-
-      std::vector<float>& frame = data.frames[i];
-
-      reject(hop, input, frame, windows.analysis);
+      reject(hops[i], data.input, data.views.frames[i], windows.analysis);
     }
 
     #pragma omp parallel for
     for (size_t i = 0; i < hops.size(); ++i)
     {
-      std::vector<float>& frame = data.frames[i];
-      std::vector<std::complex<float>>& dft = data.dfts[i];
-
-      fft.fft(frame, dft);
+      fft.fft(data.views.frames[i], data.views.dfts[i]);
     }
 
-    (*this)(index, data.input, data.dfts);
+    (*this)(index, data.input, data.views.dfts);
 
     #pragma omp parallel for
     for (size_t i = 0; i < hops.size(); ++i)
     {
-      std::vector<float>& frame = data.frames[i];
-      std::vector<std::complex<float>>& dft = data.dfts[i];
-
-      fft.ifft(dft, frame);
+      fft.ifft(data.views.dfts[i], data.views.frames[i]);
     }
 
     for (size_t i = 0; i < hops.size(); ++i)
     {
-      const size_t hop = hops[i];
-
-      std::vector<float>& frame = data.frames[i];
-
-      inject(hop, output, frame, windows.synthesis);
+      inject(hops[i], data.output, data.views.frames[i], windows.synthesis);
     }
   }
   else
   {
-    const float* input = data.input.data();
-    float* const output = data.output.data();
-
     for (size_t i = 0; i < hops.size(); ++i)
     {
-      const size_t hop = hops[i];
-
-      std::vector<float>& frame = data.frames[i];
-
-      reject(hop, input, frame, windows.analysis);
+      reject(hops[i], data.input, data.views.frames[i], windows.analysis);
     }
 
     for (size_t i = 0; i < hops.size(); ++i)
     {
-      std::vector<float>& frame = data.frames[i];
-      std::vector<std::complex<float>>& dft = data.dfts[i];
-
-      fft.fft(frame, dft);
+      fft.fft(data.views.frames[i], data.views.dfts[i]);
     }
 
-    (*this)(index, data.input, data.dfts);
+    (*this)(index, data.input, data.views.dfts);
 
     for (size_t i = 0; i < hops.size(); ++i)
     {
-      std::vector<float>& frame = data.frames[i];
-      std::vector<std::complex<float>>& dft = data.dfts[i];
-
-      fft.ifft(dft, frame);
+      fft.ifft(data.views.dfts[i], data.views.frames[i]);
     }
 
     for (size_t i = 0; i < hops.size(); ++i)
     {
-      const size_t hop = hops[i];
-
-      std::vector<float>& frame = data.frames[i];
-
-      inject(hop, output, frame, windows.synthesis);
+      inject(hops[i], data.output, data.views.frames[i], windows.synthesis);
     }
   }
 
@@ -195,7 +172,7 @@ void StftPipeline::operator()(const size_t index, const std::vector<float>& inpu
   }
 }
 
-void StftPipeline::reject(const size_t hop, const float* input, std::vector<float>& frame, const std::vector<float>& window)
+void StftPipeline::reject(const size_t hop, const std::vector<float>& input, std::span<float>& frame, const std::vector<float>& window)
 {
   for (size_t i = 0; i < frame.size(); ++i)
   {
@@ -203,7 +180,7 @@ void StftPipeline::reject(const size_t hop, const float* input, std::vector<floa
   }
 }
 
-void StftPipeline::inject(const size_t hop, float* const output, const std::vector<float>& frame, const std::vector<float>& window)
+void StftPipeline::inject(const size_t hop, std::vector<float>& output, const std::span<float>& frame, const std::vector<float>& window)
 {
   for (size_t i = 0; i < frame.size(); ++i)
   {

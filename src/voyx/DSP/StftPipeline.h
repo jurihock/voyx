@@ -28,12 +28,11 @@ protected:
 
   void warmup() override;
 
-  virtual void operator()(const size_t index, const std::vector<float>& signal, std::vector<std::vector<std::complex<float>>>& dfts) = 0;
+  virtual void operator()(const size_t index, const std::vector<float>& signal, const std::vector<std::span<std::complex<float>>>& dfts) = 0;
 
 private:
 
-  FFT<float> fft;
-  Window<float> window;
+  const FFT<float> fft;
 
   std::vector<size_t> hops;
 
@@ -41,8 +40,16 @@ private:
   {
     std::vector<float> input;
     std::vector<float> output;
-    std::vector<std::vector<float>> frames;
-    std::vector<std::vector<std::complex<float>>> dfts;
+
+    std::vector<float> frames;
+    std::vector<std::complex<float>> dfts;
+
+    struct
+    {
+      std::vector<std::span<float>> frames;
+      std::vector<std::span<std::complex<float>>> dfts;
+    }
+    views;
   }
   data;
 
@@ -53,7 +60,7 @@ private:
   }
   windows;
 
-  static void reject(const size_t hop, const float* input, std::vector<float>& frame, const std::vector<float>& window);
-  static void inject(const size_t hop, float* const output, const std::vector<float>& frame, const std::vector<float>& window);
+  static void reject(const size_t hop, const std::vector<float>& input, std::span<float>& frame, const std::vector<float>& window);
+  static void inject(const size_t hop, std::vector<float>& output, const std::span<float>& frame, const std::vector<float>& window);
 
 };

@@ -15,18 +15,18 @@ TestPipeline::TestPipeline(const size_t samplerate, const size_t framesize, cons
   }
 }
 
-void TestPipeline::operator()(const size_t index, const std::vector<float>& signal, std::vector<std::vector<std::complex<float>>>& dfts)
+void TestPipeline::operator()(const size_t index, const std::vector<float>& signal, const std::vector<std::span<std::complex<float>>>& dfts)
 {
-  std::vector<std::complex<float>> dft = fft.fft(signal);
-  std::vector<float> abs(dft.size());
-
-  for (size_t i = 0; i < dft.size(); ++i)
-  {
-    abs[i] = 20 * std::log10(std::abs(dft[i]));
-  }
-
   if (plot != nullptr)
   {
+    std::vector<std::complex<float>> dft = fft.fft(signal);
+    std::vector<float> abs(dft.size());
+
+    for (size_t i = 0; i < dft.size(); ++i)
+    {
+      abs[i] = 20 * std::log10(std::abs(dft[i]));
+    }
+
     plot->plot(abs);
   }
 }
