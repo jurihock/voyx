@@ -36,5 +36,5 @@ if (UNIX)
 endif()
 
 target_compile_features(voyx
-  PRIVATE cxx_std_17
+  PRIVATE cxx_std_20
 )
