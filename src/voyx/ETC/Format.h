@@ -5,13 +5,7 @@
 #include <fmt/format.h>
 
 template <typename... Args>
-inline static std::string $(const char* string, Args&&... args)
+std::string $(fmt::format_string<Args...> string, Args&&... args)
 {
-  return fmt::format(std::string(string), args...);
-}
-
-template <typename... Args>
-inline static std::string $(const std::string& string, Args&&... args)
-{
-  return fmt::format(string, args...);
+  return fmt::format(string, std::forward<Args>(args)...);
 }
