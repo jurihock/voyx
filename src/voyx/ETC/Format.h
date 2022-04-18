@@ -7,7 +7,7 @@
 template <typename... Args>
 inline static std::string $(const char* string, Args&&... args)
 {
-  return fmt::format(string, args...);
+  return fmt::format(std::string(string), args...);
 }
 
 template <typename... Args>
