@@ -135,7 +135,7 @@ int main(int argc, char** argv)
 
   // auto pipe = std::make_shared<BypassPipeline>(source, sink);
   // auto pipe = std::make_shared<StftPipeline>(samplerate, framesize, hopsize, source, sink);
-  auto pipe = std::make_shared<TestPipeline>(samplerate, framesize, hopsize, plot, source, sink);
+  auto pipe = std::make_shared<TestPipeline>(samplerate, framesize, hopsize, source, sink, plot);
 
   pipe->open();
 

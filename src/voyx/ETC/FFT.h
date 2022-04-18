@@ -1,6 +1,7 @@
 #pragma once
 
 #include <voyx/Header.h>
+#include <voyx/ETC/Window.h>
 
 #include <pocketfft/pocketfft_hdronly.h>
 
@@ -16,19 +17,22 @@ public:
     assert(size && !(size & (size - 1)));
   }
 
-  // time domain vector size
+  /**
+   * Time domain real vector size.
+   * */
   size_t tdsize() const
   {
     return size;
   }
 
-  // frequency domain vector size
+  /**
+   * Frequency domain complex vector size.
+   * */
   size_t fdsize() const
   {
     return size / 2 + 1;
   }
 
-  // normalized forward fft
   void fft(const std::vector<T>& signal, std::vector<std::complex<T>>& dft)
   {
     assert(signal.size() == tdsize());
@@ -45,7 +49,6 @@ public:
       T(1.0) / signal.size());
   }
 
-  // backward fft
   void ifft(const std::vector<std::complex<T>>& dft, std::vector<T>& signal)
   {
     assert(signal.size() == tdsize());
@@ -60,6 +63,44 @@ public:
       dft.data(),
       signal.data(),
       T(1.0));
+  }
+
+  std::vector<std::complex<T>> fft(const std::vector<T>& signal)
+  {
+    assert(signal.size() == tdsize());
+
+    const Window<T> window(tdsize());
+
+    return fft(signal, window);
+  }
+
+  std::vector<std::complex<T>> fft(const std::vector<T>& signal, const std::vector<T>& window)
+  {
+    assert(signal.size() == tdsize());
+    assert(window.size() == tdsize());
+
+    std::vector<T> sigwin(tdsize());
+    std::vector<std::complex<T>> dft(fdsize());
+
+    for (size_t i = 0; i < tdsize(); ++i)
+    {
+      sigwin[i] = signal[i] * window[i];
+    }
+
+    fft(sigwin, dft);
+
+    return dft;
+  }
+
+  std::vector<T> ifft(const std::vector<std::complex<T>>& dft)
+  {
+    assert(dft.size() == fdsize());
+
+    std::vector<T> signal(tdsize());
+
+    ifft(dft, signal);
+
+    return signal;
   }
 
 private:
