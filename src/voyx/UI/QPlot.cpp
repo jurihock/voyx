@@ -92,13 +92,13 @@ void QPlot::ylim(const double min, const double max)
 void QPlot::xrange(const double max)
 {
   std::unique_lock lock(mutex);
-  data.xrange = std::tuple<double, double>(0, max);
+  data.xrange = std::pair<double, double>(0, max);
 }
 
 void QPlot::xrange(const double min, const double max)
 {
   std::unique_lock lock(mutex);
-  data.xrange = std::tuple<double, double>(min, max);
+  data.xrange = std::pair<double, double>(min, max);
 }
 
 void QPlot::plot(const std::vector<float>& y)
