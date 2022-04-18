@@ -16,11 +16,27 @@ PATH="/opt/homebrew/opt/qt@5/bin:$PATH"
 #
 # ###########################################################################
 
-mkdir -p build-release
+SOURCE=$(dirname "$0")
 
-pushd build-release >/dev/null 2>&1
-cmake -DCMAKE_BUILD_TYPE=Release .. || exit $?
-cmake --build . || exit $?
-popd >/dev/null 2>&1
+if [ ${1} = "xcode" ]; then
+  OPTIONS="-G Xcode"
+  BUILD="${SOURCE}/build-xcode"
+  RUN="${BUILD}/Debug/voyx ${@:2}"
+elif [ ${1} = "debug" ]; then
+  OPTIONS="-DCMAKE_BUILD_TYPE=Debug"
+  BUILD="${SOURCE}/build-debug"
+  RUN="${BUILD}/voyx ${@:2}"
+elif [ ${1} = "release" ]; then
+  OPTIONS="-DCMAKE_BUILD_TYPE=Release"
+  BUILD="${SOURCE}/build-release"
+  RUN="${BUILD}/voyx ${@:2}"
+else
+  OPTIONS="-DCMAKE_BUILD_TYPE=Release"
+  BUILD="${SOURCE}/build-release"
+  RUN="${BUILD}/voyx ${@}"
+fi
 
-build-release/voyx $@
+cmake -S ${SOURCE} -B ${BUILD} ${OPTIONS} || exit $?
+cmake --build ${BUILD} || exit $?
+
+${RUN}
