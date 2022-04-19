@@ -92,7 +92,9 @@ void AudioSource::open()
     stream_samplerate,
     &stream_framesize,
     &AudioSource::callback,
-    this);
+    this,
+    nullptr,
+    &AudioSource::error);
 
   if (stream_framesize != framesize())
   {
@@ -189,4 +191,9 @@ int AudioSource::callback(void* output_frame_data, void* input_frame_data, uint3
   }
 
   return 0;
+}
+
+void AudioSource::error(RtAudioError::Type type, const std::string& error)
+{
+  LOG(ERROR) << "Audio source stream error: " << error;
 }

@@ -92,7 +92,9 @@ void AudioSink::open()
     stream_samplerate,
     &stream_framesize,
     &AudioSink::callback,
-    this);
+    this,
+    nullptr,
+    &AudioSink::error);
 
   if (stream_framesize != framesize())
   {
@@ -191,4 +193,9 @@ int AudioSink::callback(void* output_frame_data, void* input_frame_data, uint32_
   }
 
   return 0;
+}
+
+void AudioSink::error(RtAudioError::Type type, const std::string& error)
+{
+  LOG(ERROR) << "Audio sink stream error: " << error;
 }

@@ -36,5 +36,7 @@ private:
   RtAudio audio;
 
   static int callback(void* output_frame_data, void* input_frame_data, uint32_t framesize, double timestamp, RtAudioStreamStatus status, void* $this);
+  
+  static void error(RtAudioError::Type type, const std::string& error);
 
 };
