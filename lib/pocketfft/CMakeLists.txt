@@ -12,6 +12,10 @@ target_compile_definitions(pocketfft
   INTERFACE -DPOCKETFFT_NO_MULTITHREADING
 )
 
+target_compile_definitions(pocketfft
+  INTERFACE -DPOCKETFFT_CACHE_SIZE=10
+)
+
 if (UNIX)
   target_link_libraries(pocketfft
     INTERFACE pthread)
