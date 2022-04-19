@@ -60,7 +60,7 @@ private:
   }
   windows;
 
-  static void reject(const size_t hop, const std::vector<float>& input, std::span<float>& frame, const std::vector<float>& window);
-  static void inject(const size_t hop, std::vector<float>& output, const std::span<float>& frame, const std::vector<float>& window);
+  static void reject(const size_t hop, const std::vector<float>& input, const std::span<float>& frame, const std::vector<float>& window);
+  static void inject(const size_t hop, std::vector<float>& output, const std::span<const float>& frame, const std::vector<float>& window);
 
 };

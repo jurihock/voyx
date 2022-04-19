@@ -172,7 +172,7 @@ void StftPipeline::operator()(const size_t index, const std::vector<float>& inpu
   }
 }
 
-void StftPipeline::reject(const size_t hop, const std::vector<float>& input, std::span<float>& frame, const std::vector<float>& window)
+void StftPipeline::reject(const size_t hop, const std::vector<float>& input, const std::span<float>& frame, const std::vector<float>& window)
 {
   for (size_t i = 0; i < frame.size(); ++i)
   {
@@ -180,7 +180,7 @@ void StftPipeline::reject(const size_t hop, const std::vector<float>& input, std
   }
 }
 
-void StftPipeline::inject(const size_t hop, std::vector<float>& output, const std::span<float>& frame, const std::vector<float>& window)
+void StftPipeline::inject(const size_t hop, std::vector<float>& output, const std::span<const float>& frame, const std::vector<float>& window)
 {
   for (size_t i = 0; i < frame.size(); ++i)
   {
