@@ -13,6 +13,8 @@ public:
   ~MidiObserver();
 
   std::vector<int> keys();
+  std::vector<voyx_t> mask();
+  std::vector<voyx_t> imask();
 
   void start();
   void stop();

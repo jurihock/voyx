@@ -20,6 +20,28 @@ std::vector<int> MidiObserver::keys()
   return midi_key_state;
 }
 
+std::vector<voyx_t> MidiObserver::mask()
+{
+  const std::vector<int> src = keys();
+  std::vector<voyx_t> dst(src.size());
+
+  std::transform(src.begin(), src.end(), dst.begin(),
+    [](voyx_t value) { return value / voyx_t(127); });
+
+  return dst;
+}
+
+std::vector<voyx_t> MidiObserver::imask()
+{
+  const std::vector<int> src = keys();
+  std::vector<voyx_t> dst(src.size());
+
+  std::transform(src.begin(), src.end(), dst.begin(),
+    [](voyx_t value) { return (127 - value) / voyx_t(127); });
+
+  return dst;
+}
+
 void MidiObserver::start()
 {
   stop();
@@ -128,7 +150,7 @@ void MidiObserver::callback(double timestamp, std::vector<unsigned char>* messag
   const bool on = (status == 0b1001) || (status == 0b1010);
   const bool off = (status == 0b1000);
 
-  const int pitch = (*message)[1] & 0b0111'1111;
+  const int key = (*message)[1] & 0b0111'1111;
   const int velocity = (*message)[2] & 0b0111'1111;
 
   if (on || off)
@@ -137,9 +159,9 @@ void MidiObserver::callback(double timestamp, std::vector<unsigned char>* messag
 
     std::lock_guard lock(observer->mutex);
 
-    observer->midi_key_state[pitch] = on ? velocity : 0;
+    observer->midi_key_state[key] = on ? velocity : 0;
 
-    // LOG(INFO) << $("MIDI: {0} pitch={1:03d} velocity={2:03d}", on ? "on " : "off", pitch, velocity);
+    // LOG(INFO) << $("MIDI: {0} key={1:03d} velocity={2:03d}", on ? "on " : "off", key, velocity);
   }
 }
 
