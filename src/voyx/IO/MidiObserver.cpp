@@ -125,11 +125,11 @@ void MidiObserver::callback(double timestamp, std::vector<unsigned char>* messag
 
   const uint8_t status = ((*message)[0] >> 4);
 
-  const bool on = (status == 0b1001 || status == 0b1010);
+  const bool on = (status == 0b1001) || (status == 0b1010);
   const bool off = (status == 0b1000);
 
-  const int pitch = (*message)[1];
-  const int velocity = (*message)[2];
+  const int pitch = (*message)[1] & 0b0111'1111;
+  const int velocity = (*message)[2] & 0b0111'1111;
 
   if (on || off)
   {
