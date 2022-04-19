@@ -70,14 +70,34 @@ void MidiObserver::callback(double timestamp, std::vector<unsigned char>* messag
 {
   const std::vector<uint8_t> bytes((*message).begin(), (*message).end());
 
-  std::ostringstream bits;
+  // dump midi message bitwise
+  // {
+  //   std::ostringstream bits;
 
-  for (uint8_t byte : bytes)
+  //   for (uint8_t byte : bytes)
+  //   {
+  //     bits << std::bitset<8>(byte) << " ";
+  //   }
+
+  //   LOG(INFO) << "MIDI: " << bits.str();
+  // }
+
+  const uint8_t status = (bytes[0] >> 4);
+
+  const bool on = (status == 0b1001);
+  const bool off = (status == 0b1000);
+
+  const int pitch = bytes[1];
+  const int velocity = bytes[2];
+
+  if (on || off)
   {
-    bits << std::bitset<8>(byte) << " ";
+    LOG(INFO)
+      << "MIDI: "
+      << (on ? "on" : "off") << " "
+      << "pitch=" << pitch << " "
+      << "velocity=" << velocity;
   }
-
-  LOG(INFO) << "MIDI: " << bits.str();
 }
 
 void MidiObserver::error(RtMidiError::Type type, const std::string& error, void* $this)
