@@ -3,7 +3,8 @@
 #include <voyx/Source.h>
 
 MidiObserver::MidiObserver(const std::string& name) :
-  midi_device_name(name)
+  midi_device_name(name),
+  midi_key_state(128)
 {
   midi.setErrorCallback(&MidiObserver::error, this);
 }
@@ -11,6 +12,12 @@ MidiObserver::MidiObserver(const std::string& name) :
 MidiObserver::~MidiObserver()
 {
   stop();
+}
+
+std::vector<int> MidiObserver::keys()
+{
+  std::lock_guard lock(mutex);
+  return midi_key_state;
 }
 
 void MidiObserver::start()
@@ -66,37 +73,73 @@ void MidiObserver::stop()
   }
 }
 
+void MidiObserver::dump(std::vector<unsigned char>* message)
+{
+  const std::vector<uint8_t> bytes(
+    (*message).begin(), (*message).end());
+
+  std::ostringstream bits;
+
+  for (uint8_t byte : bytes)
+  {
+    bits << std::bitset<8>(byte) << " ";
+  }
+
+  LOG(INFO) << "MIDI: " << bits.str();
+}
+
 void MidiObserver::callback(double timestamp, std::vector<unsigned char>* message, void* $this)
 {
-  const std::vector<uint8_t> bytes((*message).begin(), (*message).end());
+  // https://www.midi.org/specifications-old/item/table-1-summary-of-midi-message
+  // https://www.midi.org/specifications-old/item/table-2-expanded-messages-list-status-bytes
 
-  // dump midi message bitwise
-  // {
-  //   std::ostringstream bits;
+  // dump(message);
 
-  //   for (uint8_t byte : bytes)
-  //   {
-  //     bits << std::bitset<8>(byte) << " ";
-  //   }
+  if ((*message).empty())
+  {
+    return;
+  }
 
-  //   LOG(INFO) << "MIDI: " << bits.str();
-  // }
+  const bool reset = ((*message)[0] == 0xFF);
 
-  const uint8_t status = (bytes[0] >> 4);
+  if (reset)
+  {
+    auto observer = static_cast<MidiObserver*>($this);
 
-  const bool on = (status == 0b1001);
+    std::lock_guard lock(observer->mutex);
+
+    std::fill(
+      observer->midi_key_state.begin(),
+      observer->midi_key_state.end(),
+      0);
+
+    // LOG(INFO) << "MIDI: reset";
+
+    return;
+  }
+
+  if ((*message).size() < 3)
+  {
+    return;
+  }
+
+  const uint8_t status = ((*message)[0] >> 4);
+
+  const bool on = (status == 0b1001 || status == 0b1010);
   const bool off = (status == 0b1000);
 
-  const int pitch = bytes[1];
-  const int velocity = bytes[2];
+  const int pitch = (*message)[1];
+  const int velocity = (*message)[2];
 
   if (on || off)
   {
-    LOG(INFO)
-      << "MIDI: "
-      << (on ? "on" : "off") << " "
-      << "pitch=" << pitch << " "
-      << "velocity=" << velocity;
+    auto observer = static_cast<MidiObserver*>($this);
+
+    std::lock_guard lock(observer->mutex);
+
+    observer->midi_key_state[pitch] = on ? velocity : 0;
+
+    // LOG(INFO) << $("MIDI: {0} pitch={1:03d} velocity={2:03d}", on ? "on " : "off", pitch, velocity);
   }
 }
 
