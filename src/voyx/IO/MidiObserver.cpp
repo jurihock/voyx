@@ -68,16 +68,16 @@ void MidiObserver::stop()
 
 void MidiObserver::callback(double timestamp, std::vector<unsigned char>* message, void* $this)
 {
-  const std::vector<int> data((*message).begin(), (*message).end());
+  const std::vector<uint8_t> bytes((*message).begin(), (*message).end());
 
-  std::ostringstream hexcode;
+  std::ostringstream bits;
 
-  for (size_t i = 0; i < data.size(); ++i)
+  for (uint8_t byte : bytes)
   {
-    hexcode << std::hex << data[i];
+    bits << std::bitset<8>(byte) << " ";
   }
 
-  LOG(INFO) << "MIDI: " << hexcode.str();
+  LOG(INFO) << "MIDI: " << bits.str();
 }
 
 void MidiObserver::error(RtMidiError::Type type, const std::string& error, void* $this)
