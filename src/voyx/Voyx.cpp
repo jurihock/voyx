@@ -13,6 +13,7 @@
 #include <voyx/Source.h>
 #include <voyx/IO/AudioProbe.h>
 #include <voyx/IO/MidiProbe.h>
+#include <voyx/IO/MidiObserver.h>
 #include <voyx/UI/Plot.h>
 #include <voyx/UI/QPlot.h>
 
@@ -130,6 +131,10 @@ int main(int argc, char** argv)
   {
     sink = std::make_shared<AudioSink>(output, samplerate, framesize, buffersize);
   }
+
+  // MIDI TEST
+  MidiObserver observer("");
+  observer.start();
 
   std::shared_ptr<Plot> plot = std::make_shared<QPlot>(source->timeout());
 
