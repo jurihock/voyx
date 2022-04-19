@@ -12,7 +12,7 @@
 #include <voyx/Source.h>
 #include <voyx/ETC/Timer.h>
 
-template<typename T>
+template<typename T = voyx_t>
 class Pipeline
 {
 

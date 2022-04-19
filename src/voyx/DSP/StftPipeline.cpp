@@ -2,7 +2,7 @@
 
 #include <voyx/Source.h>
 
-StftPipeline::StftPipeline(const size_t samplerate, const size_t framesize, const size_t hopsize, std::shared_ptr<Source<float>> source, std::shared_ptr<Sink<float>> sink) :
+StftPipeline::StftPipeline(const size_t samplerate, const size_t framesize, const size_t hopsize, std::shared_ptr<Source<voyx_t>> source, std::shared_ptr<Sink<voyx_t>> sink) :
   Pipeline(source, sink),
   samplerate(samplerate),
   framesize(framesize),
@@ -54,11 +54,11 @@ StftPipeline::StftPipeline(const size_t samplerate, const size_t framesize, cons
 
   for (size_t i = 0; i < hops.size(); ++i)
   {
-    data.views.frames[i] = std::span<float>(
+    data.views.frames[i] = std::span<voyx_t>(
       data.frames.data() + i * fft.tdsize(),
       fft.tdsize());
 
-    data.views.dfts[i] = std::span<std::complex<float>>(
+    data.views.dfts[i] = std::span<std::complex<voyx_t>>(
       data.dfts.data() + i * fft.fdsize(),
       fft.fdsize());
   }
@@ -66,16 +66,16 @@ StftPipeline::StftPipeline(const size_t samplerate, const size_t framesize, cons
   data.input.resize(2 * framesize);
   data.output.resize(2 * framesize);
 
-  const std::vector<float> window = Window<float>(framesize);
+  const std::vector<voyx_t> window = Window<voyx_t>(framesize);
 
   windows.analysis = window;
   windows.synthesis = window;
 
-  const float unitygain = hopsize / std::inner_product(
+  const voyx_t unitygain = hopsize / std::inner_product(
     windows.synthesis.begin(), windows.synthesis.end(), windows.synthesis.begin(), 0.0f);
 
   std::transform(windows.synthesis.begin(), windows.synthesis.end(), windows.synthesis.begin(),
-    [unitygain](float value) { return value * unitygain; });
+    [unitygain](voyx_t value) { return value * unitygain; });
 }
 
 void StftPipeline::warmup()
@@ -88,8 +88,8 @@ void StftPipeline::warmup()
 
     Timer<std::chrono::seconds> timer;
 
-    std::vector<float> input(framesize);
-    std::vector<float> output(framesize);
+    std::vector<voyx_t> input(framesize);
+    std::vector<voyx_t> output(framesize);
 
     timer.tic();
     for (size_t index = 0; index < frames; ++index)
@@ -102,7 +102,7 @@ void StftPipeline::warmup()
   }
 }
 
-void StftPipeline::operator()(const size_t index, const std::vector<float>& input, std::vector<float>& output)
+void StftPipeline::operator()(const size_t index, const std::vector<voyx_t>& input, std::vector<voyx_t>& output)
 {
   for (size_t i = 0; i < framesize; ++i)
   {
@@ -150,7 +150,7 @@ void StftPipeline::operator()(const size_t index, const std::vector<float>& inpu
   }
 }
 
-void StftPipeline::reject(const std::vector<size_t>& hops, const std::vector<float>& input, const std::vector<std::span<float>>& frames, const std::vector<float>& window)
+void StftPipeline::reject(const std::vector<size_t>& hops, const std::vector<voyx_t>& input, const std::vector<std::span<voyx_t>>& frames, const std::vector<voyx_t>& window)
 {
   for (size_t i = 0; i < hops.size(); ++i)
   {
@@ -161,7 +161,7 @@ void StftPipeline::reject(const std::vector<size_t>& hops, const std::vector<flo
   }
 }
 
-void StftPipeline::inject(const std::vector<size_t>& hops, std::vector<float>& output, const std::vector<std::span<float>>& frames, const std::vector<float>& window)
+void StftPipeline::inject(const std::vector<size_t>& hops, std::vector<voyx_t>& output, const std::vector<std::span<voyx_t>>& frames, const std::vector<voyx_t>& window)
 {
   for (size_t i = 0; i < hops.size(); ++i)
   {

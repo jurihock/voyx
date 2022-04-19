@@ -3,17 +3,17 @@
 #include <voyx/Header.h>
 #include <voyx/IO/Source.h>
 
-class NullSource : public Source<float>
+class NullSource : public Source<voyx_t>
 {
 
 public:
 
   NullSource(size_t samplerate, size_t framesize, size_t buffersize);
 
-  bool read(const size_t index, std::function<void(const std::vector<float>& frame)> callback) override;
+  bool read(const size_t index, std::function<void(const std::vector<voyx_t>& frame)> callback) override;
 
 private:
 
-  const std::vector<float> frame;
+  const std::vector<voyx_t> frame;
 
 };

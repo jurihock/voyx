@@ -2,7 +2,7 @@
 
 #include <voyx/Header.h>
 
-template<typename T>
+template<typename T = voyx_t>
 class Source
 {
 

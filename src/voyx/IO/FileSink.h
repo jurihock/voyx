@@ -3,7 +3,7 @@
 #include <voyx/Header.h>
 #include <voyx/IO/Sink.h>
 
-class FileSink : public Sink<float>
+class FileSink : public Sink<voyx_t>
 {
 
 public:
@@ -13,12 +13,12 @@ public:
   void open() override;
   void close() override;
 
-  bool write(const size_t index, const std::vector<float>& frame) override;
+  bool write(const size_t index, const std::vector<voyx_t>& frame) override;
 
 private:
 
   const std::string path;
 
-  std::vector<float> data;
+  std::vector<voyx_t> data;
 
 };

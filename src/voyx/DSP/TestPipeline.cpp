@@ -2,7 +2,7 @@
 
 #include <voyx/Source.h>
 
-TestPipeline::TestPipeline(const size_t samplerate, const size_t framesize, const size_t hopsize, std::shared_ptr<Source<float>> source, std::shared_ptr<Sink<float>> sink, std::shared_ptr<Plot> plot) :
+TestPipeline::TestPipeline(const size_t samplerate, const size_t framesize, const size_t hopsize, std::shared_ptr<Source<voyx_t>> source, std::shared_ptr<Sink<voyx_t>> sink, std::shared_ptr<Plot> plot) :
   StftPipeline(samplerate, framesize, hopsize, source, sink),
   fft(framesize * 2),
   plot(plot)
@@ -15,12 +15,12 @@ TestPipeline::TestPipeline(const size_t samplerate, const size_t framesize, cons
   }
 }
 
-void TestPipeline::operator()(const size_t index, const std::vector<float>& signal, const std::vector<std::span<std::complex<float>>>& dfts)
+void TestPipeline::operator()(const size_t index, const std::vector<voyx_t>& signal, const std::vector<std::span<std::complex<voyx_t>>>& dfts)
 {
   if (plot != nullptr)
   {
-    std::vector<std::complex<float>> dft = fft.fft(signal);
-    std::vector<float> abs(dft.size());
+    std::vector<std::complex<voyx_t>> dft = fft.fft(signal);
+    std::vector<voyx_t> abs(dft.size());
 
     for (size_t i = 0; i < dft.size(); ++i)
     {

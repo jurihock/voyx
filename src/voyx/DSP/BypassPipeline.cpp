@@ -2,12 +2,12 @@
 
 #include <voyx/Source.h>
 
-BypassPipeline::BypassPipeline(std::shared_ptr<Source<float>> source, std::shared_ptr<Sink<float>> sink) :
+BypassPipeline::BypassPipeline(std::shared_ptr<Source<voyx_t>> source, std::shared_ptr<Sink<voyx_t>> sink) :
   Pipeline(source, sink)
 {
 }
 
-void BypassPipeline::operator()(const size_t index, const std::vector<float>& input, std::vector<float>& output)
+void BypassPipeline::operator()(const size_t index, const std::vector<voyx_t>& input, std::vector<voyx_t>& output)
 {
   output = input;
 }

@@ -1,6 +1,13 @@
 #pragma once
 
 /**
+ * Common data type definition,
+ * e.g. float or double.
+ * */
+
+typedef float voyx_t;
+
+/**
  * This file provides a set of common std modules
  * and is to be included in .h project files.
  */

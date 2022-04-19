@@ -2,12 +2,12 @@
 
 #include <voyx/Source.h>
 
-SineSource::SineSource(float frequency, size_t samplerate, size_t framesize, size_t buffersize) :
+SineSource::SineSource(voyx_t frequency, size_t samplerate, size_t framesize, size_t buffersize) :
   SineSource(1.0f, frequency, samplerate, framesize, buffersize)
 {
 }
 
-SineSource::SineSource(float amplitude, float frequency, size_t samplerate, size_t framesize, size_t buffersize) :
+SineSource::SineSource(voyx_t amplitude, voyx_t frequency, size_t samplerate, size_t framesize, size_t buffersize) :
   Source(samplerate, framesize, buffersize),
   amplitude(amplitude),
   frequency(frequency),
@@ -16,9 +16,9 @@ SineSource::SineSource(float amplitude, float frequency, size_t samplerate, size
 {
 }
 
-bool SineSource::read(const size_t index, std::function<void(const std::vector<float>& frame)> callback)
+bool SineSource::read(const size_t index, std::function<void(const std::vector<voyx_t>& frame)> callback)
 {
-  const float phaseinc = frequency / samplerate();
+  const voyx_t phaseinc = frequency / samplerate();
 
   for (size_t i = 0; i < frame.size(); ++i)
   {

@@ -6,7 +6,7 @@
 
 #include <rtaudio/RtAudio.h>
 
-class AudioSource : public Source<float>
+class AudioSource : public Source<voyx_t>
 {
 
 public:
@@ -19,14 +19,14 @@ public:
   void start() override;
   void stop() override;
 
-  bool read(const size_t index, std::function<void(const std::vector<float>& frame)> callback) override;
+  bool read(const size_t index, std::function<void(const std::vector<voyx_t>& frame)> callback) override;
 
 private:
 
   struct InputFrame
   {
     size_t index;
-    std::vector<float> frame;
+    std::vector<voyx_t> frame;
     double timestamp;
     RtAudioStreamStatus status;
   };

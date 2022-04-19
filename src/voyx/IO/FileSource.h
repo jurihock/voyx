@@ -3,7 +3,7 @@
 #include <voyx/Header.h>
 #include <voyx/IO/Source.h>
 
-class FileSource : public Source<float>
+class FileSource : public Source<voyx_t>
 {
 
 public:
@@ -13,13 +13,13 @@ public:
   void open() override;
   void close() override;
 
-  bool read(const size_t index, std::function<void(const std::vector<float>& frame)> callback) override;
+  bool read(const size_t index, std::function<void(const std::vector<voyx_t>& frame)> callback) override;
 
 private:
 
   const std::string path;
 
-  std::vector<float> data;
-  std::vector<float> frame;
+  std::vector<voyx_t> data;
+  std::vector<voyx_t> frame;
 
 };

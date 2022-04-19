@@ -4,6 +4,15 @@
 
 #include <dr_libs/dr_wav.h>
 
+void WAV::read(const std::string& path, std::vector<double>& data, const size_t samplerate)
+{
+  std::vector<float> nativedata;
+
+  WAV::read(path, nativedata, samplerate);
+
+  data.assign(nativedata.begin(), nativedata.end());
+}
+
 void WAV::read(const std::string& path, std::vector<float>& data, const size_t samplerate)
 {
   drwav wav;
@@ -62,6 +71,13 @@ void WAV::read(const std::string& path, std::vector<float>& data, const size_t s
 
     data.resize(samples);
   }
+}
+
+void WAV::write(const std::string& path, const std::vector<double>& data, const size_t samplerate)
+{
+  std::vector<float> nativedata(data.begin(), data.end());
+
+  WAV::write(path, nativedata, samplerate);
 }
 
 void WAV::write(const std::string& path, const std::vector<float>& data, const size_t samplerate)

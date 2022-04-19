@@ -102,8 +102,8 @@ int main(int argc, char** argv)
   const size_t hopsize = framesize / std::abs(args["overlap"].as<int>());
   const size_t buffersize = std::abs(args["buffer"].as<int>());
 
-  std::shared_ptr<Source<float>> source;
-  std::shared_ptr<Sink<float>> sink;
+  std::shared_ptr<Source<>> source;
+  std::shared_ptr<Sink<>> sink;
 
   if (input.empty())
   {

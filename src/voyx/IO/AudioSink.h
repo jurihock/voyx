@@ -6,7 +6,7 @@
 
 #include <rtaudio/RtAudio.h>
 
-class AudioSink : public Sink<float>
+class AudioSink : public Sink<voyx_t>
 {
 
 public:
@@ -19,14 +19,14 @@ public:
   void start() override;
   void stop() override;
 
-  bool write(const size_t index, const std::vector<float>& frame) override;
+  bool write(const size_t index, const std::vector<voyx_t>& frame) override;
 
 private:
 
   struct OutputFrame
   {
     size_t index;
-    std::vector<float> frame;
+    std::vector<voyx_t> frame;
   };
 
   const std::string audio_device_name;

@@ -81,7 +81,7 @@ void AudioSink::open()
   stream_parameters.nChannels = 1;
   stream_parameters.firstChannel = 0;
 
-  const RtAudioFormat stream_format = RTAUDIO_FLOAT32;
+  const RtAudioFormat stream_format = (typeid(voyx_t) == typeid(float)) ? RTAUDIO_FLOAT32 : RTAUDIO_FLOAT64;
   const uint32_t stream_samplerate = static_cast<uint32_t>(samplerate());
   uint32_t stream_framesize = static_cast<uint32_t>(framesize());
 
@@ -148,7 +148,7 @@ void AudioSink::stop()
   audio.stopStream();
 }
 
-bool AudioSink::write(const size_t index, const std::vector<float>& frame)
+bool AudioSink::write(const size_t index, const std::vector<voyx_t>& frame)
 {
   const bool ok = audio_frame_buffer.write([&](OutputFrame& output)
   {

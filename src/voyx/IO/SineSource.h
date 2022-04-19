@@ -3,24 +3,24 @@
 #include <voyx/Header.h>
 #include <voyx/IO/Source.h>
 
-class SineSource : public Source<float>
+class SineSource : public Source<voyx_t>
 {
 
 public:
 
-  SineSource(float frequency, size_t samplerate, size_t framesize, size_t buffersize);
-  SineSource(float amplitude, float frequency, size_t samplerate, size_t framesize, size_t buffersize);
+  SineSource(voyx_t frequency, size_t samplerate, size_t framesize, size_t buffersize);
+  SineSource(voyx_t amplitude, voyx_t frequency, size_t samplerate, size_t framesize, size_t buffersize);
 
-  bool read(const size_t index, std::function<void(const std::vector<float>& frame)> callback) override;
+  bool read(const size_t index, std::function<void(const std::vector<voyx_t>& frame)> callback) override;
 
 private:
 
-  const float PI2 = 2.0f * std::acos(-1.0f);
+  const voyx_t PI2 = voyx_t(2.0) * std::acos(voyx_t(-1.0));
 
-  const float amplitude;
-  const float frequency;
-  float phase;
+  const voyx_t amplitude;
+  const voyx_t frequency;
+  voyx_t phase;
 
-  std::vector<float> frame;
+  std::vector<voyx_t> frame;
 
 };
