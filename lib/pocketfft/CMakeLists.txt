@@ -8,6 +8,10 @@ target_include_directories(pocketfft
   INTERFACE "${CMAKE_CURRENT_LIST_DIR}/.."
 )
 
+target_compile_definitions(pocketfft
+  INTERFACE -DPOCKETFFT_NO_MULTITHREADING
+)
+
 if (UNIX)
   target_link_libraries(pocketfft
     INTERFACE pthread)
