@@ -49,6 +49,27 @@ public:
       T(1.0) / signal.size());
   }
 
+  void fft(const std::vector<std::span<T>>& signals, const std::vector<std::span<std::complex<T>>>& dfts) const
+  {
+    assert(signals.size() == dfts.size());
+    assert(signals.front().size() == tdsize());
+    assert(dfts.front().size() == fdsize());
+
+    const ptrdiff_t X = signals.front().size() * sizeof(T);
+    const ptrdiff_t Y = dfts.front().size() * sizeof(std::complex<T>);
+
+    pocketfft::r2c(
+      { signals.front().size(), signals.size() },
+      { sizeof(T), X },
+      { sizeof(std::complex<T>), Y },
+      0,
+      true,
+      signals.front().data(),
+      dfts.front().data(),
+      T(1.0) / signals.front().size(),
+      1);
+  }
+
   void ifft(const std::span<const std::complex<T>> dft, const std::span<T> signal) const
   {
     assert(signal.size() == tdsize());
@@ -63,6 +84,27 @@ public:
       dft.data(),
       signal.data(),
       T(1.0));
+  }
+
+  void ifft(const std::vector<std::span<std::complex<T>>>& dfts, const std::vector<std::span<T>>& signals) const
+  {
+    assert(signals.size() == dfts.size());
+    assert(signals.front().size() == tdsize());
+    assert(dfts.front().size() == fdsize());
+
+    const ptrdiff_t X = dfts.front().size() * sizeof(std::complex<T>);
+    const ptrdiff_t Y = signals.front().size() * sizeof(T);
+
+    pocketfft::c2r(
+      { signals.front().size(), signals.size() },
+      { sizeof(std::complex<T>), X },
+      { sizeof(T), Y },
+      0,
+      false,
+      dfts.front().data(),
+      signals.front().data(),
+      T(1.0),
+      1);
   }
 
   std::vector<std::complex<T>> fft(const std::span<const T> signal) const
