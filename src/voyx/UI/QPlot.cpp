@@ -69,7 +69,7 @@ void QPlot::show(const size_t width, const size_t height)
 
 void QPlot::xlim(const double min, const double max)
 {
-  std::unique_lock lock(mutex);
+  std::lock_guard lock(mutex);
   data.xauto = false;
 
   for (auto plot : plots)
@@ -80,7 +80,7 @@ void QPlot::xlim(const double min, const double max)
 
 void QPlot::ylim(const double min, const double max)
 {
-  std::unique_lock lock(mutex);
+  std::lock_guard lock(mutex);
   data.yauto = false;
 
   for (auto plot : plots)
@@ -91,25 +91,25 @@ void QPlot::ylim(const double min, const double max)
 
 void QPlot::xrange(const double max)
 {
-  std::unique_lock lock(mutex);
+  std::lock_guard lock(mutex);
   data.xrange = std::pair<double, double>(0, max);
 }
 
 void QPlot::xrange(const double min, const double max)
 {
-  std::unique_lock lock(mutex);
+  std::lock_guard lock(mutex);
   data.xrange = std::pair<double, double>(min, max);
 }
 
 void QPlot::plot(const std::vector<float>& y)
 {
-  std::unique_lock lock(mutex);
+  std::lock_guard lock(mutex);
   data.ydata = std::vector<double>(y.begin(), y.end());
 }
 
 void QPlot::plot(const std::vector<double>& y)
 {
-  std::unique_lock lock(mutex);
+  std::lock_guard lock(mutex);
   data.ydata = y;
 }
 
@@ -175,7 +175,7 @@ void QPlot::loop()
     std::optional<std::pair<double, double>> xrange;
     std::vector<double> ydata;
     {
-      std::unique_lock lock(mutex);
+      std::lock_guard lock(mutex);
       xauto = data.xauto;
       yauto = data.yauto;
       xrange = data.xrange;
@@ -224,7 +224,7 @@ void QPlot::loop()
 
         // sync again
         {
-          std::unique_lock lock(mutex);
+          std::lock_guard lock(mutex);
 
           if (data.xauto)
           {
@@ -240,7 +240,7 @@ void QPlot::loop()
 
         // sync again
         {
-          std::unique_lock lock(mutex);
+          std::lock_guard lock(mutex);
 
           if (data.yauto)
           {
