@@ -30,6 +30,8 @@ std::string MidiProbe::operator()()
   }
   catch (const RtMidiError& error)
   {
+    LOG(ERROR) << error.what();
+
     ports = 0;
   }
 
@@ -43,6 +45,8 @@ std::string MidiProbe::operator()()
     }
     catch (const RtMidiError& error)
     {
+      LOG(ERROR) << error.what();
+
       continue;
     }
 

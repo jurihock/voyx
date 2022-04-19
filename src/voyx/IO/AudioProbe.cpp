@@ -50,6 +50,8 @@ std::string AudioProbe::operator()()
   }
   catch (const RtAudioError& error)
   {
+    LOG(ERROR) << error.what();
+    
     devices = 0;
   }
 
@@ -92,6 +94,8 @@ std::string AudioProbe::operator()()
     }
     catch (const RtAudioError& error)
     {
+      LOG(ERROR) << error.what();
+      
       continue;
     }
 
