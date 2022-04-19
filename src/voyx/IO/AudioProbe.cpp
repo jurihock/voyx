@@ -40,42 +40,59 @@ std::string AudioProbe::operator()()
 
   // POPULATE TABLE
 
-  RtAudio audio;
+  std::shared_ptr<RtAudio> audio;
+  size_t devices;
 
-  const size_t devices = audio.getDeviceCount();
+  try
+  {
+    audio = std::make_shared<RtAudio>();
+    devices = audio->getDeviceCount();
+  }
+  catch (const RtAudioError& error)
+  {
+    devices = 0;
+  }
 
   for (size_t index = 0; index < devices; ++index)
   {
-    const RtAudio::DeviceInfo device = audio.getDeviceInfo(index);
-
-    if (!device.probed)
-    {
-      continue;
-    }
-
-    const std::string name = device.name;
-    const std::string inputs = std::to_string(device.inputChannels) + (device.isDefaultInput ? " *" : "");
-    const std::string outputs = std::to_string(device.outputChannels) + (device.isDefaultOutput ? " *" : "");
-    const std::string duplex = std::to_string(device.duplexChannels);
-    std::vector<std::string> samplerates(device.sampleRates.size());
+    std::string name;
+    std::string inputs;
+    std::string outputs;
+    std::string duplex;
+    std::vector<std::string> samplerates;
     std::vector<std::string> formats;
 
-    for (size_t i = 0; i < samplerates.size(); ++i)
+    try
     {
-      samplerates[i] = std::to_string(device.sampleRates[i]);
+      const RtAudio::DeviceInfo device = audio->getDeviceInfo(index);
 
-      if (device.sampleRates[i] == device.preferredSampleRate)
+      if (!device.probed)
       {
-        samplerates[i] += " *";
+        continue;
+      }
+
+      name = device.name;
+      inputs = std::to_string(device.inputChannels) + (device.isDefaultInput ? " *" : "");
+      outputs = std::to_string(device.outputChannels) + (device.isDefaultOutput ? " *" : "");
+      duplex = std::to_string(device.duplexChannels);
+
+      for (const auto samplerate : device.sampleRates)
+      {
+        samplerates.push_back(std::to_string(samplerate) +
+          (samplerate == device.preferredSampleRate ? " *" : ""));
+      }
+
+      for (const auto format : well_known_formats)
+      {
+        if (format.second & device.nativeFormats)
+        {
+          formats.push_back(format.first);
+        }
       }
     }
-
-    for (const auto& format : well_known_formats)
+    catch (const RtAudioError& error)
     {
-      if (format.second & device.nativeFormats)
-      {
-        formats.push_back(format.first);
-      }
+      continue;
     }
 
     const size_t offset = table[columns.front()].size() + 1;
