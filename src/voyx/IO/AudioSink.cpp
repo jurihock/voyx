@@ -35,6 +35,14 @@ void AudioSink::open()
     audio.closeStream();
   }
 
+  const uint32_t devices = audio.getDeviceCount();
+
+  if (!devices)
+  {
+    throw std::runtime_error(
+      "No audio sinks available!");
+  }
+
   std::optional<uint32_t> id;
 
   if (audio_device_name.empty())
@@ -43,8 +51,6 @@ void AudioSink::open()
   }
   else
   {
-    const uint32_t devices = audio.getDeviceCount();
-
     for (uint32_t i = 0; i < devices; ++i)
     {
       const RtAudio::DeviceInfo device = audio.getDeviceInfo(i);
