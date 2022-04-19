@@ -21,3 +21,20 @@ include("${CMAKE_CURRENT_LIST_DIR}/lib/rtaudio/CMakeLists.txt")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/rtmidi/CMakeLists.txt")
 
 include("${CMAKE_CURRENT_LIST_DIR}/src/voyx/CMakeLists.txt")
+
+set(FOLDERS "lib;src")
+
+foreach(FOLDER ${FOLDERS})
+
+  file(GLOB_RECURSE FILES
+    "${CMAKE_CURRENT_LIST_DIR}/${FOLDER}/*.h*"
+    "${CMAKE_CURRENT_LIST_DIR}/${FOLDER}/*.c*"
+  )
+
+  source_group(
+    TREE "${CMAKE_CURRENT_LIST_DIR}/${FOLDER}"
+    PREFIX "${FOLDER}"
+    FILES ${FILES}
+  )
+
+endforeach()
