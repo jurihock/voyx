@@ -7,8 +7,14 @@
 MidiObserver::MidiObserver(const std::string& name, const voyx_t concertpitch) :
   midi_device_name(name),
   midi_concert_pitch(concertpitch),
+  midi_key_freq(128),
   midi_key_state(128)
 {
+  for (voyx_t i = 0; i < 128; ++i)
+  {
+    midi_key_freq[i] = std::pow(2, (i - 69) / 12) * concertpitch;
+  }
+
   midi.setErrorCallback(&MidiObserver::error, this);
 
   start();
@@ -17,6 +23,11 @@ MidiObserver::MidiObserver(const std::string& name, const voyx_t concertpitch) :
 MidiObserver::~MidiObserver()
 {
   stop();
+}
+
+const std::vector<voyx_t>& MidiObserver::freqs() const
+{
+  return midi_key_freq;
 }
 
 std::vector<int> MidiObserver::keys()
