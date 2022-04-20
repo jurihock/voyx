@@ -51,7 +51,8 @@ int main(int argc, char** argv)
     ("r,sr",      "Sample rate in hertz", cxxopts::value<voyx_t>()->default_value("44100"))
     ("w,window",  "STFT window size", cxxopts::value<int>()->default_value("1024"))
     ("v,overlap", "STFT window overlap", cxxopts::value<int>()->default_value("4"))
-    ("b,buffer",  "Audio IO buffer size", cxxopts::value<int>()->default_value("1000"));
+    ("b,buffer",  "Audio IO buffer size", cxxopts::value<int>()->default_value("1000"))
+    ("d,debug",   "Enable debug mode");
 
   const auto args = options.parse(argc, argv);
 
@@ -106,6 +107,8 @@ int main(int argc, char** argv)
   const size_t hopsize = framesize / std::abs(args["overlap"].as<int>());
   const size_t buffersize = std::abs(args["buffer"].as<int>());
 
+  const bool debug = args.count("debug");
+
   std::shared_ptr<Source<>> source;
   std::shared_ptr<Sink<>> sink;
 
@@ -136,7 +139,7 @@ int main(int argc, char** argv)
   }
 
   std::shared_ptr<MidiObserver> observer = midi.empty() ? nullptr : std::make_shared<MidiObserver>(midi, concertpitch);
-  std::shared_ptr<Plot> plot = false ? nullptr : std::make_shared<QPlot>(source->timeout());
+  std::shared_ptr<Plot> plot = !debug ? nullptr : std::make_shared<QPlot>(source->timeout());
 
   // auto pipe = std::make_shared<BypassPipeline>(source, sink);
   // auto pipe = std::make_shared<TestPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
