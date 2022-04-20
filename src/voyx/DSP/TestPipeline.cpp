@@ -37,7 +37,7 @@ void TestPipeline::operator()(const size_t index, const std::vector<voyx_t>& sig
 
   if (plot != nullptr && midi != nullptr)
   {
-    const auto bins = midi->bins(framesize, samplerate, 440);
+    const auto bins = midi->bins(framesize, samplerate);
 
     for (size_t i = 0; i < dfts.size(); ++i)
     {

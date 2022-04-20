@@ -4,11 +4,14 @@
 
 #include <mlinterp/mlinterp.hpp>
 
-MidiObserver::MidiObserver(const std::string& name) :
+MidiObserver::MidiObserver(const std::string& name, const voyx_t concertpitch) :
   midi_device_name(name),
+  midi_concert_pitch(concertpitch),
   midi_key_state(128)
 {
   midi.setErrorCallback(&MidiObserver::error, this);
+
+  start();
 }
 
 MidiObserver::~MidiObserver()
@@ -44,8 +47,10 @@ std::vector<voyx_t> MidiObserver::imask()
   return dst;
 }
 
-std::vector<voyx_t> MidiObserver::bins(const size_t framesize, const size_t samplerate, const voyx_t concertpitch)
+std::vector<voyx_t> MidiObserver::bins(const size_t framesize, const size_t samplerate)
 {
+  const voyx_t concertpitch = midi_concert_pitch;
+
   const std::vector<voyx_t> y0 = mask();
   std::vector<voyx_t> y1(framesize / 2 + 1);
 

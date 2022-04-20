@@ -9,13 +9,13 @@ class MidiObserver
 
 public:
 
-  MidiObserver(const std::string& name);
+  MidiObserver(const std::string& name, const voyx_t concertpitch);
   ~MidiObserver();
 
   std::vector<int> keys();
   std::vector<voyx_t> mask();
   std::vector<voyx_t> imask();
-  std::vector<voyx_t> bins(const size_t framesize, const size_t samplerate, const voyx_t concertpitch);
+  std::vector<voyx_t> bins(const size_t framesize, const size_t samplerate);
 
   void start();
   void stop();
@@ -23,6 +23,7 @@ public:
 private:
 
   const std::string midi_device_name;
+  const voyx_t midi_concert_pitch;
   std::vector<int> midi_key_state;
 
   RtMidiIn midi;
