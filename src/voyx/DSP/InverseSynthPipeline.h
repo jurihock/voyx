@@ -20,7 +20,7 @@ public:
 
 private:
 
-  Vocoder vocoder;
+  Vocoder<voyx_t> vocoder;
 
   std::shared_ptr<MidiObserver> midi;
   std::shared_ptr<Plot> plot;
