@@ -41,15 +41,15 @@ void InverseSynthPipeline::operator()(const size_t index, const std::vector<voyx
       const auto midimask = midi->mask();
       const auto dftmask = $$::interp(dftbins, midibins, midimask);
 
-      if (plot != nullptr)
-      {
-        plot->plot(dftmask);
-      }
-
       for (size_t i = 0; i < dft.size(); ++i)
       {
         dft[i].real(dftmask[i]);
         dft[i].imag(dftfreqs[i]);
+      }
+
+      if (plot != nullptr)
+      {
+        plot->plot(dftmask);
       }
     }
   }
