@@ -14,9 +14,6 @@ public:
 
   voyx_t concertpitch() const;
 
-  const std::vector<voyx_t>& keys() const;
-  const std::vector<voyx_t>& freqs() const;
-
   std::vector<int> state();
 
   std::vector<voyx_t> mask();
@@ -29,9 +26,6 @@ private:
 
   const std::string midi_device_name;
   const voyx_t midi_concert_pitch;
-
-  std::vector<voyx_t> midi_keys;
-  std::vector<voyx_t> midi_freqs;
 
   std::vector<int> midi_state;
 

@@ -4,10 +4,107 @@
 
 #include <mlinterp/mlinterp.hpp>
 
+namespace $$::dft
+{
+  template<typename T>
+  static inline T bin(const T freq, const voyx_t samplerate, const size_t framesize)
+  {
+    return static_cast<T>(
+      freq * framesize / samplerate);
+  }
+
+  template<typename T>
+  static inline T freq(const T bin, const voyx_t samplerate, const size_t framesize)
+  {
+    return static_cast<T>(
+      bin * samplerate / framesize);
+  }
+
+  template<typename T>
+  static inline std::vector<T> bins(const size_t framesize)
+  {
+    std::vector<T> values(framesize / 2 + 1);
+    std::iota(values.begin(), values.end(), 0);
+    return values;
+  }
+
+  template<typename T>
+  static inline std::vector<T> freqs(const voyx_t samplerate, const size_t framesize)
+  {
+    std::vector<T> values(framesize / 2 + 1);
+    std::iota(values.begin(), values.end(), 0);
+    std::transform(values.begin(), values.end(), values.begin(),
+      [samplerate, framesize](T i) { return $$::dft::freq(i, samplerate, framesize); });
+    return values;
+  }
+}
+
+namespace $$::midi
+{
+  template<typename T>
+  static inline T key(const T freq, const voyx_t concertpitch)
+  {
+    return static_cast<T>(
+      (freq > 0) ? 69 + 12 * std::log2(freq / concertpitch) : 0);
+  }
+
+  template<typename T>
+  static inline T freq(const T key, const voyx_t concertpitch)
+  {
+    return static_cast<T>(
+      std::pow(2, (key - 69) / 12) * concertpitch);
+  }
+
+  template<typename T>
+  static inline std::vector<T> keys(const std::vector<T>& freqs, const voyx_t concertpitch)
+  {
+    std::vector<T> values(freqs.size());
+    std::transform(freqs.begin(), freqs.end(), values.begin(),
+      [concertpitch](voyx_t i) { return $$::midi::key(i, concertpitch); });
+    return values;
+  }
+
+  template<typename T>
+  static inline std::vector<T> keys()
+  {
+    std::vector<T> values(128);
+    std::iota(values.begin(), values.end(), 0);
+    return values;
+  }
+
+  template<typename T>
+  static inline std::vector<T> freqs(const voyx_t concertpitch)
+  {
+    std::vector<T> values(128);
+    std::iota(values.begin(), values.end(), 0);
+    std::transform(values.begin(), values.end(), values.begin(),
+      [concertpitch](T i) { return $$::midi::freq(i, concertpitch); });
+    return values;
+  }
+}
+
 namespace $$
 {
   template<typename T>
   static inline std::vector<T> interp(const std::span<const T> x1, const std::span<const T> x0, const std::span<const T> y0)
+  {
+    assert(x0.size() == y0.size());
+
+    const size_t n0[] = { x0.size() };
+    const size_t n1 = x1.size();
+
+    std::vector<T> y1(n1);
+
+    mlinterp::interp(
+      n0,        n1,
+      y0.data(), y1.data(),
+      x0.data(), x1.data());
+
+    return y1;
+  }
+
+  template<typename T>
+  static inline std::vector<T> interp(const std::vector<T>& x1, const std::vector<T>& x0, const std::vector<T>& y0)
   {
     assert(x0.size() == y0.size());
 

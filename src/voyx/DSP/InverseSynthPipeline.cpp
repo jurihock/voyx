@@ -14,28 +14,13 @@ InverseSynthPipeline::InverseSynthPipeline(const voyx_t samplerate, const size_t
   {
     const voyx_t concertpitch = midi->concertpitch();
 
-    dftbins.resize(framesize / 2 + 1);
-    {
-      std::iota(dftbins.begin(), dftbins.end(), 0);
-    }
-
-    dftfreqs.resize(dftbins.size());
-    {
-      std::transform(dftbins.begin(), dftbins.end(), dftfreqs.begin(),
-        [samplerate, framesize](voyx_t i) { return i * samplerate / framesize; });
-    }
-
-    dftkeys.resize(dftfreqs.size());
-    {
-      std::transform(dftfreqs.begin(), dftfreqs.end(), dftkeys.begin(),
-        [concertpitch](voyx_t i) { return (i > 0) ? 69 + 12 * std::log2(i / concertpitch) : 0; });
-    }
-
-    midikeys = midi->keys();
-    midifreqs = midi->freqs();
-
-    midibins = $$::interp<voyx_t>(midikeys, dftkeys, dftbins);
-    dftfreqs = $$::interp<voyx_t>(dftbins, midibins, midifreqs);
+    dftfreqs = $$::dft::freqs<voyx_t>(samplerate, framesize);
+    dftbins = $$::dft::bins<voyx_t>(framesize);
+    dftkeys = $$::midi::keys(dftfreqs, concertpitch);
+    midifreqs = $$::midi::freqs<voyx_t>(concertpitch);
+    midikeys = $$::midi::keys<voyx_t>();
+    midibins = $$::interp(midikeys, dftkeys, dftbins);
+    dftfreqs = $$::interp(dftbins, midibins, midifreqs);
   }
 
   if (plot != nullptr)
@@ -54,7 +39,7 @@ void InverseSynthPipeline::operator()(const size_t index, const std::vector<voyx
     for (auto dft : dfts)
     {
       const auto midimask = midi->mask();
-      const auto dftmask = $$::interp<voyx_t>(dftbins, midibins, midimask);
+      const auto dftmask = $$::interp(dftbins, midibins, midimask);
 
       if (plot != nullptr)
       {
