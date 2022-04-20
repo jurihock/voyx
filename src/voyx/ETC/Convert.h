@@ -2,8 +2,28 @@
 
 #include <voyx/Header.h>
 
+#include <mlinterp/mlinterp.hpp>
+
 namespace $$
 {
+  template<typename T>
+  static inline std::vector<T> interp(const std::span<const T> x1, const std::span<const T> x0, const std::span<const T> y0)
+  {
+    assert(x0.size() == y0.size());
+
+    const size_t n0[] = { x0.size() };
+    const size_t n1 = x1.size();
+
+    std::vector<T> y1(n1);
+
+    mlinterp::interp(
+      n0,        n1,
+      y0.data(), y1.data(),
+      x0.data(), x1.data());
+
+    return y1;
+  }
+
   static inline bool match(const std::string& value, const std::string& pattern)
   {
     const auto regex = std::regex(pattern);

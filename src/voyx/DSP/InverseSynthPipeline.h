@@ -20,10 +20,10 @@ public:
 
 private:
 
+  Vocoder vocoder;
+
   std::shared_ptr<MidiObserver> midi;
   std::shared_ptr<Plot> plot;
-
-  Vocoder vocoder;
 
   std::vector<voyx_t> dftbins, dftfreqs, dftkeys;
   std::vector<voyx_t> midibins, midifreqs, midikeys;

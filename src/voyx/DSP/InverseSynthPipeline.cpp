@@ -2,8 +2,6 @@
 
 #include <voyx/Source.h>
 
-#include <mlinterp/mlinterp.hpp>
-
 InverseSynthPipeline::InverseSynthPipeline(const voyx_t samplerate, const size_t framesize, const size_t hopsize,
                                            std::shared_ptr<Source<voyx_t>> source, std::shared_ptr<Sink<voyx_t>> sink,
                                            std::shared_ptr<MidiObserver> midi, std::shared_ptr<Plot> plot) :
@@ -36,43 +34,8 @@ InverseSynthPipeline::InverseSynthPipeline(const voyx_t samplerate, const size_t
     midikeys = midi->keys();
     midifreqs = midi->freqs();
 
-    midibins.resize(128);
-    {
-      std::vector<voyx_t> x0(dftkeys);
-      std::vector<voyx_t> x1(midikeys);
-
-      std::vector<voyx_t> y0(dftbins);
-      std::vector<voyx_t> y1(midibins.size());
-
-      const size_t n0[] = { x0.size() };
-      const size_t n1 = x1.size();
-
-      mlinterp::interp(
-        n0,        n1,
-        y0.data(), y1.data(),
-        x0.data(), x1.data());
-
-      midibins = y1;
-    }
-
-    dftfreqs.resize(framesize / 2 + 1);
-    {
-      std::vector<voyx_t> x0(midibins);
-      std::vector<voyx_t> x1(dftbins);
-
-      std::vector<voyx_t> y0(midifreqs);
-      std::vector<voyx_t> y1(dftfreqs.size());
-
-      const size_t n0[] = { x0.size() };
-      const size_t n1 = x1.size();
-
-      mlinterp::interp(
-        n0,        n1,
-        y0.data(), y1.data(),
-        x0.data(), x1.data());
-
-      dftfreqs = y1;
-    }
+    midibins = $$::interp<voyx_t>(midikeys, dftkeys, dftbins);
+    dftfreqs = $$::interp<voyx_t>(dftbins, midibins, midifreqs);
   }
 
   if (plot != nullptr)
@@ -90,25 +53,8 @@ void InverseSynthPipeline::operator()(const size_t index, const std::vector<voyx
   {
     for (auto dft : dfts)
     {
-      std::vector<voyx_t> midimask(midi->mask());
-      std::vector<voyx_t> dftmask(dftbins.size());
-      {
-        std::vector<voyx_t> x0(midibins);
-        std::vector<voyx_t> x1(dftbins);
-
-        std::vector<voyx_t> y0(midimask);
-        std::vector<voyx_t> y1(dftmask.size());
-
-        const size_t n0[] = { x0.size() };
-        const size_t n1 = x1.size();
-
-        mlinterp::interp(
-          n0,        n1,
-          y0.data(), y1.data(),
-          x0.data(), x1.data());
-
-        dftmask = y1;
-      }
+      const auto midimask = midi->mask();
+      const auto dftmask = $$::interp<voyx_t>(dftbins, midibins, midimask);
 
       if (plot != nullptr)
       {
