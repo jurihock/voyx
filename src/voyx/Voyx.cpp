@@ -132,15 +132,14 @@ int main(int argc, char** argv)
     sink = std::make_shared<AudioSink>(output, samplerate, framesize, buffersize);
   }
 
-  // MIDI TEST
-  MidiObserver observer("");
-  observer.start();
+  std::shared_ptr<MidiObserver> observer = std::make_shared<MidiObserver>("");
+  observer->start();
 
   std::shared_ptr<Plot> plot = std::make_shared<QPlot>(source->timeout());
 
   // auto pipe = std::make_shared<BypassPipeline>(source, sink);
   // auto pipe = std::make_shared<StftPipeline>(samplerate, framesize, hopsize, source, sink);
-  auto pipe = std::make_shared<TestPipeline>(samplerate, framesize, hopsize, source, sink, plot);
+  auto pipe = std::make_shared<TestPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
 
   pipe->open();
 

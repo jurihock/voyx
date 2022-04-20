@@ -2,6 +2,8 @@
 
 #include <voyx/Source.h>
 
+#include <mlinterp/mlinterp.hpp>
+
 MidiObserver::MidiObserver(const std::string& name) :
   midi_device_name(name),
   midi_key_state(128)
@@ -40,6 +42,34 @@ std::vector<voyx_t> MidiObserver::imask()
     [](voyx_t value) { return (127 - value) / voyx_t(127); });
 
   return dst;
+}
+
+std::vector<voyx_t> MidiObserver::bins(const size_t framesize, const size_t samplerate, const voyx_t concertpitch)
+{
+  const std::vector<voyx_t> y0 = mask();
+  std::vector<voyx_t> y1(framesize / 2 + 1);
+
+  const size_t n0[] = { y0.size() };
+  const size_t n1 = y1.size();
+
+  std::vector<voyx_t> x0(y0.size());
+  std::vector<voyx_t> x1(y1.size());
+
+  std::iota(x0.begin(), x0.end(), 0);
+  std::iota(x1.begin(), x1.end(), 0);
+
+  std::transform(x0.begin(), x0.end(), x0.begin(),
+    [concertpitch](voyx_t i) { return std::pow(2, (i - 69) / 12) * concertpitch; });
+
+  std::transform(x1.begin(), x1.end(), x1.begin(),
+    [samplerate, n1](voyx_t i) { return (i / n1) * (samplerate / 2); });
+
+  mlinterp::interp(
+    n0,        n1,
+    y0.data(), y1.data(),
+    x0.data(), x1.data());
+
+  return y1;
 }
 
 void MidiObserver::start()

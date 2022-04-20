@@ -15,6 +15,7 @@ public:
   std::vector<int> keys();
   std::vector<voyx_t> mask();
   std::vector<voyx_t> imask();
+  std::vector<voyx_t> bins(const size_t framesize, const size_t samplerate, const voyx_t concertpitch);
 
   void start();
   void stop();
