@@ -15,7 +15,7 @@ public:
   std::vector<int> keys();
   std::vector<voyx_t> mask();
   std::vector<voyx_t> imask();
-  std::vector<voyx_t> bins(const size_t framesize, const size_t samplerate);
+  std::vector<voyx_t> bins(const size_t framesize, const voyx_t samplerate);
 
   void start();
   void stop();

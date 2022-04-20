@@ -11,7 +11,7 @@ class AudioSource : public Source<voyx_t>
 
 public:
 
-  AudioSource(const std::string& name, size_t samplerate, size_t framesize, size_t buffersize);
+  AudioSource(const std::string& name, voyx_t samplerate, size_t framesize, size_t buffersize);
 
   void open() override;
   void close() override;

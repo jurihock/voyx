@@ -8,7 +8,7 @@ class Sink
 
 public:
 
-  Sink(size_t samplerate, size_t framesize, size_t buffersize) :
+  Sink(voyx_t samplerate, size_t framesize, size_t buffersize) :
     sink_samplerate(samplerate),
     sink_framesize(framesize),
     sink_buffersize(buffersize),
@@ -18,7 +18,7 @@ public:
 
   virtual ~Sink() {}
 
-  size_t samplerate() const { return sink_samplerate; }
+  voyx_t samplerate() const { return sink_samplerate; }
   size_t framesize() const { return sink_framesize; }
   size_t buffersize() const { return sink_buffersize; }
   const std::chrono::milliseconds& timeout() const { return sink_timeout; }
@@ -33,7 +33,7 @@ public:
 
 private:
 
-  const size_t sink_samplerate;
+  const voyx_t sink_samplerate;
   const size_t sink_framesize;
   const size_t sink_buffersize;
   const std::chrono::milliseconds sink_timeout;

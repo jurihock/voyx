@@ -11,7 +11,7 @@ class AudioSink : public Sink<voyx_t>
 
 public:
 
-  AudioSink(const std::string& name, size_t samplerate, size_t framesize, size_t buffersize);
+  AudioSink(const std::string& name, voyx_t samplerate, size_t framesize, size_t buffersize);
 
   void open() override;
   void close() override;

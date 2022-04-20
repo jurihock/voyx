@@ -4,7 +4,7 @@
 
 #include <dr_libs/dr_wav.h>
 
-void WAV::read(const std::string& path, std::vector<double>& data, const size_t samplerate)
+void WAV::read(const std::string& path, std::vector<double>& data, const voyx_t samplerate)
 {
   std::vector<float> nativedata;
 
@@ -13,7 +13,7 @@ void WAV::read(const std::string& path, std::vector<double>& data, const size_t 
   data.assign(nativedata.begin(), nativedata.end());
 }
 
-void WAV::read(const std::string& path, std::vector<float>& data, const size_t samplerate)
+void WAV::read(const std::string& path, std::vector<float>& data, const voyx_t samplerate)
 {
   drwav wav;
 
@@ -73,14 +73,14 @@ void WAV::read(const std::string& path, std::vector<float>& data, const size_t s
   }
 }
 
-void WAV::write(const std::string& path, const std::vector<double>& data, const size_t samplerate)
+void WAV::write(const std::string& path, const std::vector<double>& data, const voyx_t samplerate)
 {
   std::vector<float> nativedata(data.begin(), data.end());
 
   WAV::write(path, nativedata, samplerate);
 }
 
-void WAV::write(const std::string& path, const std::vector<float>& data, const size_t samplerate)
+void WAV::write(const std::string& path, const std::vector<float>& data, const voyx_t samplerate)
 {
   const size_t samples = data.size();
   const size_t channels = 1;
@@ -99,7 +99,7 @@ void WAV::write(const std::string& path, const std::vector<float>& data, const s
   format.format = DR_WAVE_FORMAT_IEEE_FLOAT;
   format.bitsPerSample = sizeof(float) * 8;
   format.channels = channels;
-  format.sampleRate = samplerate;
+  format.sampleRate = static_cast<size_t>(samplerate);
 
   if (drwav_init_file_write(&wav, path.c_str(), &format, nullptr) != DRWAV_TRUE)
   {

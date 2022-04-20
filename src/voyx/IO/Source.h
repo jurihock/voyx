@@ -8,7 +8,7 @@ class Source
 
 public:
 
-  Source(size_t samplerate, size_t framesize, size_t buffersize) :
+  Source(voyx_t samplerate, size_t framesize, size_t buffersize) :
     source_samplerate(samplerate),
     source_framesize(framesize),
     source_buffersize(buffersize),
@@ -18,7 +18,7 @@ public:
 
   virtual ~Source() {}
 
-  size_t samplerate() const { return source_samplerate; }
+  voyx_t samplerate() const { return source_samplerate; }
   size_t framesize() const { return source_framesize; }
   size_t buffersize() const { return source_buffersize; }
   const std::chrono::milliseconds& timeout() const { return source_timeout; }
@@ -33,7 +33,7 @@ public:
 
 private:
 
-  const size_t source_samplerate;
+  const voyx_t source_samplerate;
   const size_t source_framesize;
   const size_t source_buffersize;
   const std::chrono::milliseconds source_timeout;

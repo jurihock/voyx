@@ -2,7 +2,7 @@
 
 #include <voyx/Source.h>
 
-AudioSource::AudioSource(const std::string& name, size_t samplerate, size_t framesize, size_t buffersize) :
+AudioSource::AudioSource(const std::string& name, voyx_t samplerate, size_t framesize, size_t buffersize) :
   Source(samplerate, framesize, buffersize),
   audio_device_name(name),
   audio_frame_buffer(

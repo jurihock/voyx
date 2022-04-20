@@ -47,7 +47,7 @@ std::vector<voyx_t> MidiObserver::imask()
   return dst;
 }
 
-std::vector<voyx_t> MidiObserver::bins(const size_t framesize, const size_t samplerate)
+std::vector<voyx_t> MidiObserver::bins(const size_t framesize, const voyx_t samplerate)
 {
   const voyx_t concertpitch = midi_concert_pitch;
 

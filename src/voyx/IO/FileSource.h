@@ -8,7 +8,7 @@ class FileSource : public Source<voyx_t>
 
 public:
 
-  FileSource(const std::string& path, size_t samplerate, size_t framesize, size_t buffersize);
+  FileSource(const std::string& path, voyx_t samplerate, size_t framesize, size_t buffersize);
 
   void open() override;
   void close() override;

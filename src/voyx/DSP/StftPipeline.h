@@ -10,13 +10,13 @@ class StftPipeline : public Pipeline<voyx_t>
 
 public:
 
-  StftPipeline(const size_t samplerate, const size_t framesize, const size_t hopsize, std::shared_ptr<Source<voyx_t>> source, std::shared_ptr<Sink<voyx_t>> sink);
+  StftPipeline(const voyx_t samplerate, const size_t framesize, const size_t hopsize, std::shared_ptr<Source<voyx_t>> source, std::shared_ptr<Sink<voyx_t>> sink);
 
   void operator()(const size_t index, const std::vector<voyx_t>& input, std::vector<voyx_t>& output) override;
 
 protected:
 
-  const size_t samplerate;
+  const voyx_t samplerate;
   const size_t framesize;
   const size_t hopsize;
 

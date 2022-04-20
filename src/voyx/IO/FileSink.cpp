@@ -3,7 +3,7 @@
 #include <voyx/Source.h>
 #include <voyx/ETC/WAV.h>
 
-FileSink::FileSink(const std::string& path, size_t samplerate, size_t framesize, size_t buffersize) :
+FileSink::FileSink(const std::string& path, voyx_t samplerate, size_t framesize, size_t buffersize) :
   Sink(samplerate, framesize, buffersize),
   path(path),
   data(0)

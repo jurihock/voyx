@@ -8,7 +8,7 @@ class FileSink : public Sink<voyx_t>
 
 public:
 
-  FileSink(const std::string& path, size_t samplerate, size_t framesize, size_t buffersize);
+  FileSink(const std::string& path, voyx_t samplerate, size_t framesize, size_t buffersize);
 
   void open() override;
   void close() override;

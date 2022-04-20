@@ -8,7 +8,7 @@ class NullSource : public Source<voyx_t>
 
 public:
 
-  NullSource(size_t samplerate, size_t framesize, size_t buffersize);
+  NullSource(voyx_t samplerate, size_t framesize, size_t buffersize);
 
   bool read(const size_t index, std::function<void(const std::vector<voyx_t>& frame)> callback) override;
 

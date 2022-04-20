@@ -8,8 +8,8 @@ class SineSource : public Source<voyx_t>
 
 public:
 
-  SineSource(voyx_t frequency, size_t samplerate, size_t framesize, size_t buffersize);
-  SineSource(voyx_t amplitude, voyx_t frequency, size_t samplerate, size_t framesize, size_t buffersize);
+  SineSource(voyx_t frequency, voyx_t samplerate, size_t framesize, size_t buffersize);
+  SineSource(voyx_t amplitude, voyx_t frequency, voyx_t samplerate, size_t framesize, size_t buffersize);
 
   bool read(const size_t index, std::function<void(const std::vector<voyx_t>& frame)> callback) override;
 

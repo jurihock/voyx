@@ -3,7 +3,7 @@
 #include <voyx/Source.h>
 #include <voyx/ETC/WAV.h>
 
-FileSource::FileSource(const std::string& path, size_t samplerate, size_t framesize, size_t buffersize) :
+FileSource::FileSource(const std::string& path, voyx_t samplerate, size_t framesize, size_t buffersize) :
   Source(samplerate, framesize, buffersize),
   path(path),
   data(0),
