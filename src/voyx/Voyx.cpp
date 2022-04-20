@@ -1,7 +1,7 @@
 // TODO object factory
 #include <voyx/DSP/TestPipeline.h>
+#include <voyx/DSP/InverseSynthPipeline.h>
 #include <voyx/DSP/BypassPipeline.h>
-#include <voyx/DSP/StftPipeline.h>
 #include <voyx/IO/AudioSource.h>
 #include <voyx/IO/AudioSink.h>
 #include <voyx/IO/FileSource.h>
@@ -135,13 +135,12 @@ int main(int argc, char** argv)
     sink = std::make_shared<AudioSink>(output, samplerate, framesize, buffersize);
   }
 
-  std::shared_ptr<MidiObserver> observer = std::make_shared<MidiObserver>(midi, concertpitch);
-
-  std::shared_ptr<Plot> plot = std::make_shared<QPlot>(source->timeout());
+  std::shared_ptr<MidiObserver> observer = midi.empty() ? nullptr : std::make_shared<MidiObserver>(midi, concertpitch);
+  std::shared_ptr<Plot> plot = false ? nullptr : std::make_shared<QPlot>(source->timeout());
 
   // auto pipe = std::make_shared<BypassPipeline>(source, sink);
-  // auto pipe = std::make_shared<StftPipeline>(samplerate, framesize, hopsize, source, sink);
-  auto pipe = std::make_shared<TestPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
+  // auto pipe = std::make_shared<TestPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
+  auto pipe = std::make_shared<InverseSynthPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
 
   pipe->open();
 

@@ -2,18 +2,17 @@
 
 #include <voyx/Source.h>
 
-#include <mlinterp/mlinterp.hpp>
-
 MidiObserver::MidiObserver(const std::string& name, const voyx_t concertpitch) :
   midi_device_name(name),
   midi_concert_pitch(concertpitch),
-  midi_key_freq(128),
-  midi_key_state(128)
+  midi_keys(128),
+  midi_freqs(128),
+  midi_state(128)
 {
-  for (voyx_t i = 0; i < 128; ++i)
-  {
-    midi_key_freq[i] = std::pow(2, (i - 69) / 12) * concertpitch;
-  }
+  std::iota(midi_keys.begin(), midi_keys.end(), 0);
+
+  std::transform(midi_keys.begin(), midi_keys.end(), midi_freqs.begin(),
+    [concertpitch](voyx_t i) { return std::pow(2, (i - 69) / 12) * concertpitch; });
 
   midi.setErrorCallback(&MidiObserver::error, this);
 
@@ -25,20 +24,30 @@ MidiObserver::~MidiObserver()
   stop();
 }
 
-const std::vector<voyx_t>& MidiObserver::freqs() const
+voyx_t MidiObserver::concertpitch() const
 {
-  return midi_key_freq;
+  return midi_concert_pitch;
 }
 
-std::vector<int> MidiObserver::keys()
+const std::vector<voyx_t>& MidiObserver::keys() const
+{
+  return midi_keys;
+}
+
+const std::vector<voyx_t>& MidiObserver::freqs() const
+{
+  return midi_freqs;
+}
+
+std::vector<int> MidiObserver::state()
 {
   std::lock_guard lock(mutex);
-  return midi_key_state;
+  return midi_state;
 }
 
 std::vector<voyx_t> MidiObserver::mask()
 {
-  const std::vector<int> src = keys();
+  const std::vector<int> src = state();
   std::vector<voyx_t> dst(src.size());
 
   std::transform(src.begin(), src.end(), dst.begin(),
@@ -49,43 +58,13 @@ std::vector<voyx_t> MidiObserver::mask()
 
 std::vector<voyx_t> MidiObserver::imask()
 {
-  const std::vector<int> src = keys();
+  const std::vector<int> src = state();
   std::vector<voyx_t> dst(src.size());
 
   std::transform(src.begin(), src.end(), dst.begin(),
     [](voyx_t value) { return (127 - value) / voyx_t(127); });
 
   return dst;
-}
-
-std::vector<voyx_t> MidiObserver::bins(const size_t framesize, const voyx_t samplerate)
-{
-  const voyx_t concertpitch = midi_concert_pitch;
-
-  const std::vector<voyx_t> y0 = mask();
-  std::vector<voyx_t> y1(framesize / 2 + 1);
-
-  const size_t n0[] = { y0.size() };
-  const size_t n1 = y1.size();
-
-  std::vector<voyx_t> x0(y0.size());
-  std::vector<voyx_t> x1(y1.size());
-
-  std::iota(x0.begin(), x0.end(), 0);
-  std::iota(x1.begin(), x1.end(), 0);
-
-  std::transform(x0.begin(), x0.end(), x0.begin(),
-    [concertpitch](voyx_t i) { return std::pow(2, (i - 69) / 12) * concertpitch; });
-
-  std::transform(x1.begin(), x1.end(), x1.begin(),
-    [samplerate, n1](voyx_t i) { return (i / n1) * (samplerate / 2); });
-
-  mlinterp::interp(
-    n0,        n1,
-    y0.data(), y1.data(),
-    x0.data(), x1.data());
-
-  return y1;
 }
 
 void MidiObserver::start()
@@ -177,8 +156,8 @@ void MidiObserver::callback(double timestamp, std::vector<unsigned char>* messag
     std::lock_guard lock(observer->mutex);
 
     std::fill(
-      observer->midi_key_state.begin(),
-      observer->midi_key_state.end(),
+      observer->midi_state.begin(),
+      observer->midi_state.end(),
       0);
 
     // LOG(INFO) << "MIDI: reset";
@@ -205,7 +184,7 @@ void MidiObserver::callback(double timestamp, std::vector<unsigned char>* messag
 
     std::lock_guard lock(observer->mutex);
 
-    observer->midi_key_state[key] = on ? velocity : 0;
+    observer->midi_state[key] = on ? velocity : 0;
 
     // LOG(INFO) << $("MIDI: {0} key={1:03d} velocity={2:03d}", on ? "on " : "off", key, velocity);
   }

@@ -12,13 +12,15 @@ public:
   MidiObserver(const std::string& name, const voyx_t concertpitch);
   ~MidiObserver();
 
+  voyx_t concertpitch() const;
+
+  const std::vector<voyx_t>& keys() const;
   const std::vector<voyx_t>& freqs() const;
-  std::vector<int> keys();
+
+  std::vector<int> state();
 
   std::vector<voyx_t> mask();
   std::vector<voyx_t> imask();
-
-  std::vector<voyx_t> bins(const size_t framesize, const voyx_t samplerate);
 
   void start();
   void stop();
@@ -28,8 +30,10 @@ private:
   const std::string midi_device_name;
   const voyx_t midi_concert_pitch;
 
-  std::vector<voyx_t> midi_key_freq;
-  std::vector<int> midi_key_state;
+  std::vector<voyx_t> midi_keys;
+  std::vector<voyx_t> midi_freqs;
+
+  std::vector<int> midi_state;
 
   RtMidiIn midi;
 
