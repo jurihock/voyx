@@ -92,6 +92,12 @@ void MidiObserver::start()
 {
   stop();
 
+  if (midi_device_name.empty())
+  {
+    throw std::runtime_error(
+      "No midi source name specified!");
+  }
+
   const uint32_t ports = midi.getPortCount();
 
   if (!ports)
@@ -105,12 +111,6 @@ void MidiObserver::start()
   for (uint32_t i = 0; i < ports; ++i)
   {
     const std::string name = midi.getPortName(i);
-
-    if (midi_device_name.empty())
-    {
-      id = i;
-      break;
-    }
 
     if (!$$::imatch(name, ".*" + midi_device_name + ".*"))
     {
