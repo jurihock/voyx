@@ -31,8 +31,8 @@ public:
   void xrange(const double max) override;
   void xrange(const double min, const double max) override;
 
-  void plot(const std::vector<float>& y) override;
-  void plot(const std::vector<double>& y) override;
+  void plot(const std::span<const float> y) override;
+  void plot(const std::span<const double> y) override;
 
 protected:
 

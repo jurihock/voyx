@@ -101,16 +101,16 @@ void QPlot::xrange(const double min, const double max)
   data.xrange = std::pair<double, double>(min, max);
 }
 
-void QPlot::plot(const std::vector<float>& y)
+void QPlot::plot(const std::span<const float> y)
 {
   std::lock_guard lock(mutex);
   data.ydata = std::vector<double>(y.begin(), y.end());
 }
 
-void QPlot::plot(const std::vector<double>& y)
+void QPlot::plot(const std::span<const double> y)
 {
   std::lock_guard lock(mutex);
-  data.ydata = y;
+  data.ydata = std::vector<double>(y.begin(), y.end());
 }
 
 void QPlot::addPlot(const size_t row, const size_t col, const size_t graphs)
