@@ -15,7 +15,7 @@ public:
 
 private:
 
-  const voyx_t PI2 = voyx_t(2.0) * std::acos(voyx_t(-1.0));
+  const voyx_t PI2 = voyx_t(2) * std::acos(voyx_t(-1));
 
   const voyx_t amplitude;
   const voyx_t frequency;

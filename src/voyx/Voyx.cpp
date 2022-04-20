@@ -101,6 +101,7 @@ int main(int argc, char** argv)
 
   const voyx_t concertpitch = std::abs(args["a4"].as<voyx_t>());
   const voyx_t samplerate = std::abs(args["sr"].as<voyx_t>());
+
   const size_t framesize = std::abs(args["window"].as<int>());
   const size_t hopsize = framesize / std::abs(args["overlap"].as<int>());
   const size_t buffersize = std::abs(args["buffer"].as<int>());

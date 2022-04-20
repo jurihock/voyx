@@ -32,7 +32,7 @@ public:
 
 private:
 
-  const T PI2 = T(2.0) * std::acos(T(-1.0));
+  const T PI2 = T(2) * std::acos(T(-1));
 
   const size_t size;
 

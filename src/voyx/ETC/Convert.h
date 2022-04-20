@@ -4,9 +4,18 @@
 
 namespace $$
 {
-  static inline bool pot(const uint64_t value)
+  static inline bool match(const std::string& value, const std::string& pattern)
   {
-    return value && !(value & (value - 1));
+    const auto regex = std::regex(pattern);
+
+    return std::regex_match(value, regex);
+  }
+
+  static inline bool imatch(const std::string& value, const std::string& pattern)
+  {
+    const auto regex = std::regex(pattern, std::regex_constants::icase);
+
+    return std::regex_match(value, regex);
   }
 
   static inline std::string lower(const std::string& value)
@@ -27,20 +36,6 @@ namespace $$
       [](int c) { return std::toupper(c); });
 
     return result;
-  }
-
-  static inline bool match(const std::string& value, const std::string& pattern)
-  {
-    const auto regex = std::regex(pattern);
-
-    return std::regex_match(value, regex);
-  }
-
-  static inline bool imatch(const std::string& value, const std::string& pattern)
-  {
-    const auto regex = std::regex(pattern, std::regex_constants::icase);
-
-    return std::regex_match(value, regex);
   }
 
   static inline std::string trim(const std::string& value)
