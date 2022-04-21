@@ -140,8 +140,9 @@ namespace $$
     {
       const voyx_t n = m / factor;
 
-      const voyx_t n0 = std::floor(n);
-      const voyx_t n1 = std::ceil(n);
+      const ptrdiff_t n_ = static_cast<ptrdiff_t>(n);
+      const ptrdiff_t n0 = n_ - (n < n_); // std::floor(n)
+      const ptrdiff_t n1 = n_ + (n > n_); // std::ceil(n)
 
       if (n0 < 0 || N <= n0)
       {
@@ -155,12 +156,12 @@ namespace $$
 
       if (n0 == n1)
       {
-        y[m] = x[static_cast<size_t>(n0)];
+        y[m] = x[n0];
         continue;
       }
 
-      const T y0 = x[static_cast<size_t>(n0)];
-      const T y1 = x[static_cast<size_t>(n1)];
+      const T y0 = x[n0];
+      const T y1 = x[n1];
 
       const voyx_t i = (n - n0) / (n1 - n0);
 
