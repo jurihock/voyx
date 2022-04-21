@@ -86,38 +86,39 @@ namespace $$::midi
 namespace $$
 {
   template<typename T>
-  static inline std::vector<T> interp(const std::span<const T> x1, const std::span<const T> x0, const std::span<const T> y0)
+  static inline void interp(const std::span<const T> x1, const std::span<const T> x0, const std::span<const T> y0, std::span<T> y1)
   {
     assert(x0.size() == y0.size());
+    assert(x1.size() == y1.size());
 
     const size_t n0[] = { x0.size() };
     const size_t n1 = x1.size();
-
-    std::vector<T> y1(n1);
 
     mlinterp::interp(
       n0,        n1,
       y0.data(), y1.data(),
       x0.data(), x1.data());
+  }
 
+  template<typename T>
+  static inline void interp(const std::vector<T>& x1, const std::vector<T>& x0, const std::vector<T>& y0, std::vector<T>& y1)
+  {
+    $$::interp<T>(x1, x0, y0, y1);
+  }
+
+  template<typename T>
+  static inline std::vector<T> interp(const std::span<const T> x1, const std::span<const T> x0, const std::span<const T> y0)
+  {
+    std::vector<T> y1(x1.size());
+    $$::interp<T>(x1, x0, y0, y1);
     return y1;
   }
 
   template<typename T>
   static inline std::vector<T> interp(const std::vector<T>& x1, const std::vector<T>& x0, const std::vector<T>& y0)
   {
-    assert(x0.size() == y0.size());
-
-    const size_t n0[] = { x0.size() };
-    const size_t n1 = x1.size();
-
-    std::vector<T> y1(n1);
-
-    mlinterp::interp(
-      n0,        n1,
-      y0.data(), y1.data(),
-      x0.data(), x1.data());
-
+    std::vector<T> y1(x1.size());
+    $$::interp<T>(x1, x0, y0, y1);
     return y1;
   }
 
