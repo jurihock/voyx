@@ -27,7 +27,7 @@ private:
   const std::string midi_device_name;
   const voyx_t midi_concert_pitch;
 
-  std::vector<int> midi_state;
+  std::vector<int> midi_key_state;
 
   RtMidiIn midi;
 

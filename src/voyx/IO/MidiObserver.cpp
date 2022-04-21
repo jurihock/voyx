@@ -5,7 +5,7 @@
 MidiObserver::MidiObserver(const std::string& name, const voyx_t concertpitch) :
   midi_device_name(name),
   midi_concert_pitch(concertpitch),
-  midi_state(128)
+  midi_key_state(128)
 {
   midi.setErrorCallback(&MidiObserver::error, this);
 
@@ -25,7 +25,7 @@ voyx_t MidiObserver::concertpitch() const
 std::vector<int> MidiObserver::state()
 {
   std::lock_guard lock(mutex);
-  return midi_state;
+  return midi_key_state;
 }
 
 std::vector<voyx_t> MidiObserver::mask()
@@ -139,8 +139,8 @@ void MidiObserver::callback(double timestamp, std::vector<unsigned char>* messag
     std::lock_guard lock(observer->mutex);
 
     std::fill(
-      observer->midi_state.begin(),
-      observer->midi_state.end(),
+      observer->midi_key_state.begin(),
+      observer->midi_key_state.end(),
       0);
 
     // LOG(INFO) << "MIDI: reset";
@@ -167,7 +167,7 @@ void MidiObserver::callback(double timestamp, std::vector<unsigned char>* messag
 
     std::lock_guard lock(observer->mutex);
 
-    observer->midi_state[key] = on ? velocity : 0;
+    observer->midi_key_state[key] = on ? velocity : 0;
 
     // LOG(INFO) << $("MIDI: {0} key={1:03d} velocity={2:03d}", on ? "on " : "off", key, velocity);
   }
