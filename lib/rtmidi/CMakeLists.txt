@@ -16,13 +16,29 @@ target_compile_features(rtmidi
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
-  target_compile_definitions(rtmidi
-    PUBLIC -D__UNIX_JACK__
-  )
+  find_package(PkgConfig QUIET)
 
-  target_link_libraries(rtmidi
-    PUBLIC jack
-  )
+  if (PKG_CONFIG_FOUND)
+
+    pkg_search_module(JACK QUIET jack)
+
+  endif()
+
+  if (NOT JACK_FOUND)
+
+    message(WARNING "Continuing without jack!")
+
+  else()
+
+    target_compile_definitions(rtmidi
+      PUBLIC -D__UNIX_JACK__
+    )
+
+    target_link_libraries(rtmidi
+      PUBLIC jack
+    )
+
+  endif()
 
 endif()
 
