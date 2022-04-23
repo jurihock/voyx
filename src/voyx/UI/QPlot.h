@@ -1,3 +1,5 @@
+#ifdef VOYXUI
+
 #pragma once
 
 #include <voyx/Header.h>
@@ -90,3 +92,5 @@ private:
   };
 
 };
+
+#endif

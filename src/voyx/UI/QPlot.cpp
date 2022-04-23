@@ -1,3 +1,5 @@
+#ifdef VOYXUI
+
 #include <voyx/UI/QPlot.h>
 
 #include <voyx/Source.h>
@@ -258,3 +260,5 @@ void QPlot::loop()
     }
   }
 }
+
+#endif

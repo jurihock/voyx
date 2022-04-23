@@ -31,11 +31,16 @@ target_link_libraries(voyx
           rtmidi
 )
 
+target_compile_features(voyx
+  PRIVATE cxx_std_20
+)
+
 if (UNIX)
   target_link_libraries(voyx
     PRIVATE pthread)
 endif()
 
-target_compile_features(voyx
-  PRIVATE cxx_std_20
-)
+if (UI)
+  target_compile_definitions(voyx
+    PRIVATE VOYXUI)
+endif()

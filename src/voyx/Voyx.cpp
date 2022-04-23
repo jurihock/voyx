@@ -139,7 +139,12 @@ int main(int argc, char** argv)
   }
 
   std::shared_ptr<MidiObserver> observer = midi.empty() ? nullptr : std::make_shared<MidiObserver>(midi, concertpitch);
+
+  #ifdef VOYXUI
   std::shared_ptr<Plot> plot = !debug ? nullptr : std::make_shared<QPlot>(source->timeout());
+  #else
+  std::shared_ptr<Plot> plot = nullptr;
+  #endif
 
   // auto pipe = std::make_shared<BypassPipeline>(source, sink);
   // auto pipe = std::make_shared<TestPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
