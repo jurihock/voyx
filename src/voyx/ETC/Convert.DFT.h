@@ -19,6 +19,15 @@ namespace $$::dft
   }
 
   template<typename T>
+  static inline std::vector<T> bins(const std::vector<T>& freqs, const voyx_t samplerate, const size_t framesize)
+  {
+    std::vector<T> values(freqs.size());
+    std::transform(freqs.begin(), freqs.end(), values.begin(),
+      [samplerate, framesize](T i) { return $$::dft::bin(i, samplerate, framesize); });
+    return values;
+  }
+
+  template<typename T>
   static inline std::vector<T> bins(const size_t framesize)
   {
     std::vector<T> values(framesize / 2 + 1);
