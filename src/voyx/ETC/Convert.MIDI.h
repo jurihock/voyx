@@ -23,7 +23,7 @@ namespace $$::midi
   {
     std::vector<T> values(freqs.size());
     std::transform(freqs.begin(), freqs.end(), values.begin(),
-      [concertpitch](voyx_t i) { return $$::midi::key(i, concertpitch); });
+      [concertpitch](T i) { return $$::midi::key(i, concertpitch); });
     return values;
   }
 
