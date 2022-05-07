@@ -63,10 +63,10 @@ namespace $$
       return;
     }
 
-    const size_t N = x.size();
-    const size_t M = static_cast<size_t>(std::round(N * factor));
+    const ptrdiff_t N = static_cast<ptrdiff_t>(x.size());
+    const ptrdiff_t M = static_cast<ptrdiff_t>(std::round(N * factor));
 
-    for (size_t m = 0; m < std::min(M, N); ++m)
+    for (ptrdiff_t m = 0; m < std::min(M, N); ++m)
     {
       const voyx_t n = m / factor;
 
@@ -110,10 +110,10 @@ namespace $$
       return;
     }
 
-    const size_t N = x.size();
-    const size_t M = static_cast<size_t>(std::round(N * factor));
+    const ptrdiff_t N = static_cast<ptrdiff_t>(x.size());
+    const ptrdiff_t M = static_cast<ptrdiff_t>(std::round(N * factor));
 
-    for (size_t m = 0; m < std::min(M, N); ++m)
+    for (ptrdiff_t m = 0; m < std::min(M, N); ++m)
     {
       const voyx_t n = m / factor;
 
