@@ -46,7 +46,7 @@ public:
       true,
       signal.data(),
       dft.data(),
-      T(1.0) / signal.size());
+      T(1) / signal.size());
   }
 
   void fft(const std::vector<std::span<T>>& signals, const std::vector<std::span<std::complex<T>>>& dfts) const
@@ -66,7 +66,7 @@ public:
       true,
       signals.front().data(),
       dfts.front().data(),
-      T(1.0) / signals.front().size());
+      T(1) / signals.front().size());
   }
 
   void ifft(const std::span<const std::complex<T>> dft, const std::span<T> signal) const
@@ -82,7 +82,7 @@ public:
       false,
       dft.data(),
       signal.data(),
-      T(1.0));
+      T(1));
   }
 
   void ifft(const std::vector<std::span<std::complex<T>>>& dfts, const std::vector<std::span<T>>& signals) const
@@ -102,7 +102,7 @@ public:
       false,
       dfts.front().data(),
       signals.front().data(),
-      T(1.0));
+      T(1));
   }
 
   std::vector<std::complex<T>> fft(const std::span<const T> signal) const
