@@ -63,39 +63,27 @@ namespace $$
       return;
     }
 
-    const ptrdiff_t N = static_cast<ptrdiff_t>(x.size());
-    const ptrdiff_t M = static_cast<ptrdiff_t>(std::round(N * factor));
+    const ptrdiff_t n = static_cast<ptrdiff_t>(x.size());
+    const ptrdiff_t m = static_cast<ptrdiff_t>(n * factor);
 
-    for (ptrdiff_t m = 0; m < std::min(M, N); ++m)
+    const T q = T(n) / T(m);
+
+    for (ptrdiff_t i = 0; i < std::min(n, m); ++i)
     {
-      const voyx_t n = m / factor;
+      T k = i * q;
 
-      const ptrdiff_t n_ = static_cast<ptrdiff_t>(n);
-      const ptrdiff_t n0 = n_ - (n < n_); // std::floor(n)
-      const ptrdiff_t n1 = n_ + (n > n_); // std::ceil(n)
+      const ptrdiff_t j = static_cast<ptrdiff_t>(std::trunc(k));
 
-      if (n0 < 0 || N <= n0)
+      k = k - j;
+
+      const bool ok = (0 <= j) && (j < n - 1);
+
+      if (!ok)
       {
         continue;
       }
 
-      if (n1 < 0 || N <= n1)
-      {
-        continue;
-      }
-
-      if (n0 == n1)
-      {
-        y[m] = x[n0];
-        continue;
-      }
-
-      const T y0 = x[n0];
-      const T y1 = x[n1];
-
-      const voyx_t i = (n - n0) / (n1 - n0);
-
-      y[m] = y0 * (1 - i) + y1 * i;
+      y[i] = k * x[j + 1] + (1 - k) * x[j];
     }
   }
 
@@ -110,39 +98,27 @@ namespace $$
       return;
     }
 
-    const ptrdiff_t N = static_cast<ptrdiff_t>(x.size());
-    const ptrdiff_t M = static_cast<ptrdiff_t>(std::round(N * factor));
+    const ptrdiff_t n = static_cast<ptrdiff_t>(x.size());
+    const ptrdiff_t m = static_cast<ptrdiff_t>(n * factor);
 
-    for (ptrdiff_t m = 0; m < std::min(M, N); ++m)
+    const T q = T(n) / T(m);
+
+    for (ptrdiff_t i = 0; i < std::min(n, m); ++i)
     {
-      const voyx_t n = m / factor;
+      T k = i * q;
 
-      const ptrdiff_t n_ = static_cast<ptrdiff_t>(n);
-      const ptrdiff_t n0 = n_ - (n < n_); // std::floor(n)
-      const ptrdiff_t n1 = n_ + (n > n_); // std::ceil(n)
+      const ptrdiff_t j = static_cast<ptrdiff_t>(std::trunc(k));
 
-      if (n0 < 0 || N <= n0)
+      k = k - j;
+
+      const bool ok = (0 <= j) && (j < n - 1);
+
+      if (!ok)
       {
         continue;
       }
 
-      if (n1 < 0 || N <= n1)
-      {
-        continue;
-      }
-
-      if (n0 == n1)
-      {
-        y[m] = x[n0];
-        continue;
-      }
-
-      const T y0 = x[n0];
-      const T y1 = x[n1];
-
-      const voyx_t i = (n - n0) / (n1 - n0);
-
-      y[m] = y0 * (1 - i) + y1 * i;
+      y[i] = k * x[j + 1] + (1 - k) * x[j];
     }
   }
 
