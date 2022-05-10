@@ -29,6 +29,7 @@ target_link_libraries(voyx
           readerwriterqueue
           rtaudio
           rtmidi
+          thread_pool
 )
 
 target_compile_features(voyx
