@@ -4,7 +4,7 @@ CPMAddPackage(
   NAME mlinterp
   VERSION 0.1.1
   GITHUB_REPOSITORY parsiad/mlinterp
-  DOWNLOAD_ONLY)
+  DOWNLOAD_ONLY YES)
 
 if(mlinterp_ADDED)
 

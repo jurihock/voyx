@@ -5,7 +5,7 @@ CPMAddPackage(
   VERSION 2021.11.23
   GIT_TAG daa8bb18327bc5c7d22c69428c25cf5dc64167d3
   GIT_REPOSITORY https://gitlab.mpcdf.mpg.de/mtr/pocketfft
-  DOWNLOAD_ONLY)
+  DOWNLOAD_ONLY YES)
 
 if(pocketfft_ADDED)
 

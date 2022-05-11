@@ -4,7 +4,7 @@ CPMAddPackage(
   NAME thread_pool
   VERSION 2.0.0
   GITHUB_REPOSITORY bshoshany/thread-pool
-  DOWNLOAD_ONLY)
+  DOWNLOAD_ONLY YES)
 
 if(thread_pool_ADDED)
 
