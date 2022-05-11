@@ -36,6 +36,7 @@ typedef float voyx_t;
 #include <sstream>
 #include <string>
 #include <thread>
+#include <type_traits>
 #include <typeinfo>
 #include <utility>
 #include <vector>

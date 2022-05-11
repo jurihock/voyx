@@ -56,70 +56,14 @@ namespace $$
   static inline void interp(const std::span<const T> x, std::span<T> y, const voyx_t factor)
   {
     assert(x.size() == y.size());
-
-    if (factor == 1)
-    {
-      y = x;
-      return;
-    }
-
-    const ptrdiff_t n = static_cast<ptrdiff_t>(x.size());
-    const ptrdiff_t m = static_cast<ptrdiff_t>(n * factor);
-
-    const T q = T(n) / T(m);
-
-    for (ptrdiff_t i = 0; i < std::min(n, m); ++i)
-    {
-      T k = i * q;
-
-      const ptrdiff_t j = static_cast<ptrdiff_t>(std::trunc(k));
-
-      k = k - j;
-
-      const bool ok = (0 <= j) && (j < n - 1);
-
-      if (!ok)
-      {
-        continue;
-      }
-
-      y[i] = k * x[j + 1] + (1 - k) * x[j];
-    }
+    $$::interp(x.size(), x.data(), y.data(), factor);
   }
 
   template<typename T>
   static inline void interp(const std::vector<T>& x, std::vector<T>& y, const voyx_t factor)
   {
     assert(x.size() == y.size());
-
-    if (factor == 1)
-    {
-      y = x;
-      return;
-    }
-
-    const ptrdiff_t n = static_cast<ptrdiff_t>(x.size());
-    const ptrdiff_t m = static_cast<ptrdiff_t>(n * factor);
-
-    const T q = T(n) / T(m);
-
-    for (ptrdiff_t i = 0; i < std::min(n, m); ++i)
-    {
-      T k = i * q;
-
-      const ptrdiff_t j = static_cast<ptrdiff_t>(std::trunc(k));
-
-      k = k - j;
-
-      const bool ok = (0 <= j) && (j < n - 1);
-
-      if (!ok)
-      {
-        continue;
-      }
-
-      y[i] = k * x[j + 1] + (1 - k) * x[j];
-    }
+    $$::interp(x.size(), x.data(), y.data(), factor);
   }
 
   template<typename T>
@@ -136,5 +80,62 @@ namespace $$
     std::vector<T> y(x.size());
     $$::interp<T>(x, y, factor);
     return y;
+  }
+
+  template<typename T>
+  struct valuetype { typedef T type; };
+
+  template<typename T>
+  struct valuetype<std::complex<T>> { typedef T type; };
+
+  template<typename T>
+  static inline void interp(const size_t size, const T* x, T* const y, const voyx_t factor)
+  {
+    using V = typename $$::valuetype<T>::type;
+
+    const ptrdiff_t n = static_cast<ptrdiff_t>(size);
+    const ptrdiff_t m = static_cast<ptrdiff_t>(n * factor);
+
+    const V q = V(n) / V(m);
+
+    const auto interp = [&](const ptrdiff_t i)
+    {
+      V k = i * q;
+
+      const ptrdiff_t j = static_cast<ptrdiff_t>(std::trunc(k));
+
+      k = k - j;
+
+      const bool ok = (0 <= j) && (j < n - 1);
+
+      if (!ok)
+      {
+        return;
+      }
+
+      y[i] = k * x[j + 1] + (1 - k) * x[j];
+    };
+
+    if (factor < 1)
+    {
+      for (ptrdiff_t i = 0; i < std::min(n, m); ++i)
+      {
+        interp(i);
+      }
+    }
+    else if (factor > 1)
+    {
+      for (ptrdiff_t i = std::min(n, m) - 1; i >= 0; --i)
+      {
+        interp(i);
+      }
+    }
+    else if (y != x)
+    {
+      for (size_t i = 0; i < size; ++i)
+      {
+        y[i] = x[i];
+      }
+    }
   }
 }
