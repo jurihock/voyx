@@ -5,7 +5,7 @@
 #include <voyx/Header.h>
 #include <voyx/UI/Plot.h>
 
-#include <qcustomplot/qcustomplot.h>
+#include <qcustomplot.h>
 
 #include <QApplication>
 #include <QColor>
