@@ -2,7 +2,7 @@
 
 #include <voyx/Header.h>
 
-#include <readerwriterqueue/readerwriterqueue.h>
+#include <readerwriterqueue.h>
 
 template<typename T>
 class FIFO
