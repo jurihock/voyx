@@ -18,7 +18,7 @@
 #include <voyx/UI/Plot.h>
 #include <voyx/UI/QPlot.h>
 
-#include <cxxopts/cxxopts.hpp>
+#include <cxxopts.hpp>
 
 INITIALIZE_EASYLOGGINGPP
 
