@@ -47,7 +47,6 @@ void VoiceSynthPipeline::operator()(const size_t index,
 
   std::vector<std::complex<voyx_t>> buffer(factors.size() * dfts.front().size());
   std::matrix<std::complex<voyx_t>> buffers(factors.size());
-  std::vector<size_t> mask(dfts.front().size());
 
   for (size_t i = 0; i < factors.size(); ++i)
   {
@@ -63,29 +62,15 @@ void VoiceSynthPipeline::operator()(const size_t index,
       $$::interp($$::constspan(dft), buffers[i], factors[i]);
     }
 
-    for (size_t i = 0; i < dfts.front().size(); ++i)
-    {
-      voyx_t value = buffers[0][i].real();
-      size_t index = 0;
-
-      for (size_t j = 1; j < factors.size(); ++j)
-      {
-        if (buffers[j][i].real() > value)
-        {
-          value = buffers[j][i].real();
-          index = j;
-        }
-      }
-
-      mask[i] = index;
-    }
+    const auto mask = $$::argmax<$$::real>(buffers);
 
     for (size_t i = 0; i < dft.size(); ++i)
     {
       const size_t j = mask[i];
 
-      dft[i].real(buffers[j][i].real());
-      dft[i].imag(buffers[j][i].imag() * factors[j]);
+      dft[i] = buffers[j][i];
+
+      dft[i].imag(dft[i].imag() * factors[j]);
     }
   }
 
