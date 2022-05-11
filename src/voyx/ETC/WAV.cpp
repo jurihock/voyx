@@ -2,7 +2,7 @@
 
 #include <voyx/Source.h>
 
-#include <dr_libs/dr_wav.h>
+#include <dr_wav.h>
 
 void WAV::read(const std::string& path, std::vector<double>& data, const voyx_t samplerate)
 {
