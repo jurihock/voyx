@@ -10,6 +10,7 @@
 #include <QApplication>
 #include <QColor>
 #include <QGridLayout>
+#include <QKeyEvent>
 #include <QPen>
 #include <QWidget>
 

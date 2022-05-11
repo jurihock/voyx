@@ -11,11 +11,30 @@ namespace args
   int argc = sizeof(argv) / sizeof(char*) - 1;
 }
 
+class QCloseOnEscapeWidget : public QWidget
+{
+
+protected:
+
+  void keyPressEvent(QKeyEvent* event)
+  {
+    if (event->key() == Qt::Key_Escape)
+    {
+      close();
+    }
+    else
+    {
+      QWidget::keyPressEvent(event);
+    }
+  }
+
+};
+
 QPlot::QPlot(const std::chrono::duration<double> delay) :
   delay(delay)
 {
   application = std::make_shared<QApplication>(args::argc, args::argv);
-  widget = std::make_shared<QWidget>();
+  widget = std::make_shared<QCloseOnEscapeWidget>();
 
   layout = std::make_shared<QGridLayout>();
   widget->setLayout(layout.get());
