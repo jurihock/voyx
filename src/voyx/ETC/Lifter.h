@@ -17,28 +17,28 @@ public:
   {
   }
 
-  std::vector<T> real(const std::span<const T> dft)
+  std::vector<T> real(const std::constspan<T> dft)
   {
     std::vector<T> envelope(dft.size());
     real(dft, envelope);
     return envelope;
   }
 
-  std::vector<T> real(const std::span<const std::complex<T>> dft)
+  std::vector<T> real(const std::constspan<std::complex<T>> dft)
   {
     std::vector<T> envelope(dft.size());
     real(dft, envelope);
     return envelope;
   }
 
-  std::vector<T> abs(const std::span<const std::complex<T>> dft)
+  std::vector<T> abs(const std::constspan<std::complex<T>> dft)
   {
     std::vector<T> envelope(dft.size());
     abs(dft, envelope);
     return envelope;
   }
 
-  void real(const std::span<const T> dft, std::span<T> envelope)
+  void real(const std::constspan<T> dft, std::span<T> envelope)
   {
     assert(dft.size() == envelope.size());
 
@@ -57,7 +57,7 @@ public:
     }
   }
 
-  void real(const std::span<const std::complex<T>> dft, std::span<T> envelope)
+  void real(const std::constspan<std::complex<T>> dft, std::span<T> envelope)
   {
     assert(dft.size() == envelope.size());
 
@@ -76,7 +76,7 @@ public:
     }
   }
 
-  void abs(const std::span<const std::complex<T>> dft, std::span<T> envelope)
+  void abs(const std::constspan<std::complex<T>> dft, std::span<T> envelope)
   {
     assert(dft.size() == envelope.size());
 

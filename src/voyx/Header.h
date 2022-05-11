@@ -1,13 +1,6 @@
 #pragma once
 
 /**
- * Common data type definition,
- * e.g. float or double.
- * */
-
-typedef float voyx_t;
-
-/**
  * This file provides a set of common std modules
  * and is to be included in .h project files.
  */
@@ -41,3 +34,19 @@ typedef float voyx_t;
 #include <typeinfo>
 #include <utility>
 #include <vector>
+
+/**
+ * Following by custom std namespace hacks.
+ * */
+namespace std
+{
+  template <typename T>
+  using constspan = span<const T>;
+}
+
+/**
+ * And finally common data type definition,
+ * e.g. float or double.
+ * */
+
+typedef float voyx_t;

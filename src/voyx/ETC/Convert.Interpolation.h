@@ -7,7 +7,7 @@
 namespace $$
 {
   template<typename T>
-  static inline void interp(const std::span<const T> x1, std::span<T> y1, const std::span<const T> x0, const std::span<const T> y0)
+  static inline void interp(const std::constspan<T> x1, std::span<T> y1, const std::constspan<T> x0, const std::constspan<T> y0)
   {
     assert(x0.size() == y0.size());
     assert(x1.size() == y1.size());
@@ -37,7 +37,7 @@ namespace $$
   }
 
   template<typename T>
-  static inline std::vector<T> interp(const std::span<const T> x1, const std::span<const T> x0, const std::span<const T> y0)
+  static inline std::vector<T> interp(const std::constspan<T> x1, const std::constspan<T> x0, const std::constspan<T> y0)
   {
     std::vector<T> y1(x1.size());
     $$::interp<T>(x1, y1, x0, y0);
@@ -53,45 +53,9 @@ namespace $$
   }
 
   template<typename T>
-  static inline void interp(const std::span<const T> x, std::span<T> y, const voyx_t factor)
-  {
-    assert(x.size() == y.size());
-    $$::interp(x.size(), x.data(), y.data(), factor);
-  }
-
-  template<typename T>
-  static inline void interp(const std::vector<T>& x, std::vector<T>& y, const voyx_t factor)
-  {
-    assert(x.size() == y.size());
-    $$::interp(x.size(), x.data(), y.data(), factor);
-  }
-
-  template<typename T>
-  static inline std::vector<T> interp(const std::span<const T> x, const voyx_t factor)
-  {
-    std::vector<T> y(x.size());
-    $$::interp<T>(x, y, factor);
-    return y;
-  }
-
-  template<typename T>
-  static inline std::vector<T> interp(const std::vector<T>& x, const voyx_t factor)
-  {
-    std::vector<T> y(x.size());
-    $$::interp<T>(x, y, factor);
-    return y;
-  }
-
-  template<typename T>
-  struct valuetype { typedef T type; };
-
-  template<typename T>
-  struct valuetype<std::complex<T>> { typedef T type; };
-
-  template<typename T>
   static inline void interp(const size_t size, const T* x, T* const y, const voyx_t factor)
   {
-    using V = typename $$::valuetype<T>::type;
+    using V = typename $$::typeofvalue<T>::type;
 
     const ptrdiff_t n = static_cast<ptrdiff_t>(size);
     const ptrdiff_t m = static_cast<ptrdiff_t>(n * factor);
@@ -137,5 +101,35 @@ namespace $$
         y[i] = x[i];
       }
     }
+  }
+
+  template<typename T>
+  static inline void interp(const std::constspan<T> x, std::span<T> y, const voyx_t factor)
+  {
+    assert(x.size() == y.size());
+    $$::interp(x.size(), x.data(), y.data(), factor);
+  }
+
+  template<typename T>
+  static inline void interp(const std::vector<T>& x, std::vector<T>& y, const voyx_t factor)
+  {
+    assert(x.size() == y.size());
+    $$::interp(x.size(), x.data(), y.data(), factor);
+  }
+
+  template<typename T>
+  static inline std::vector<T> interp(const std::constspan<T> x, const voyx_t factor)
+  {
+    std::vector<T> y(x.size());
+    $$::interp<T>(x, y, factor);
+    return y;
+  }
+
+  template<typename T>
+  static inline std::vector<T> interp(const std::vector<T>& x, const voyx_t factor)
+  {
+    std::vector<T> y(x.size());
+    $$::interp<T>(x, y, factor);
+    return y;
   }
 }

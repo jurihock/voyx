@@ -33,7 +33,7 @@ public:
     return size / 2 + 1;
   }
 
-  void fft(const std::span<const T> signal, const std::span<std::complex<T>> dft) const
+  void fft(const std::constspan<T> signal, const std::span<std::complex<T>> dft) const
   {
     assert(signal.size() == tdsize());
     assert(dft.size() == fdsize());
@@ -69,7 +69,7 @@ public:
       T(1) / signals.front().size());
   }
 
-  void ifft(const std::span<const std::complex<T>> dft, const std::span<T> signal) const
+  void ifft(const std::constspan<std::complex<T>> dft, const std::span<T> signal) const
   {
     assert(signal.size() == tdsize());
     assert(dft.size() == fdsize());
@@ -105,7 +105,7 @@ public:
       T(1));
   }
 
-  std::vector<std::complex<T>> fft(const std::span<const T> signal) const
+  std::vector<std::complex<T>> fft(const std::constspan<T> signal) const
   {
     assert(signal.size() == tdsize());
 
@@ -114,7 +114,7 @@ public:
     return fft(signal, window);
   }
 
-  std::vector<std::complex<T>> fft(const std::span<const T> signal, const std::span<const T> window) const
+  std::vector<std::complex<T>> fft(const std::constspan<T> signal, const std::constspan<T> window) const
   {
     assert(signal.size() == tdsize());
     assert(window.size() == tdsize());
@@ -132,7 +132,7 @@ public:
     return dft;
   }
 
-  std::vector<T> ifft(const std::span<const std::complex<T>> dft) const
+  std::vector<T> ifft(const std::constspan<std::complex<T>> dft) const
   {
     assert(dft.size() == fdsize());
 

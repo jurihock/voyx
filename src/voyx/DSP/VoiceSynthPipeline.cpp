@@ -59,8 +59,7 @@ void VoiceSynthPipeline::operator()(const size_t index, const std::vector<voyx_t
   {
     for (size_t i = 0; i < factors.size(); ++i)
     {
-      // FIXME $$::interp(dft, buffers[i], factors[i]);
-      $$::interp(dft.size(), dft.data(), buffers[i].data(), factors[i]);
+      $$::interp($$::constspan(dft), buffers[i], factors[i]);
     }
 
     for (size_t i = 0; i < dfts.front().size(); ++i)
