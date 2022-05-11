@@ -29,7 +29,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/lib/qt/CMakeLists.txt")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/readerwriterqueue/CMakeLists.txt")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/rtaudio/CMakeLists.txt")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/rtmidi/CMakeLists.txt")
-include("${CMAKE_CURRENT_LIST_DIR}/lib/thread_pool/CMakeLists.txt")
+include("${CMAKE_CURRENT_LIST_DIR}/lib/thread_pool.cmake")
 
 include("${CMAKE_CURRENT_LIST_DIR}/src/voyx/CMakeLists.txt")
 
