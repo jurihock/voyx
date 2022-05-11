@@ -15,7 +15,8 @@ public:
                      std::shared_ptr<Source<voyx_t>> source, std::shared_ptr<Sink<voyx_t>> sink,
                      std::shared_ptr<MidiObserver> midi, std::shared_ptr<Plot> plot);
 
-  void operator()(const size_t index, const std::vector<voyx_t>& signal,
+  void operator()(const size_t index,
+                  const std::vector<voyx_t>& signal,
                   const std::matrix<std::complex<voyx_t>>& dfts) override;
 
 private:

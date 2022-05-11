@@ -22,7 +22,8 @@ VoiceSynthPipeline::VoiceSynthPipeline(const voyx_t samplerate, const size_t fra
   }
 }
 
-void VoiceSynthPipeline::operator()(const size_t index, const std::vector<voyx_t>& signal,
+void VoiceSynthPipeline::operator()(const size_t index,
+                                    const std::vector<voyx_t>& signal,
                                     const std::matrix<std::complex<voyx_t>>& dfts)
 {
   if (plot != nullptr)
@@ -64,15 +65,15 @@ void VoiceSynthPipeline::operator()(const size_t index, const std::vector<voyx_t
 
     for (size_t i = 0; i < dfts.front().size(); ++i)
     {
-      size_t index = 0;
       voyx_t value = buffers[0][i].real();
+      size_t index = 0;
 
       for (size_t j = 1; j < factors.size(); ++j)
       {
         if (buffers[j][i].real() > value)
         {
-          index = j;
           value = buffers[j][i].real();
+          index = j;
         }
       }
 
