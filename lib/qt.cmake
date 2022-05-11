@@ -1,3 +1,14 @@
+option(UI "Enable Qt5 based user interface" ON)
+
+find_package(Qt5 COMPONENTS Core QUIET)
+
+if (UI AND NOT Qt5_FOUND)
+
+  message(WARNING "Continuing without user interface!")
+  set(UI OFF CACHE BOOL "" FORCE)
+
+endif()
+
 if (UI)
 
   set(CMAKE_AUTOMOC ON)
