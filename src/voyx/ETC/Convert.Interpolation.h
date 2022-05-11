@@ -2,7 +2,7 @@
 
 #include <voyx/Header.h>
 
-#include <mlinterp/mlinterp.hpp>
+#include <mlinterp.hpp>
 
 namespace $$
 {
