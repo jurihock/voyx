@@ -1,6 +1,7 @@
 // TODO object factory
 #include <voyx/DSP/TestPipeline.h>
 #include <voyx/DSP/InverseSynthPipeline.h>
+#include <voyx/DSP/VoiceSynthPipeline.h>
 #include <voyx/DSP/BypassPipeline.h>
 #include <voyx/IO/AudioSource.h>
 #include <voyx/IO/AudioSink.h>
@@ -148,7 +149,8 @@ int main(int argc, char** argv)
 
   // auto pipe = std::make_shared<BypassPipeline>(source, sink);
   // auto pipe = std::make_shared<TestPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
-  auto pipe = std::make_shared<InverseSynthPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
+  // auto pipe = std::make_shared<InverseSynthPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
+  auto pipe = std::make_shared<VoiceSynthPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
 
   pipe->open();
 
