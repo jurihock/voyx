@@ -150,7 +150,7 @@ void StftPipeline::operator()(const size_t index, const std::vector<voyx_t>& inp
   }
 }
 
-void StftPipeline::reject(const std::vector<size_t>& hops, const std::vector<voyx_t>& input, const std::vector<std::span<voyx_t>>& frames, const std::vector<voyx_t>& window)
+void StftPipeline::reject(const std::vector<size_t>& hops, const std::vector<voyx_t>& input, const std::matrix<voyx_t>& frames, const std::vector<voyx_t>& window)
 {
   for (size_t i = 0; i < hops.size(); ++i)
   {
@@ -161,7 +161,7 @@ void StftPipeline::reject(const std::vector<size_t>& hops, const std::vector<voy
   }
 }
 
-void StftPipeline::inject(const std::vector<size_t>& hops, std::vector<voyx_t>& output, const std::vector<std::span<voyx_t>>& frames, const std::vector<voyx_t>& window)
+void StftPipeline::inject(const std::vector<size_t>& hops, std::vector<voyx_t>& output, const std::matrix<voyx_t>& frames, const std::vector<voyx_t>& window)
 {
   for (size_t i = 0; i < hops.size(); ++i)
   {

@@ -49,7 +49,7 @@ public:
       T(1) / signal.size());
   }
 
-  void fft(const std::vector<std::span<T>>& signals, const std::vector<std::span<std::complex<T>>>& dfts) const
+  void fft(const std::matrix<T>& signals, const std::matrix<std::complex<T>>& dfts) const
   {
     assert(signals.size() == dfts.size());
     assert(signals.front().size() == tdsize());
@@ -85,7 +85,7 @@ public:
       T(1));
   }
 
-  void ifft(const std::vector<std::span<std::complex<T>>>& dfts, const std::vector<std::span<T>>& signals) const
+  void ifft(const std::matrix<std::complex<T>>& dfts, const std::matrix<T>& signals) const
   {
     assert(signals.size() == dfts.size());
     assert(signals.front().size() == tdsize());

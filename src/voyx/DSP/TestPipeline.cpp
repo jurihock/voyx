@@ -18,7 +18,7 @@ TestPipeline::TestPipeline(const voyx_t samplerate, const size_t framesize, cons
 }
 
 void TestPipeline::operator()(const size_t index, const std::vector<voyx_t>& signal,
-                              const std::vector<std::span<std::complex<voyx_t>>>& dfts)
+                              const std::matrix<std::complex<voyx_t>>& dfts)
 {
   if (plot != nullptr)
   {

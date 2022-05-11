@@ -28,7 +28,7 @@ protected:
 
   void warmup() override;
 
-  virtual void operator()(const size_t index, const std::vector<voyx_t>& signal, const std::vector<std::span<std::complex<voyx_t>>>& dfts) = 0;
+  virtual void operator()(const size_t index, const std::vector<voyx_t>& signal, const std::matrix<std::complex<voyx_t>>& dfts) = 0;
 
 private:
 
@@ -46,8 +46,8 @@ private:
 
     struct
     {
-      std::vector<std::span<voyx_t>> frames;
-      std::vector<std::span<std::complex<voyx_t>>> dfts;
+      std::matrix<voyx_t> frames;
+      std::matrix<std::complex<voyx_t>> dfts;
     }
     views;
   }
@@ -60,7 +60,7 @@ private:
   }
   windows;
 
-  static void reject(const std::vector<size_t>& hops, const std::vector<voyx_t>& input, const std::vector<std::span<voyx_t>>& frames, const std::vector<voyx_t>& window);
-  static void inject(const std::vector<size_t>& hops, std::vector<voyx_t>& output, const std::vector<std::span<voyx_t>>& frames, const std::vector<voyx_t>& window);
+  static void reject(const std::vector<size_t>& hops, const std::vector<voyx_t>& input, const std::matrix<voyx_t>& frames, const std::vector<voyx_t>& window);
+  static void inject(const std::vector<size_t>& hops, std::vector<voyx_t>& output, const std::matrix<voyx_t>& frames, const std::vector<voyx_t>& window);
 
 };

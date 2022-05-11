@@ -16,7 +16,7 @@ public:
     decode_phase_buffer.resize(framesize / 2 + 1);
   }
 
-  void encode(const std::vector<std::span<std::complex<T>>>& dfts)
+  void encode(const std::matrix<std::complex<T>>& dfts)
   {
     for (auto dft : dfts)
     {
@@ -24,7 +24,7 @@ public:
     }
   }
 
-  void decode(const std::vector<std::span<std::complex<T>>>& dfts)
+  void decode(const std::matrix<std::complex<T>>& dfts)
   {
     for (auto dft : dfts)
     {

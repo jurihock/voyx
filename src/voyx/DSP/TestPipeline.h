@@ -15,7 +15,7 @@ public:
                std::shared_ptr<MidiObserver> midi, std::shared_ptr<Plot> plot);
 
   void operator()(const size_t index, const std::vector<voyx_t>& signal,
-                  const std::vector<std::span<std::complex<voyx_t>>>& dfts) override;
+                  const std::matrix<std::complex<voyx_t>>& dfts) override;
 
 private:
 

@@ -36,10 +36,13 @@
 #include <vector>
 
 /**
- * Following by custom std namespace hacks.
+ * Following by minimal std namespace hacks.
  * */
 namespace std
 {
+  template<typename T>
+  using matrix = std::vector<std::span<T>>;
+
   template <typename T>
   using constspan = span<const T>;
 }
