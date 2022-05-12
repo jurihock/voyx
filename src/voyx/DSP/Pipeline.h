@@ -8,8 +8,7 @@
 #include <voyx/IO/AudioSource.h>
 #include <voyx/IO/AudioSink.h>
 
-// TODO run time measurements and logging
-#include <voyx/Source.h>
+#include <voyx/ETC/Logger.h>
 #include <voyx/ETC/Timer.h>
 
 template<typename T = voyx_t>
@@ -87,8 +86,6 @@ public:
 
   void stop()
   {
-    const bool log = doloop;
-
     doloop = false;
 
     if (thread != nullptr)
@@ -103,17 +100,6 @@ public:
 
     source->stop();
     sink->stop();
-
-    if (log)
-    {
-      LOG(INFO)
-        << "Timing: "
-        << "inner " << timers.inner.str() << ", "
-        << "outer " << timers.outer.str();
-
-      timers.inner.cls();
-      timers.outer.cls();
-    }
   }
 
   virtual void operator()(const size_t index, const std::vector<T>& input, std::vector<T>& output) = 0;
@@ -127,18 +113,18 @@ protected:
 
 private:
 
-  struct
-  {
-    Timer<std::chrono::milliseconds> inner;
-    Timer<std::chrono::milliseconds> outer;
-  }
-  timers;
-
   std::shared_ptr<std::thread> thread;
   bool doloop = false;
 
   void loop(const size_t frames)
   {
+    struct
+    {
+      Timer<std::chrono::milliseconds> inner;
+      Timer<std::chrono::milliseconds> outer;
+    }
+    timers;
+
     std::vector<T> output(sink->framesize());
 
     size_t index = 0;
@@ -166,6 +152,14 @@ private:
 
         index += ok ? 1 : 0;
       }
+
+      LOG(INFO)
+        << "Timing: \t"
+        << "inner " << timers.inner.str() << "\t"
+        << "outer " << timers.outer.str();
+
+      timers.inner.cls();
+      timers.outer.cls();
     }
     else
     {
@@ -173,8 +167,33 @@ private:
         (std::dynamic_pointer_cast<AudioSource>(source) == nullptr) &&
         (std::dynamic_pointer_cast<AudioSink>(sink) != nullptr);
 
+      auto millis = [](const std::chrono::steady_clock::duration& duration)
+      {
+        return std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+      };
+
+      auto now = []()
+      {
+        return std::chrono::steady_clock::now();
+      };
+
+      auto timestamp = now();
+
       while(doloop)
       {
+        if (millis(now() - timestamp) > 5000)
+        {
+          LOG(INFO)
+            << "Timing: \t"
+            << "inner " << timers.inner.str() << "\t"
+            << "outer " << timers.outer.str();
+
+          timers.inner.cls();
+          timers.outer.cls();
+
+          timestamp = now();
+        }
+
         const bool ok = source->read(index, [&](const std::vector<T>& input)
         {
           timers.outer.toc();

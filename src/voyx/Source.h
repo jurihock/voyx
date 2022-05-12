@@ -7,5 +7,4 @@
 
 #include <voyx/ETC/Convert.h>
 #include <voyx/ETC/Format.h>
-
-#include <easylogging++.h>
+#include <voyx/ETC/Logger.h>
