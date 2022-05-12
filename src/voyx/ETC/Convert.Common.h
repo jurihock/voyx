@@ -10,14 +10,11 @@ namespace $$
 
 namespace $$
 {
-  struct asis
+  struct real
   {
     template<typename T>
     T operator()(const T value) const { return value; };
-  };
 
-  struct real
-  {
     template<typename T>
     T operator()(const std::complex<T>& value) const { return value.real(); };
   };
