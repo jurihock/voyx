@@ -2,7 +2,7 @@
 
 #include <voyx/Header.h>
 
-#include <rtmidi/RtMidi.h>
+#include <RtMidi.h>
 
 class MidiObserver
 {

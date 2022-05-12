@@ -2,7 +2,7 @@
 
 #include <voyx/Source.h>
 
-#include <rtmidi/RtMidi.h>
+#include <RtMidi.h>
 
 std::string MidiProbe::operator()()
 {
