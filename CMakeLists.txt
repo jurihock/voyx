@@ -15,7 +15,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/lib/cpm.cmake")
 
 include("${CMAKE_CURRENT_LIST_DIR}/lib/cxxopts.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/dr_libs.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/lib/easyloggingpp/CMakeLists.txt")
+include("${CMAKE_CURRENT_LIST_DIR}/lib/easyloggingpp.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/fmt.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/mlinterp.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/pocketfft.cmake")
