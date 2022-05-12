@@ -16,16 +16,14 @@ if (UI)
   find_package(Qt5 REQUIRED COMPONENTS
     Core
     PrintSupport
-    Widgets
-  )
+    Widgets)
 
   add_library(qt INTERFACE)
 
   target_link_libraries(qt
     INTERFACE Qt5::Core
               Qt5::PrintSupport
-              Qt5::Widgets
-  )
+              Qt5::Widgets)
 
 else()
 

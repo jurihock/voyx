@@ -25,7 +25,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/lib/rtaudio.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/rtmidi.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/thread_pool.cmake")
 
-include("${CMAKE_CURRENT_LIST_DIR}/src/voyx/CMakeLists.txt")
+include("${CMAKE_CURRENT_LIST_DIR}/src/voyx/voyx.cmake")
 
 set(FOLDERS "lib;src")
 

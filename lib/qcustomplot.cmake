@@ -14,16 +14,13 @@ if (UI)
 
     target_sources(qcustomplot
       PUBLIC "${qcustomplot_SOURCE_DIR}/qcustomplot.h"
-             "${qcustomplot_SOURCE_DIR}/qcustomplot.cpp"
-    )
+             "${qcustomplot_SOURCE_DIR}/qcustomplot.cpp")
 
     target_include_directories(qcustomplot
-      PUBLIC  "${qcustomplot_SOURCE_DIR}"
-    )
+      PUBLIC  "${qcustomplot_SOURCE_DIR}")
 
     target_link_libraries(qcustomplot
-      PUBLIC qt
-    )
+      PUBLIC qt)
 
   endif()
 
@@ -40,7 +37,6 @@ endif()
 if (UI AND UNIX)
 
   target_compile_options(qcustomplot
-    PUBLIC -Wno-deprecated-declarations
-  )
+    PUBLIC -Wno-deprecated-declarations)
 
 endif()

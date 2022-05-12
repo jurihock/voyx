@@ -15,12 +15,10 @@ if(pocketfft_ADDED)
     INTERFACE "${pocketfft_SOURCE_DIR}")
 
   target_compile_definitions(pocketfft
-    INTERFACE -DPOCKETFFT_NO_MULTITHREADING
-  )
+    INTERFACE -DPOCKETFFT_NO_MULTITHREADING)
 
   target_compile_definitions(pocketfft
-    INTERFACE -DPOCKETFFT_CACHE_SIZE=10
-  )
+    INTERFACE -DPOCKETFFT_CACHE_SIZE=10)
 
   if (UNIX)
     target_link_libraries(pocketfft
