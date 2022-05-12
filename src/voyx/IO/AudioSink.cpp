@@ -171,6 +171,14 @@ bool AudioSink::write(const size_t index, const std::vector<voyx_t>& frame)
   return ok;
 }
 
+bool AudioSink::sync()
+{
+  std::unique_lock sync_lock(sync_mutex);
+  std::cv_status sync_status = sync_variable.wait_for(sync_lock, timeout());
+
+  return sync_status != std::cv_status::timeout;
+}
+
 int AudioSink::callback(void* output_frame_data, void* input_frame_data, uint32_t framesize, double timestamp, RtAudioStreamStatus status, void* $this)
 {
   auto& audio_frame_buffer = static_cast<AudioSink*>($this)->audio_frame_buffer;
@@ -197,6 +205,8 @@ int AudioSink::callback(void* output_frame_data, void* input_frame_data, uint32_
   {
     LOG(WARNING) << $("Audio sink stream status {0}!", status);
   }
+
+  static_cast<AudioSink*>($this)->sync_variable.notify_all();
 
   return 0;
 }

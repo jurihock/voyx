@@ -206,12 +206,12 @@ private:
 
         if (ok)
         {
-          if (sync && (index & 1))
-          {
-            std::this_thread::sleep_for(sink->timeout());
-          }
-
           sink->write(index, output);
+
+          if (sync)
+          {
+            sink->sync();
+          }
         }
 
         index += ok ? 1 : 0;

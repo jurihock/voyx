@@ -30,6 +30,7 @@ public:
   virtual void stop() {};
 
   virtual bool write(const size_t index, const std::vector<T>& frame) = 0;
+  virtual bool sync() { return true; }
 
 private:
 
