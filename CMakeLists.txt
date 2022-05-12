@@ -21,7 +21,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/lib/mlinterp.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/pocketfft.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/qcustomplot.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/readerwriterqueue.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/lib/rtaudio/CMakeLists.txt")
+include("${CMAKE_CURRENT_LIST_DIR}/lib/rtaudio.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/rtmidi/CMakeLists.txt")
 include("${CMAKE_CURRENT_LIST_DIR}/lib/thread_pool.cmake")
 

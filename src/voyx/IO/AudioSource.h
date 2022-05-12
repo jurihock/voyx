@@ -4,7 +4,7 @@
 #include <voyx/ETC/FIFO.h>
 #include <voyx/IO/Source.h>
 
-#include <rtaudio/RtAudio.h>
+#include <RtAudio.h>
 
 class AudioSource : public Source<voyx_t>
 {

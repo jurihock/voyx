@@ -2,7 +2,7 @@
 
 #include <voyx/Source.h>
 
-#include <rtaudio/RtAudio.h>
+#include <RtAudio.h>
 
 std::string AudioProbe::operator()()
 {

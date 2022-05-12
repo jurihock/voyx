@@ -4,7 +4,7 @@
 #include <voyx/ETC/FIFO.h>
 #include <voyx/IO/Sink.h>
 
-#include <rtaudio/RtAudio.h>
+#include <RtAudio.h>
 
 class AudioSink : public Sink<voyx_t>
 {
