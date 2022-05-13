@@ -148,9 +148,9 @@ int main(int argc, char** argv)
   #endif
 
   // auto pipe = std::make_shared<BypassPipeline>(source, sink);
-  // auto pipe = std::make_shared<TestPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
+  auto pipe = std::make_shared<TestPipeline>(samplerate, framesize, 2048, source, sink, observer, plot);
   // auto pipe = std::make_shared<InverseSynthPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
-  auto pipe = std::make_shared<VoiceSynthPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
+  // auto pipe = std::make_shared<VoiceSynthPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
 
   pipe->open();
 
