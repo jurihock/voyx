@@ -78,30 +78,6 @@ StftPipeline::StftPipeline(const voyx_t samplerate, const size_t framesize, cons
     [unitygain](voyx_t value) { return value * unitygain; });
 }
 
-void StftPipeline::warmup()
-{
-  if (parallelize)
-  {
-    const size_t frames = 60 * sink->samplerate() / sink->framesize();
-
-    LOG(INFO) << "Begin warmup (" << frames << " frames)";
-
-    Timer<std::chrono::seconds> timer;
-
-    std::vector<voyx_t> input(framesize);
-    std::vector<voyx_t> output(framesize);
-
-    timer.tic();
-    for (size_t index = 0; index < frames; ++index)
-    {
-      (*this)(index, input, output);
-    }
-    timer.toc();
-
-    LOG(INFO) << "Finish warmup (" << timer.str() << ")";
-  }
-}
-
 void StftPipeline::operator()(const size_t index, const std::vector<voyx_t>& input, std::vector<voyx_t>& output)
 {
   for (size_t i = 0; i < framesize; ++i)
@@ -115,34 +91,13 @@ void StftPipeline::operator()(const size_t index, const std::vector<voyx_t>& inp
     data.output[j] = 0;
   }
 
-  if (parallelize)
-  {
-    reject(hops, data.input, data.views.frames, windows.analysis);
+  reject(hops, data.input, data.views.frames, windows.analysis);
+  fft.fft(data.views.frames, data.views.dfts);
 
-    #pragma omp parallel for
-    for (size_t i = 0; i < hops.size(); ++i)
-    {
-      fft.fft(data.views.frames[i], data.views.dfts[i]);
-    }
+  (*this)(index, data.input, data.views.dfts);
 
-    (*this)(index, data.input, data.views.dfts);
-
-    #pragma omp parallel for
-    for (size_t i = 0; i < hops.size(); ++i)
-    {
-      fft.ifft(data.views.dfts[i], data.views.frames[i]);
-    }
-
-    inject(hops, data.output, data.views.frames, windows.synthesis);
-  }
-  else
-  {
-    reject(hops, data.input, data.views.frames, windows.analysis);
-    fft.fft(data.views.frames, data.views.dfts);
-    (*this)(index, data.input, data.views.dfts);
-    fft.ifft(data.views.dfts, data.views.frames);
-    inject(hops, data.output, data.views.frames, windows.synthesis);
-  }
+  fft.ifft(data.views.dfts, data.views.frames);
+  inject(hops, data.output, data.views.frames, windows.synthesis);
 
   for (size_t i = 0; i < framesize; ++i)
   {

@@ -20,14 +20,6 @@ protected:
   const size_t framesize;
   const size_t hopsize;
 
-  #ifdef _OPENMP
-  const bool parallelize = false; // temporary disabled to prevent warmup
-  #else
-  const bool parallelize = false;
-  #endif
-
-  void warmup() override;
-
   virtual void operator()(const size_t index, const std::vector<voyx_t>& signal, const std::matrix<std::complex<voyx_t>>& dfts) = 0;
 
 private:
