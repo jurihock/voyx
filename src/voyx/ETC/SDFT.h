@@ -11,23 +11,13 @@ public:
   SDFT(const size_t size) :
     size(size)
   {
-    twiddles.forward.resize(size);
+    twiddles.resize(size);
     {
       const T pi = T(2) * std::acos(T(-1)) / size;
 
       for (size_t i = 0; i < size; ++i)
       {
-        twiddles.forward[i] = std::polar(T(1), pi * i);
-      }
-    }
-
-    twiddles.backward.resize(size);
-    {
-      const T pi = T(1) * std::acos(T(-1));
-
-      for (size_t i = 0; i < size; ++i)
-      {
-        twiddles.backward[i] = std::polar(T(1), pi * i);
+        twiddles[i] = std::polar(T(1), pi * i);
       }
     }
 
@@ -46,7 +36,7 @@ public:
 
     for (size_t i = 0; i < size; ++i)
     {
-      buffer.output[i] = twiddles.forward[i] * (buffer.output[i] + sample - bias);
+      buffer.output[i] = twiddles[i] * (buffer.output[i] + sample - bias);
     }
 
     dft[0] = window(buffer.output[size - 1],
@@ -95,7 +85,7 @@ public:
 
     for (size_t i = 0; i < size; ++i)
     {
-      sample += (dft[i] * twiddles.backward[i]).real();
+      sample += dft[i].real() * (i % 2 ? -1 : +1);
     }
 
     return sample;
@@ -115,12 +105,7 @@ private:
 
   const size_t size;
 
-  struct
-  {
-    std::vector<std::complex<T>> forward;
-    std::vector<std::complex<T>> backward;
-  }
-  twiddles;
+  std::vector<std::complex<T>> twiddles;
 
   struct
   {
