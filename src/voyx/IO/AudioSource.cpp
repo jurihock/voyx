@@ -12,8 +12,6 @@ AudioSource::AudioSource(const std::string& name, voyx_t samplerate, size_t fram
       auto input = new InputFrame();
       input->index = index;
       input->frame.resize(framesize);
-      input->timestamp = 0;
-      input->status = 0;
       return input;
     },
     [](InputFrame* input)

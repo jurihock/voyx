@@ -27,8 +27,6 @@ private:
   {
     size_t index;
     std::vector<voyx_t> frame;
-    double timestamp;
-    RtAudioStreamStatus status;
   };
 
   const std::string audio_device_name;
