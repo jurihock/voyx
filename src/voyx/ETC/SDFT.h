@@ -9,51 +9,71 @@ class SDFT
 public:
 
   SDFT(const size_t size) :
-    size(size),
-    twiddles(size),
-    sdft_input_buffer(size),
-    sdft_output_buffer(size),
-    sdft_input_cursor(0)
+    size(size)
   {
-    const T pi = T(2) * std::acos(T(-1)) / size;
-
-    for (size_t i = 0; i < size; ++i)
+    twiddles.forward.resize(size);
     {
-      twiddles[i] = std::polar(T(1), pi * i);
+      const T pi = T(2) * std::acos(T(-1)) / size;
+
+      for (size_t i = 0; i < size; ++i)
+      {
+        twiddles.forward[i] = std::polar(T(1), pi * i);
+      }
     }
+
+    twiddles.backward.resize(size);
+    {
+      const T pi = T(1) * std::acos(T(-1));
+
+      for (size_t i = 0; i < size; ++i)
+      {
+        twiddles.backward[i] = std::polar(T(1), pi * i);
+      }
+    }
+
+    buffer.input.resize(size);
+    buffer.output.resize(size);
+    buffer.cursor = 0;
   }
 
   void sdft(const T sample, const std::span<std::complex<T>> dft)
   {
     assert(dft.size() == size);
 
-    const T bias = sdft_input_buffer[sdft_input_cursor];
+    const T bias = buffer.input[buffer.cursor];
 
-    sdft_input_buffer[sdft_input_cursor] = sample;
+    buffer.input[buffer.cursor] = sample;
 
     for (size_t i = 0; i < size; ++i)
     {
-      sdft_output_buffer[i] = twiddles[i] * (sdft_output_buffer[i] + sample - bias);
+      buffer.output[i] = twiddles.forward[i] * (buffer.output[i] + sample - bias);
     }
 
-    dft[0] = window(sdft_output_buffer[0],
-                    sdft_output_buffer[size - 1],
-                    sdft_output_buffer[1]);
+    dft[0] = window(buffer.output[size - 1],
+                    buffer.output[0],
+                    buffer.output[1]);
 
     for (size_t i = 1; i < size - 1; ++i)
     {
-      dft[i] = window(sdft_output_buffer[i],
-                      sdft_output_buffer[i - 1],
-                      sdft_output_buffer[i + 1]);
+      dft[i] = window(buffer.output[i - 1],
+                      buffer.output[i],
+                      buffer.output[i + 1]);
     }
 
-    dft[size - 1] = window(sdft_output_buffer[size - 1],
-                           sdft_output_buffer[size - 2],
-                           sdft_output_buffer[0]);
+    dft[size - 1] = window(buffer.output[size - 2],
+                           buffer.output[size - 1],
+                           buffer.output[0]);
 
-    if (++sdft_input_cursor >= size)
+    const T scale = T(1) / size;
+
+    for (size_t i = 0; i < size; ++i)
     {
-      sdft_input_cursor = 0;
+      dft[i] *= scale;
+    }
+
+    if (++buffer.cursor >= size)
+    {
+      buffer.cursor = 0;
     }
   }
 
@@ -64,13 +84,30 @@ public:
     for (size_t i = 0; i < samples.size(); ++i)
     {
       sdft(samples[i], dfts[i]);
+    }
+  }
 
-      const T scale = T(1) / samples.size(); // TODO
+  T isdft(const std::span<std::complex<T>> dft)
+  {
+    assert(dft.size() == size);
 
-      for (size_t j = 0; j < dfts[i].size(); ++j)
-      {
-        dfts[i][j] *= scale;
-      }
+    T sample = T(0);
+
+    for (size_t i = 0; i < size; ++i)
+    {
+      sample += (dft[i] * twiddles.backward[i]).real();
+    }
+
+    return sample;
+  }
+
+  void isdft(const std::matrix<std::complex<T>>& dfts, std::vector<T>& samples)
+  {
+    assert(samples.size() == dfts.size());
+
+    for (size_t i = 0; i < samples.size(); ++i)
+    {
+      samples[i] = isdft(dfts[i]);
     }
   }
 
@@ -78,15 +115,26 @@ private:
 
   const size_t size;
 
-  std::vector<std::complex<T>> twiddles;
-  std::vector<T> sdft_input_buffer;
-  std::vector<std::complex<T>> sdft_output_buffer;
-
-  size_t sdft_input_cursor;
-
-  inline static std::complex<T> window(const std::complex<T>& a, const std::complex<T>& b, const std::complex<T>& c)
+  struct
   {
-    return T(0.5) * a - T(0.25) * (b + c);
+    std::vector<std::complex<T>> forward;
+    std::vector<std::complex<T>> backward;
+  }
+  twiddles;
+
+  struct
+  {
+    std::vector<T> input;
+    std::vector<std::complex<T>> output;
+    size_t cursor;
+  }
+  buffer;
+
+  inline static std::complex<T> window(const std::complex<T>& left,
+                                       const std::complex<T>& middle,
+                                       const std::complex<T>& right)
+  {
+    return T(0.5) * middle - T(0.25) * (left + right);
   }
 
 };

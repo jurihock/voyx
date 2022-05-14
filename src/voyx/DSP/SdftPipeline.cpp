@@ -24,7 +24,5 @@ void SdftPipeline::operator()(const size_t index, const std::vector<voyx_t>& inp
 {
   sdft.sdft(input, data.views.dfts);
   (*this)(index, data.views.dfts);
-  //sdft.isdft(data.views.dfts, output);
-
-  output = input;
+  sdft.isdft(data.views.dfts, output);
 }
