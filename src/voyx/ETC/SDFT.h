@@ -30,9 +30,7 @@ public:
   {
     assert(dft.size() == size);
 
-    const T bias = buffer.input[buffer.cursor];
-
-    buffer.input[buffer.cursor] = sample;
+    const T bias = std::exchange(buffer.input[buffer.cursor], sample);
 
     for (size_t i = 0; i < size; ++i)
     {
