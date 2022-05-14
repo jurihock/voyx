@@ -22,17 +22,17 @@ public:
   {
     std::vector<T> window(size);
 
-    std::iota(window.begin(), window.end(), T(0.0));
+    const T pi = T(2) * std::acos(T(-1)) / size;
 
-    std::transform(window.begin(), window.end(), window.begin(),
-      [&](T value) { return T(0.5) - T(0.5) * std::cos(PI2 * value / window.size()); });
+    for (size_t i = 0; i < size; ++i)
+    {
+      window[i] = T(0.5) - T(0.5) * std::cos(pi * i);
+    }
 
     return window;
   }
 
 private:
-
-  const T PI2 = T(2) * std::acos(T(-1));
 
   const size_t size;
 
