@@ -9,38 +9,6 @@ StftPipeline::StftPipeline(const voyx_t samplerate, const size_t framesize, cons
   hopsize(hopsize),
   fft(framesize)
 {
-  if (source->samplerate() != samplerate)
-  {
-    throw std::runtime_error(
-      $("Incompatible source sample rate {0} != {1}!",
-        source->samplerate(),
-        samplerate));
-  }
-
-  if (sink->samplerate() != samplerate)
-  {
-    throw std::runtime_error(
-      $("Incompatible sink sample rate {0} != {1}!",
-        sink->samplerate(),
-        samplerate));
-  }
-
-  if (source->framesize() != framesize)
-  {
-    throw std::runtime_error(
-      $("Incompatible source frame size {0} != {1}!",
-        source->framesize(),
-        framesize));
-  }
-
-  if (sink->framesize() != framesize)
-  {
-    throw std::runtime_error(
-      $("Incompatible sink frame size {0} != {1}!",
-        sink->framesize(),
-        framesize));
-  }
-
   for (size_t hop = 0; (hop + framesize) < (framesize * 2); hop += hopsize)
   {
     hops.push_back(hop);
