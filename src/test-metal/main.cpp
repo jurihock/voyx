@@ -1,4 +1,5 @@
 #include <iostream>
+#include <filesystem>
 
 #include <Foundation/Foundation.hpp>
 #include <Metal/Metal.hpp>
@@ -6,6 +7,8 @@
 
 int main()
 {
+  NS::Error* error = nullptr;
+
   MTL::Device* device = MTL::CreateSystemDefaultDevice();
 
   if (device == nullptr)
@@ -13,11 +16,15 @@ int main()
     throw std::runtime_error("Unable to create Metal device!");
   }
 
-  MTL::Library* library = device->newDefaultLibrary();
+  auto filename = std::filesystem::current_path() / "build-release" / "test.metallib";
+  auto filepath = NS::String::string(filename.c_str(), NS::ASCIIStringEncoding);
+
+  error = nullptr;
+  MTL::Library* library = device->newLibrary(filepath, &error);
 
   if (library == nullptr)
   {
-    throw std::runtime_error("Unable to load Metal library!");
+    throw std::runtime_error("Unable to load Metal library!"); // TODO error
   }
 
   auto add_arrays = NS::String::string("add_arrays", NS::ASCIIStringEncoding);
@@ -29,7 +36,7 @@ int main()
     throw std::runtime_error("Unable to find Metal function!");
   }
 
-  NS::Error* error = nullptr;
+  error = nullptr;
   MTL::ComputePipelineState* pipe = device->newComputePipelineState(function, &error);
 
   if (pipe == nullptr)

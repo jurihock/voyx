@@ -31,10 +31,10 @@ add_custom_target(xcrun_test_air
   ALL DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/test.air")
 
 add_custom_command(
-  OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/default.metallib"
-  COMMAND xcrun -sdk macosx metallib "${CMAKE_CURRENT_BINARY_DIR}/test.air" -o "${CMAKE_CURRENT_BINARY_DIR}/default.metallib"
+  OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/test.metallib"
+  COMMAND xcrun -sdk macosx metallib "${CMAKE_CURRENT_BINARY_DIR}/test.air" -o "${CMAKE_CURRENT_BINARY_DIR}/test.metallib"
   WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
   DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/test.air")
 
-add_custom_target(xcrun_default_metallib
-  ALL DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/default.metallib")
+add_custom_target(xcrun_test_metallib
+  ALL DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/test.metallib")
