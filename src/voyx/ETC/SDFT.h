@@ -2,6 +2,14 @@
 
 #include <voyx/Header.h>
 
+/**
+ * Sliding DFT implementation according to [1].
+ *
+ * [1] Russell Bradford and Richard Dobson and John ffitch
+ *     Sliding is Smoother than Jumping
+ *     International Computer Music Conference 2005 (ICMC 2005)
+ *     https://quod.lib.umich.edu/cgi/p/pod/dod-idx/sliding-is-smoother-than-jumping.pdf?c=icmc;idno=bbp2372.2005.086;format=pdf
+ **/
 template <class T>
 class SDFT
 {
