@@ -8,6 +8,8 @@ void test();
 
 int main()
 {
+  test();
+
   return 0;
 }
 
@@ -33,6 +35,29 @@ void test()
     throw std::runtime_error("Unable to load Metal library!"); // TODO error
   }
 
+  MTL::CommandQueue* queue = device->newCommandQueue();
+
+  if (queue == nullptr)
+  {
+    throw std::runtime_error("Unable to create Metal queue!");
+  }
+
+  // SPECIFIC CODE
+
+  MTL::CommandBuffer* command = queue->commandBuffer();
+
+  if (command == nullptr)
+  {
+    throw std::runtime_error("Unable to create Metal command!");
+  }
+
+  MTL::ComputeCommandEncoder* encoder = command->computeCommandEncoder();
+
+  if (encoder == nullptr)
+  {
+    throw std::runtime_error("Unable to create Metal encoder!");
+  }
+
   auto add_arrays = NS::String::string("add_arrays", NS::ASCIIStringEncoding);
 
   MTL::Function* function = library->newFunction(add_arrays);
@@ -50,13 +75,6 @@ void test()
     throw std::runtime_error("Unable to create Metal pipeline!"); // TODO error
   }
 
-  MTL::CommandQueue* queue = device->newCommandQueue();
-
-  if (queue == nullptr)
-  {
-    throw std::runtime_error("Unable to create Metal queue!");
-  }
-
   NS::UInteger size = 1000;
   NS::UInteger bytes = size * sizeof(float);
 
@@ -69,20 +87,6 @@ void test()
     ((float*)a->contents())[i] = i;
     ((float*)b->contents())[i] = i;
     ((float*)c->contents())[i] = 0;
-  }
-
-  MTL::CommandBuffer* command = queue->commandBuffer();
-
-  if (command == nullptr)
-  {
-    throw std::runtime_error("Unable to create Metal command!");
-  }
-
-  MTL::ComputeCommandEncoder* encoder = command->computeCommandEncoder();
-
-  if (encoder == nullptr)
-  {
-    throw std::runtime_error("Unable to create Metal encoder!");
   }
 
   encoder->setComputePipelineState(pipe);
