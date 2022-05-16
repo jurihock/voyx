@@ -9,6 +9,7 @@ class FileSource : public Source<voyx_t>
 public:
 
   FileSource(const std::string& path, voyx_t samplerate, size_t framesize, size_t buffersize);
+  ~FileSource();
 
   void open() override;
   void close() override;
@@ -20,6 +21,6 @@ private:
   const std::string path;
 
   std::vector<voyx_t> data;
-  std::vector<voyx_t> frame;
+  voyx::vector<voyx_t> frame;
 
 };

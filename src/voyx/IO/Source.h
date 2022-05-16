@@ -2,6 +2,10 @@
 
 #include <voyx/Header.h>
 
+#include <voyx/MEM/MemoryPool.h>
+#include <voyx/MEM/DefaultMemoryPool.h>
+#include <voyx/MEM/MetalMemoryPool.h>
+
 template<typename T = voyx_t>
 class Source
 {
@@ -31,11 +35,19 @@ public:
 
   virtual bool read(const size_t index, std::function<void(const voyx::vector<T> frame)> callback) = 0;
 
+protected:
+
+  std::shared_ptr<MemoryPool<T>> memory() const { return source_memory_pool; }
+
 private:
 
   const voyx_t source_samplerate;
   const size_t source_framesize;
   const size_t source_buffersize;
   const std::chrono::milliseconds source_timeout;
+
+  std::shared_ptr<MemoryPool<T>> source_memory_pool =
+    // std::make_shared<DefaultMemoryPool<T>>();
+    std::make_shared<MetalMemoryPool>();
 
 };

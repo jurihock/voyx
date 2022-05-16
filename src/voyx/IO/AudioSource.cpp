@@ -7,15 +7,16 @@ AudioSource::AudioSource(const std::string& name, voyx_t samplerate, size_t fram
   audio_device_name(name),
   audio_frame_buffer(
     buffersize,
-    [framesize](size_t index)
+    [this, framesize](size_t index)
     {
       auto input = new InputFrame();
       input->index = index;
-      input->frame.resize(framesize);
+      input->frame = memory()->allocate(framesize);
       return input;
     },
-    [](InputFrame* input)
+    [this](InputFrame* input)
     {
+      memory()->deallocate(input->frame);
       delete input;
     })
 {

@@ -42,9 +42,17 @@ namespace voyx
 
     // CONSTRUCTORS
 
-    vector(T* data, const size_t size) :
+    vector() :
+      vector_data(nullptr),
+      vector_size(0),
+      vector_tag(nullptr)
+    {
+    }
+
+    vector(T* data, const size_t size, void* tag = nullptr) :
       vector_data(data),
-      vector_size(size)
+      vector_size(size),
+      vector_tag(tag)
     {
     }
 
@@ -59,15 +67,16 @@ namespace voyx
     }
 
     vector(voyx::vector<T>& other) :
-      vector(other.data(), other.size())
+      vector(other.data(), other.size(), other.tag())
     {
     }
 
     // CONST CONSTRUCTORS
 
-    vector(const T* data, const size_t size) :
+    vector(const T* data, const size_t size, void* tag = nullptr) :
       vector_data((T*)data),
-      vector_size(size)
+      vector_size(size),
+      vector_tag((void*)tag)
     {
     }
 
@@ -82,7 +91,7 @@ namespace voyx
     }
 
     vector(const voyx::vector<T>& other) :
-      vector(other.data(), other.size())
+      vector(other.data(), other.size(), other.tag())
     {
     }
 
@@ -127,7 +136,18 @@ namespace voyx
 
     voyx::vector<T>& operator=(const voyx::vector<T>& other)
     {
-      if (this != &other)
+      if (other.data() == nullptr)
+      {
+        throw std::runtime_error("Invalid voyx::vector assignment!");
+      }
+
+      if (this->data() == nullptr)
+      {
+        vector_data = (T*)other.data();
+        vector_size = other.size();
+        vector_tag = (void*)other.tag();
+      }
+      else if (this != &other)
       {
         std::copy(other.data(), other.data() + other.size(), this->data());
       }
@@ -187,10 +207,24 @@ namespace voyx
       return *this;
     }
 
+    // TAG
+
+    void* tag() const
+    {
+      return vector_tag;
+    }
+
+    void tag(void* tag)
+    {
+      vector_tag = tag;
+    }
+
   private:
 
     T* vector_data;
     size_t vector_size;
+
+    void* vector_tag;
 
   };
 }

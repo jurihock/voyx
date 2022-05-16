@@ -11,9 +11,14 @@ SineSource::SineSource(voyx_t amplitude, voyx_t frequency, voyx_t samplerate, si
   Source(samplerate, framesize, buffersize),
   amplitude(amplitude),
   frequency(frequency),
-  phase(0),
-  frame(framesize)
+  phase(0)
 {
+  frame = memory()->allocate(framesize);
+}
+
+SineSource::~SineSource()
+{
+  memory()->deallocate(frame);
 }
 
 bool SineSource::read(const size_t index, std::function<void(const voyx::vector<voyx_t> frame)> callback)

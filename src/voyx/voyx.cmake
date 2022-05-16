@@ -15,6 +15,7 @@ target_link_libraries(voyx
           dr_libs
           easyloggingpp
           fmt
+          metal
           mlinterp
           openmp
           pocketfft

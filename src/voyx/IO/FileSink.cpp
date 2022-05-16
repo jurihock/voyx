@@ -5,8 +5,7 @@
 
 FileSink::FileSink(const std::string& path, voyx_t samplerate, size_t framesize, size_t buffersize) :
   Sink(samplerate, framesize, buffersize),
-  path(path),
-  data(0)
+  path(path)
 {
 }
 

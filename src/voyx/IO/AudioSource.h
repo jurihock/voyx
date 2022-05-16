@@ -26,7 +26,7 @@ private:
   struct InputFrame
   {
     size_t index;
-    std::vector<voyx_t> frame;
+    voyx::vector<voyx_t> frame;
   };
 
   const std::string audio_device_name;
