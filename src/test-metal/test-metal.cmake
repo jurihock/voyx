@@ -24,7 +24,7 @@ endif()
 add_custom_command(
   OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/test.air"
   COMMAND xcrun -sdk macosx metal -c "${CMAKE_CURRENT_LIST_DIR}/test.metal" -o "${CMAKE_CURRENT_BINARY_DIR}/test.air"
-  WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}"
+  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
   DEPENDS "${CMAKE_CURRENT_LIST_DIR}/test.metal")
 
 add_custom_target(xcrun_test_air

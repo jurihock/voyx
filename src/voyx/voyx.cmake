@@ -38,3 +38,23 @@ if (UI)
   target_compile_definitions(voyx
     PRIVATE VOYXUI)
 endif()
+
+# TODO METAL
+
+add_custom_command(
+  OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/default.air"
+  COMMAND xcrun -sdk macosx metal -c "${CMAKE_CURRENT_LIST_DIR}/METAL/Voyx.metal" -o "${CMAKE_CURRENT_BINARY_DIR}/default.air"
+  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+  DEPENDS "${CMAKE_CURRENT_LIST_DIR}/METAL/Voyx.metal")
+
+add_custom_target(xcrun_default_air
+  ALL DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/default.air")
+
+add_custom_command(
+  OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/default.metallib"
+  COMMAND xcrun -sdk macosx metallib "${CMAKE_CURRENT_BINARY_DIR}/default.air" -o "${CMAKE_CURRENT_BINARY_DIR}/default.metallib"
+  WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+  DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/default.air")
+
+add_custom_target(xcrun_default_metallib
+  ALL DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/default.metallib")
