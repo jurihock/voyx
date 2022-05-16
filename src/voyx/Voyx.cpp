@@ -1,3 +1,8 @@
+// TODO METAL
+#define NS_PRIVATE_IMPLEMENTATION
+#define MTL_PRIVATE_IMPLEMENTATION
+#include <voyx/Metal.h>
+
 // TODO object factory
 #include <voyx/DSP/TestPipeline.h>
 #include <voyx/DSP/InverseSynthPipeline.h>

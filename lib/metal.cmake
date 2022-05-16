@@ -20,18 +20,6 @@ if(metal_ADDED)
                 "-framework Metal"
                 "-framework MetalKit")
 
-    # Foundation/Foundation.hpp
-    target_compile_definitions(metal
-      INTERFACE -DNS_PRIVATE_IMPLEMENTATION)
-
-    # Metal/Metal.hpp
-    target_compile_definitions(metal
-      INTERFACE -DMTL_PRIVATE_IMPLEMENTATION)
-
-    # QuartzCore/QuartzCore.hpp
-    target_compile_definitions(metal
-      INTERFACE -DCA_PRIVATE_IMPLEMENTATION)
-
   endif()
 
 endif()

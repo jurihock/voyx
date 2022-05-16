@@ -48,6 +48,6 @@ private:
 
   std::shared_ptr<MemoryPool<T>> source_memory_pool =
     // std::make_shared<DefaultMemoryPool<T>>();
-    std::make_shared<MetalMemoryPool>();
+    std::make_shared<MetalMemoryPool<T>>();
 
 };

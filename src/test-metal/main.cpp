@@ -1,7 +1,10 @@
 #include <iostream>
 #include <filesystem>
 
+#define NS_PRIVATE_IMPLEMENTATION
 #include <Foundation/Foundation.hpp>
+
+#define MTL_PRIVATE_IMPLEMENTATION
 #include <Metal/Metal.hpp>
 
 void test();
