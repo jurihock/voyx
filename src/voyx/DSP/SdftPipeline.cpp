@@ -64,28 +64,27 @@ void SdftPipeline::operator()(const size_t index, const voyx::vector<voyx_t> inp
 
   // TODO METAL
   {
-    std::memcpy(x->contents(), input.data(), framesize * sizeof(voyx_t));
+    // std::memcpy(x->contents(), input.data(), framesize * sizeof(voyx_t));
 
-    MTL::CommandBuffer* command = queue->commandBuffer();
-    NULLERROR(command, "Unable to create Metal command buffer!");
+    // MTL::CommandBuffer* command = queue->commandBuffer();
+    // NULLERROR(command, "Unable to create Metal command buffer!");
 
-    MTL::ComputeCommandEncoder* encoder = command->computeCommandEncoder();
-    NULLERROR(encoder, "Unable to create Metal command encoder!");
+    // MTL::ComputeCommandEncoder* encoder = command->computeCommandEncoder();
+    // NULLERROR(encoder, "Unable to create Metal command encoder!");
 
-    encoder->setComputePipelineState(pipeline);
-    encoder->setBuffer(x, 0, 0);
-    encoder->setBuffer(y, 0, 1);
+    // encoder->setComputePipelineState(pipeline);
+    // encoder->setBuffer(x, 0, 0);
+    // encoder->setBuffer(y, 0, 1);
+    // encoder->dispatchThreads(grid, group);
+    // encoder->endEncoding();
 
-    encoder->dispatchThreads(grid, group);
-    encoder->endEncoding();
+    // command->commit();
+    // command->waitUntilCompleted();
 
-    command->commit();
-    command->waitUntilCompleted();
-
-    std::memcpy(output.data(), y->contents(), framesize * sizeof(voyx_t));
+    // std::memcpy(output.data(), y->contents(), framesize * sizeof(voyx_t));
   }
 
-  // sdft.sdft(input, dfts);
-  // (*this)(index, dfts);
-  // sdft.isdft(dfts, output);
+  sdft.sdft(input, dfts);
+  (*this)(index, dfts);
+  sdft.isdft(dfts, output);
 }
