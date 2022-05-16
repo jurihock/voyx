@@ -4,7 +4,14 @@
 #include <Foundation/Foundation.hpp>
 #include <Metal/Metal.hpp>
 
+void test();
+
 int main()
+{
+  return 0;
+}
+
+void test()
 {
   NS::Error* error = nullptr;
 
@@ -109,6 +116,4 @@ int main()
 
     std::cout << i << std::endl;
   }
-
-  return 0;
 }
