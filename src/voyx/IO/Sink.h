@@ -2,10 +2,6 @@
 
 #include <voyx/Header.h>
 
-#include <voyx/MEM/MemoryPool.h>
-#include <voyx/MEM/DefaultMemoryPool.h>
-#include <voyx/MEM/MetalMemoryPool.h>
-
 template<typename T = voyx_t>
 class Sink
 {
@@ -36,19 +32,11 @@ public:
   virtual bool write(const size_t index, const voyx::vector<T> frame) = 0;
   virtual bool sync() { return true; }
 
-protected:
-
-  std::shared_ptr<MemoryPool<T>> memory() const { return source_memory_pool; }
-
 private:
 
   const voyx_t sink_samplerate;
   const size_t sink_framesize;
   const size_t sink_buffersize;
   const std::chrono::milliseconds sink_timeout;
-
-  std::shared_ptr<MemoryPool<T>> source_memory_pool =
-    // std::make_shared<DefaultMemoryPool<T>>();
-    std::make_shared<MetalMemoryPool<T>>();
 
 };

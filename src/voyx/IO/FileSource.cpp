@@ -5,14 +5,10 @@
 
 FileSource::FileSource(const std::string& path, voyx_t samplerate, size_t framesize, size_t buffersize) :
   Source(samplerate, framesize, buffersize),
-  path(path)
+  path(path),
+  data(0),
+  frame(framesize)
 {
-  frame = memory()->allocate(framesize);
-}
-
-FileSource::~FileSource()
-{
-  memory()->deallocate(frame);
 }
 
 void FileSource::open()

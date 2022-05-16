@@ -7,16 +7,15 @@ AudioSink::AudioSink(const std::string& name, voyx_t samplerate, size_t framesiz
   audio_device_name(name),
   audio_frame_buffer(
     buffersize,
-    [this, framesize](size_t index)
+    [framesize](size_t index)
     {
       auto output = new OutputFrame();
       output->index = index;
-      output->frame = memory()->allocate(framesize);
+      output->frame.resize(framesize);
       return output;
     },
-    [this](OutputFrame* output)
+    [](OutputFrame* output)
     {
-      memory()->deallocate(output->frame);
       delete output;
     })
 {
@@ -159,7 +158,7 @@ bool AudioSink::write(const size_t index, const voyx::vector<voyx_t> frame)
 {
   const bool ok = audio_frame_buffer.write([&](OutputFrame& output)
   {
-    output.frame = frame;
+    output.frame.assign(frame.begin(), frame.end());
   });
 
   if (!ok)
