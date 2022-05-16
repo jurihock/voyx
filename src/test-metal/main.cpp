@@ -42,7 +42,7 @@ void test()
 
   if (queue == nullptr)
   {
-    throw std::runtime_error("Unable to create Metal queue!");
+    throw std::runtime_error("Unable to create Metal command queue!");
   }
 
   // SPECIFIC CODE
@@ -51,14 +51,14 @@ void test()
 
   if (command == nullptr)
   {
-    throw std::runtime_error("Unable to create Metal command!");
+    throw std::runtime_error("Unable to create Metal command buffer!");
   }
 
   MTL::ComputeCommandEncoder* encoder = command->computeCommandEncoder();
 
   if (encoder == nullptr)
   {
-    throw std::runtime_error("Unable to create Metal encoder!");
+    throw std::runtime_error("Unable to create Metal command encoder!");
   }
 
   auto add_arrays = NS::String::string("add_arrays", NS::ASCIIStringEncoding);
