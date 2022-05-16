@@ -7,7 +7,7 @@ NullSink::NullSink(voyx_t samplerate, size_t framesize, size_t buffersize) :
 {
 }
 
-bool NullSink::write(const size_t index, const std::vector<voyx_t>& frame)
+bool NullSink::write(const size_t index, const voyx::vector<voyx_t> frame)
 {
   return true;
 }

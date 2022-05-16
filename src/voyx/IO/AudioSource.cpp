@@ -152,7 +152,7 @@ void AudioSource::stop()
   audio.stopStream();
 }
 
-bool AudioSource::read(const size_t index, std::function<void(const std::vector<voyx_t>& frame)> callback)
+bool AudioSource::read(const size_t index, std::function<void(const voyx::vector<voyx_t> frame)> callback)
 {
   const bool ok = audio_frame_buffer.read(timeout(), [&](InputFrame& input)
   {

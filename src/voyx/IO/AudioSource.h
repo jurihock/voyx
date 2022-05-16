@@ -19,7 +19,7 @@ public:
   void start() override;
   void stop() override;
 
-  bool read(const size_t index, std::function<void(const std::vector<voyx_t>& frame)> callback) override;
+  bool read(const size_t index, std::function<void(const voyx::vector<voyx_t> frame)> callback) override;
 
 private:
 

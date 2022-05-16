@@ -102,7 +102,7 @@ public:
     sink->stop();
   }
 
-  virtual void operator()(const size_t index, const std::vector<T>& input, std::vector<T>& output) = 0;
+  virtual void operator()(const size_t index, const voyx::vector<T> input, voyx::vector<T> output) = 0;
 
 protected:
 
@@ -135,7 +135,7 @@ private:
     {
       while (doloop && index < frames)
       {
-        const bool ok = source->read(index, [&](const std::vector<T>& input)
+        const bool ok = source->read(index, [&](const voyx::vector<T> input)
         {
           timers.outer.toc();
           timers.outer.tic();
@@ -194,7 +194,7 @@ private:
           timestamp = now();
         }
 
-        const bool ok = source->read(index, [&](const std::vector<T>& input)
+        const bool ok = source->read(index, [&](const voyx::vector<T> input)
         {
           timers.outer.toc();
           timers.outer.tic();

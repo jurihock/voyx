@@ -7,7 +7,7 @@ BypassPipeline::BypassPipeline(std::shared_ptr<Source<voyx_t>> source, std::shar
 {
 }
 
-void BypassPipeline::operator()(const size_t index, const std::vector<voyx_t>& input, std::vector<voyx_t>& output)
+void BypassPipeline::operator()(const size_t index, const voyx::vector<voyx_t> input, voyx::vector<voyx_t> output)
 {
   output = input;
 }

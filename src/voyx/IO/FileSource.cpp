@@ -21,7 +21,7 @@ void FileSource::close()
   data.clear();
 }
 
-bool FileSource::read(const size_t index, std::function<void(const std::vector<voyx_t>& frame)> callback)
+bool FileSource::read(const size_t index, std::function<void(const voyx::vector<voyx_t> frame)> callback)
 {
   const size_t offset = index * frame.size();
 

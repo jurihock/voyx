@@ -7,7 +7,7 @@
 namespace $$
 {
   template<typename T>
-  static inline void interp(const std::constspan<T> x1, std::span<T> y1, const std::constspan<T> x0, const std::constspan<T> y0)
+  static inline void interp(const voyx::vector<T> x1, voyx::vector<T> y1, const voyx::vector<T> x0, const voyx::vector<T> y0)
   {
     assert(x0.size() == y0.size());
     assert(x1.size() == y1.size());
@@ -37,7 +37,7 @@ namespace $$
   }
 
   template<typename T>
-  static inline std::vector<T> interp(const std::constspan<T> x1, const std::constspan<T> x0, const std::constspan<T> y0)
+  static inline std::vector<T> interp(const voyx::vector<T> x1, const voyx::vector<T> x0, const voyx::vector<T> y0)
   {
     std::vector<T> y1(x1.size());
     $$::interp<T>(x1, y1, x0, y0);
@@ -104,7 +104,7 @@ namespace $$
   }
 
   template<typename T>
-  static inline void interp(const std::constspan<T> x, std::span<T> y, const voyx_t factor)
+  static inline void interp(const voyx::vector<T> x, voyx::vector<T> y, const voyx_t factor)
   {
     assert(x.size() == y.size());
     $$::interp(x.size(), x.data(), y.data(), factor);
@@ -118,7 +118,7 @@ namespace $$
   }
 
   template<typename T>
-  static inline std::vector<T> interp(const std::constspan<T> x, const voyx_t factor)
+  static inline std::vector<T> interp(const voyx::vector<T> x, const voyx_t factor)
   {
     std::vector<T> y(x.size());
     $$::interp<T>(x, y, factor);

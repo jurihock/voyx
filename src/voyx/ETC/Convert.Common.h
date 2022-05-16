@@ -4,12 +4,6 @@
 
 namespace $$
 {
-  template<class T>
-  std::constspan<T> constspan(std::span<T> value) { return value; }
-}
-
-namespace $$
-{
   struct real
   {
     template<typename T>

@@ -8,7 +8,7 @@ NullSource::NullSource(voyx_t samplerate, size_t framesize, size_t buffersize) :
 {
 }
 
-bool NullSource::read(const size_t index, std::function<void(const std::vector<voyx_t>& frame)> callback)
+bool NullSource::read(const size_t index, std::function<void(const voyx::vector<voyx_t> frame)> callback)
 {
   callback(frame);
 

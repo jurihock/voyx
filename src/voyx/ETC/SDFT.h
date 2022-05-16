@@ -34,7 +34,7 @@ public:
     buffer.cursor = 0;
   }
 
-  void sdft(const T sample, const std::span<std::complex<T>> dft)
+  void sdft(const T sample, voyx::vector<std::complex<T>> dft)
   {
     assert(dft.size() == size);
 
@@ -73,7 +73,7 @@ public:
     }
   }
 
-  void sdft(const std::vector<T>& samples, const std::matrix<std::complex<T>>& dfts)
+  void sdft(const voyx::vector<T> samples, voyx::matrix<std::complex<T>> dfts)
   {
     assert(samples.size() == dfts.size());
 
@@ -83,7 +83,7 @@ public:
     }
   }
 
-  T isdft(const std::span<std::complex<T>> dft)
+  T isdft(const voyx::vector<std::complex<T>> dft)
   {
     assert(dft.size() == size);
 
@@ -97,7 +97,7 @@ public:
     return sample;
   }
 
-  void isdft(const std::matrix<std::complex<T>>& dfts, std::vector<T>& samples)
+  void isdft(const voyx::matrix<std::complex<T>> dfts, voyx::vector<T> samples)
   {
     assert(samples.size() == dfts.size());
 

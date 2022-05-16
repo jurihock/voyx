@@ -16,7 +16,7 @@ SineSource::SineSource(voyx_t amplitude, voyx_t frequency, voyx_t samplerate, si
 {
 }
 
-bool SineSource::read(const size_t index, std::function<void(const std::vector<voyx_t>& frame)> callback)
+bool SineSource::read(const size_t index, std::function<void(const voyx::vector<voyx_t> frame)> callback)
 {
   const voyx_t phaseinc = frequency / samplerate();
 

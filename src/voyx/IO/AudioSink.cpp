@@ -154,11 +154,11 @@ void AudioSink::stop()
   audio.stopStream();
 }
 
-bool AudioSink::write(const size_t index, const std::vector<voyx_t>& frame)
+bool AudioSink::write(const size_t index, const voyx::vector<voyx_t> frame)
 {
   const bool ok = audio_frame_buffer.write([&](OutputFrame& output)
   {
-    output.frame = frame;
+    output.frame.assign(frame.begin(), frame.end());
   });
 
   if (!ok)

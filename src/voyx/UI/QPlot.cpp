@@ -122,13 +122,13 @@ void QPlot::xrange(const double min, const double max)
   data.xrange = std::pair<double, double>(min, max);
 }
 
-void QPlot::plot(const std::constspan<float> y)
+void QPlot::plot(const std::span<const float> y)
 {
   std::lock_guard lock(mutex);
   data.ydata = std::vector<double>(y.begin(), y.end());
 }
 
-void QPlot::plot(const std::constspan<double> y)
+void QPlot::plot(const std::span<const double> y)
 {
   std::lock_guard lock(mutex);
   data.ydata = std::vector<double>(y.begin(), y.end());

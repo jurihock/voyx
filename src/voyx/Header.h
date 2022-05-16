@@ -3,7 +3,7 @@
 /**
  * This file provides a set of common std modules
  * and is to be included in .h project files.
- */
+ **/
 
 #include <algorithm>
 #include <array>
@@ -36,20 +36,15 @@
 #include <vector>
 
 /**
- * Following by minimal std namespace hacks.
- * */
-namespace std
-{
-  template<typename T>
-  using matrix = std::vector<std::span<T>>;
+ * Following by custom types.
+ **/
 
-  template <typename T>
-  using constspan = span<const T>;
-}
+#include <voyx/ETC/Vector.h>
+#include <voyx/ETC/Matrix.h>
 
 /**
  * And finally common data type definition,
  * e.g. float or double.
- * */
+ **/
 
 typedef float voyx_t;

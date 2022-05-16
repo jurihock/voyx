@@ -32,8 +32,8 @@ InverseSynthPipeline::InverseSynthPipeline(const voyx_t samplerate, const size_t
 }
 
 void InverseSynthPipeline::operator()(const size_t index,
-                                      const std::vector<voyx_t>& signal,
-                                      const std::matrix<std::complex<voyx_t>>& dfts)
+                                      const voyx::vector<voyx_t> signal,
+                                      voyx::matrix<std::complex<voyx_t>> dfts)
 {
   if (midi != nullptr)
   {

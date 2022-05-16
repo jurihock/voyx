@@ -29,7 +29,7 @@ public:
   virtual void start() {};
   virtual void stop() {};
 
-  virtual bool read(const size_t index, std::function<void(const std::vector<T>& frame)> callback) = 0;
+  virtual bool read(const size_t index, std::function<void(const voyx::vector<T> frame)> callback) = 0;
 
 private:
 

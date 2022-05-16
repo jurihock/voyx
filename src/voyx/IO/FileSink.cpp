@@ -20,7 +20,7 @@ void FileSink::close()
   WAV::write(path, data, samplerate());
 }
 
-bool FileSink::write(const size_t index, const std::vector<voyx_t>& frame)
+bool FileSink::write(const size_t index, const voyx::vector<voyx_t> frame)
 {
   const size_t oldsize = data.size();
   const size_t newsize = oldsize + frame.size();

@@ -16,7 +16,7 @@ public:
     decode_phase_buffer.resize(framesize / 2 + 1);
   }
 
-  void encode(const std::matrix<std::complex<T>>& dfts)
+  void encode(voyx::matrix<std::complex<T>> dfts)
   {
     for (auto dft : dfts)
     {
@@ -24,7 +24,7 @@ public:
     }
   }
 
-  void decode(const std::matrix<std::complex<T>>& dfts)
+  void decode(voyx::matrix<std::complex<T>> dfts)
   {
     for (auto dft : dfts)
     {
@@ -32,7 +32,7 @@ public:
     }
   }
 
-  void encode(std::span<std::complex<T>> dft)
+  void encode(voyx::vector<std::complex<T>> dft)
   {
     T frequency,
       phase,
@@ -56,7 +56,7 @@ public:
     }
   }
 
-  void decode(std::span<std::complex<T>> dft)
+  void decode(voyx::vector<std::complex<T>> dft)
   {
     T frequency,
       phase,

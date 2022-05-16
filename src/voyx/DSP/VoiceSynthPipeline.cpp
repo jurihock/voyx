@@ -23,8 +23,8 @@ VoiceSynthPipeline::VoiceSynthPipeline(const voyx_t samplerate, const size_t fra
 }
 
 void VoiceSynthPipeline::operator()(const size_t index,
-                                    const std::vector<voyx_t>& signal,
-                                    const std::matrix<std::complex<voyx_t>>& dfts)
+                                    const voyx::vector<voyx_t> signal,
+                                    voyx::matrix<std::complex<voyx_t>> dfts)
 {
   if (plot != nullptr)
   {
@@ -45,21 +45,14 @@ void VoiceSynthPipeline::operator()(const size_t index,
 
   const std::vector<voyx_t> factors = { 0.5, 1.25, 1.5, 2 };
 
-  std::vector<std::complex<voyx_t>> buffer(factors.size() * dfts.front().size());
-  std::matrix<std::complex<voyx_t>> buffers(factors.size());
-
-  for (size_t i = 0; i < factors.size(); ++i)
-  {
-    buffers[i] = std::span<std::complex<voyx_t>>(
-      buffer.data() + i * dfts.front().size(),
-      dfts.front().size());
-  }
+  std::vector<std::complex<voyx_t>> buffer(factors.size() * dfts.stride());
+  voyx::matrix<std::complex<voyx_t>> buffers(buffer, dfts.stride());
 
   for (auto dft : dfts)
   {
     for (size_t i = 0; i < factors.size(); ++i)
     {
-      $$::interp($$::constspan(dft), buffers[i], factors[i]);
+      $$::interp(dft, buffers[i], factors[i]);
     }
 
     const auto mask = $$::argmax<$$::real>(buffers);

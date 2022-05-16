@@ -19,7 +19,7 @@ public:
   void start() override;
   void stop() override;
 
-  bool write(const size_t index, const std::vector<voyx_t>& frame) override;
+  bool write(const size_t index, const voyx::vector<voyx_t> frame) override;
   bool sync() override;
 
 private:

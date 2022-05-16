@@ -12,7 +12,7 @@ public:
 
   StftPipeline(const voyx_t samplerate, const size_t framesize, const size_t hopsize, std::shared_ptr<Source<voyx_t>> source, std::shared_ptr<Sink<voyx_t>> sink);
 
-  void operator()(const size_t index, const std::vector<voyx_t>& input, std::vector<voyx_t>& output) override;
+  void operator()(const size_t index, const voyx::vector<voyx_t> input, voyx::vector<voyx_t> output) override;
 
 protected:
 
@@ -20,7 +20,7 @@ protected:
   const size_t framesize;
   const size_t hopsize;
 
-  virtual void operator()(const size_t index, const std::vector<voyx_t>& signal, const std::matrix<std::complex<voyx_t>>& dfts) = 0;
+  virtual void operator()(const size_t index, const voyx::vector<voyx_t> signal, voyx::matrix<std::complex<voyx_t>> dfts) = 0;
 
 private:
 
@@ -35,13 +35,6 @@ private:
 
     std::vector<voyx_t> frames;
     std::vector<std::complex<voyx_t>> dfts;
-
-    struct
-    {
-      std::matrix<voyx_t> frames;
-      std::matrix<std::complex<voyx_t>> dfts;
-    }
-    views;
   }
   data;
 
@@ -52,7 +45,7 @@ private:
   }
   windows;
 
-  static void reject(const std::vector<size_t>& hops, const std::vector<voyx_t>& input, const std::matrix<voyx_t>& frames, const std::vector<voyx_t>& window);
-  static void inject(const std::vector<size_t>& hops, std::vector<voyx_t>& output, const std::matrix<voyx_t>& frames, const std::vector<voyx_t>& window);
+  static void reject(const std::vector<size_t>& hops, const voyx::vector<voyx_t> input, voyx::matrix<voyx_t> frames, const std::vector<voyx_t>& window);
+  static void inject(const std::vector<size_t>& hops, voyx::vector<voyx_t> output, const voyx::matrix<voyx_t> frames, const std::vector<voyx_t>& window);
 
 };

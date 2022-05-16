@@ -19,7 +19,7 @@ public:
 
   /**
    * Time domain real vector size.
-   * */
+   **/
   size_t tdsize() const
   {
     return size;
@@ -27,13 +27,13 @@ public:
 
   /**
    * Frequency domain complex vector size.
-   * */
+   **/
   size_t fdsize() const
   {
     return size / 2 + 1;
   }
 
-  void fft(const std::constspan<T> signal, const std::span<std::complex<T>> dft) const
+  void fft(const voyx::vector<T> signal, voyx::vector<std::complex<T>> dft) const
   {
     assert(signal.size() == tdsize());
     assert(dft.size() == fdsize());
@@ -49,27 +49,27 @@ public:
       T(1) / signal.size());
   }
 
-  void fft(const std::matrix<T>& signals, const std::matrix<std::complex<T>>& dfts) const
+  void fft(const voyx::matrix<T> signals, voyx::matrix<std::complex<T>> dfts) const
   {
     assert(signals.size() == dfts.size());
-    assert(signals.front().size() == tdsize());
-    assert(dfts.front().size() == fdsize());
+    assert(signals.stride() == tdsize());
+    assert(dfts.stride() == fdsize());
 
-    const ptrdiff_t X = signals.front().size() * sizeof(T);
-    const ptrdiff_t Y = dfts.front().size() * sizeof(std::complex<T>);
+    const ptrdiff_t X = signals.stride() * sizeof(T);
+    const ptrdiff_t Y = dfts.stride() * sizeof(std::complex<T>);
 
     pocketfft::r2c(
-      { signals.front().size(), signals.size() },
+      { signals.stride(), signals.size() },
       { sizeof(T), X },
       { sizeof(std::complex<T>), Y },
       0,
       true,
-      signals.front().data(),
-      dfts.front().data(),
-      T(1) / signals.front().size());
+      signals.data(),
+      dfts.data(),
+      T(1) / signals.stride());
   }
 
-  void ifft(const std::constspan<std::complex<T>> dft, const std::span<T> signal) const
+  void ifft(const voyx::vector<std::complex<T>> dft, voyx::vector<T> signal) const
   {
     assert(signal.size() == tdsize());
     assert(dft.size() == fdsize());
@@ -85,27 +85,27 @@ public:
       T(1));
   }
 
-  void ifft(const std::matrix<std::complex<T>>& dfts, const std::matrix<T>& signals) const
+  void ifft(const voyx::matrix<std::complex<T>> dfts, voyx::matrix<T> signals) const
   {
     assert(signals.size() == dfts.size());
-    assert(signals.front().size() == tdsize());
-    assert(dfts.front().size() == fdsize());
+    assert(signals.stride() == tdsize());
+    assert(dfts.stride() == fdsize());
 
-    const ptrdiff_t X = dfts.front().size() * sizeof(std::complex<T>);
-    const ptrdiff_t Y = signals.front().size() * sizeof(T);
+    const ptrdiff_t X = dfts.stride() * sizeof(std::complex<T>);
+    const ptrdiff_t Y = signals.stride() * sizeof(T);
 
     pocketfft::c2r(
-      { signals.front().size(), signals.size() },
+      { signals.stride(), signals.size() },
       { sizeof(std::complex<T>), X },
       { sizeof(T), Y },
       0,
       false,
-      dfts.front().data(),
-      signals.front().data(),
+      dfts.data(),
+      signals.data(),
       T(1));
   }
 
-  std::vector<std::complex<T>> fft(const std::constspan<T> signal) const
+  std::vector<std::complex<T>> fft(const voyx::vector<T> signal) const
   {
     assert(signal.size() == tdsize());
 
@@ -114,7 +114,7 @@ public:
     return fft(signal, window);
   }
 
-  std::vector<std::complex<T>> fft(const std::constspan<T> signal, const std::constspan<T> window) const
+  std::vector<std::complex<T>> fft(const voyx::vector<T> signal, const voyx::vector<T> window) const
   {
     assert(signal.size() == tdsize());
     assert(window.size() == tdsize());
@@ -132,7 +132,7 @@ public:
     return dft;
   }
 
-  std::vector<T> ifft(const std::constspan<std::complex<T>> dft) const
+  std::vector<T> ifft(const voyx::vector<std::complex<T>> dft) const
   {
     assert(dft.size() == fdsize());
 

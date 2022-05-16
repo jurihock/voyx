@@ -18,11 +18,11 @@ TestPipeline::TestPipeline(const voyx_t samplerate, const size_t framesize, cons
 }
 
 void TestPipeline::operator()(const size_t index,
-                              const std::matrix<std::complex<voyx_t>>& dfts)
+                              voyx::matrix<std::complex<voyx_t>> dfts)
 {
   if (plot != nullptr)
   {
-    const std::span<std::complex<voyx_t>>& dft = dfts.front();
+    const auto dft = dfts.front();
 
     std::vector<voyx_t> abs(dft.size());
 

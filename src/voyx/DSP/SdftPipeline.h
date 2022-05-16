@@ -11,7 +11,7 @@ public:
 
   SdftPipeline(const voyx_t samplerate, const size_t framesize, const size_t dftsize, std::shared_ptr<Source<voyx_t>> source, std::shared_ptr<Sink<voyx_t>> sink);
 
-  void operator()(const size_t index, const std::vector<voyx_t>& input, std::vector<voyx_t>& output) override;
+  void operator()(const size_t index, const voyx::vector<voyx_t> input, voyx::vector<voyx_t> output) override;
 
 protected:
 
@@ -19,7 +19,7 @@ protected:
   const size_t framesize;
   const size_t dftsize;
 
-  virtual void operator()(const size_t index, const std::matrix<std::complex<voyx_t>>& dfts) = 0;
+  virtual void operator()(const size_t index, voyx::matrix<std::complex<voyx_t>> dfts) = 0;
 
 private:
 
@@ -28,14 +28,7 @@ private:
   struct
   {
     std::vector<std::complex<voyx_t>> dfts;
-
-    struct
-    {
-      std::matrix<std::complex<voyx_t>> dfts;
-    }
-    views;
   }
   data;
-
 
 };

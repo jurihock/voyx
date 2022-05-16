@@ -17,20 +17,6 @@ StftPipeline::StftPipeline(const voyx_t samplerate, const size_t framesize, cons
   data.frames.resize(hops.size() * fft.tdsize());
   data.dfts.resize(hops.size() * fft.fdsize());
 
-  data.views.frames.resize(hops.size());
-  data.views.dfts.resize(hops.size());
-
-  for (size_t i = 0; i < hops.size(); ++i)
-  {
-    data.views.frames[i] = std::span<voyx_t>(
-      data.frames.data() + i * fft.tdsize(),
-      fft.tdsize());
-
-    data.views.dfts[i] = std::span<std::complex<voyx_t>>(
-      data.dfts.data() + i * fft.fdsize(),
-      fft.fdsize());
-  }
-
   data.input.resize(2 * framesize);
   data.output.resize(2 * framesize);
 
@@ -46,7 +32,7 @@ StftPipeline::StftPipeline(const voyx_t samplerate, const size_t framesize, cons
     [unitygain](voyx_t value) { return value * unitygain; });
 }
 
-void StftPipeline::operator()(const size_t index, const std::vector<voyx_t>& input, std::vector<voyx_t>& output)
+void StftPipeline::operator()(const size_t index, const voyx::vector<voyx_t> input, voyx::vector<voyx_t> output)
 {
   for (size_t i = 0; i < framesize; ++i)
   {
@@ -59,13 +45,16 @@ void StftPipeline::operator()(const size_t index, const std::vector<voyx_t>& inp
     data.output[j] = 0;
   }
 
-  reject(hops, data.input, data.views.frames, windows.analysis);
-  fft.fft(data.views.frames, data.views.dfts);
+  voyx::matrix<voyx_t> frames(data.frames, fft.tdsize());
+  voyx::matrix<std::complex<voyx_t>> dfts(data.dfts, fft.fdsize());
 
-  (*this)(index, data.input, data.views.dfts);
+  reject(hops, data.input, frames, windows.analysis);
+  fft.fft(frames, dfts);
 
-  fft.ifft(data.views.dfts, data.views.frames);
-  inject(hops, data.output, data.views.frames, windows.synthesis);
+  (*this)(index, data.input, dfts);
+
+  fft.ifft(dfts, frames);
+  inject(hops, data.output, frames, windows.synthesis);
 
   for (size_t i = 0; i < framesize; ++i)
   {
@@ -73,7 +62,7 @@ void StftPipeline::operator()(const size_t index, const std::vector<voyx_t>& inp
   }
 }
 
-void StftPipeline::reject(const std::vector<size_t>& hops, const std::vector<voyx_t>& input, const std::matrix<voyx_t>& frames, const std::vector<voyx_t>& window)
+void StftPipeline::reject(const std::vector<size_t>& hops, const voyx::vector<voyx_t> input, voyx::matrix<voyx_t> frames, const std::vector<voyx_t>& window)
 {
   for (size_t i = 0; i < hops.size(); ++i)
   {
@@ -84,7 +73,7 @@ void StftPipeline::reject(const std::vector<size_t>& hops, const std::vector<voy
   }
 }
 
-void StftPipeline::inject(const std::vector<size_t>& hops, std::vector<voyx_t>& output, const std::matrix<voyx_t>& frames, const std::vector<voyx_t>& window)
+void StftPipeline::inject(const std::vector<size_t>& hops, voyx::vector<voyx_t> output, const voyx::matrix<voyx_t> frames, const std::vector<voyx_t>& window)
 {
   for (size_t i = 0; i < hops.size(); ++i)
   {

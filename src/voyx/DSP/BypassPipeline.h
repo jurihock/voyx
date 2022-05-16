@@ -10,6 +10,6 @@ public:
 
   BypassPipeline(std::shared_ptr<Source<voyx_t>> source, std::shared_ptr<Sink<voyx_t>> sink);
 
-  void operator()(const size_t index, const std::vector<voyx_t>& input, std::vector<voyx_t>& output) override;
+  void operator()(const size_t index, const voyx::vector<voyx_t> input, voyx::vector<voyx_t> output) override;
 
 };
