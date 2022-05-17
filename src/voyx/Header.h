@@ -39,6 +39,7 @@
  * Following by custom types.
  **/
 
+#include <voyx/ETC/Assert.h>
 #include <voyx/ETC/Vector.h>
 #include <voyx/ETC/Matrix.h>
 

@@ -127,11 +127,6 @@ namespace voyx
 
     voyx::vector<T>& operator=(const voyx::vector<T>& other)
     {
-      if (this->data() == nullptr || other.data() == nullptr)
-      {
-        throw std::runtime_error("Invalid voyx::vector assignment!");
-      }
-
       if (this != &other)
       {
         std::copy(other.data(), other.data() + other.size(), this->data());
