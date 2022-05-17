@@ -3,7 +3,7 @@
 #include <voyx/Source.h>
 
 StftPipeline::StftPipeline(const voyx_t samplerate, const size_t framesize, const size_t hopsize, std::shared_ptr<Source<voyx_t>> source, std::shared_ptr<Sink<voyx_t>> sink) :
-  Pipeline(source, sink),
+  SyncPipeline<voyx_t>(source, sink),
   samplerate(samplerate),
   framesize(framesize),
   hopsize(hopsize),

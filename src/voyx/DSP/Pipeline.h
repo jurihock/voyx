@@ -5,12 +5,6 @@
 #include <voyx/IO/Source.h>
 #include <voyx/IO/Sink.h>
 
-#include <voyx/IO/AudioSource.h>
-#include <voyx/IO/AudioSink.h>
-
-#include <voyx/ETC/Logger.h>
-#include <voyx/ETC/Timer.h>
-
 template<typename T = voyx_t>
 class Pipeline
 {
@@ -23,10 +17,7 @@ public:
   {
   }
 
-  ~Pipeline()
-  {
-    close();
-  }
+  virtual ~Pipeline() {}
 
   void open()
   {
@@ -63,160 +54,35 @@ public:
   void start(const size_t frames)
   {
     stop();
-    warmup();
+
+    onwarmup();
 
     source->start();
     sink->start();
 
-    doloop = true;
-
-    thread = std::make_shared<std::thread>(
-      [frames, this](){ loop(frames); });
+    onstart(frames);
 
     if (frames > 0)
     {
-      if (thread->joinable())
-      {
-        thread->join();
-      }
-
       stop();
     }
   }
 
   void stop()
   {
-    doloop = false;
-
-    if (thread != nullptr)
-    {
-      if (thread->joinable())
-      {
-        thread->join();
-      }
-
-      thread = nullptr;
-    }
+    onstop();
 
     source->stop();
     sink->stop();
   }
 
-  virtual void operator()(const size_t index, const voyx::vector<T> input, voyx::vector<T> output) = 0;
+public:
 
-protected:
+  const std::shared_ptr<Source<T>> source;
+  const std::shared_ptr<Sink<T>> sink;
 
-  std::shared_ptr<Source<T>> source;
-  std::shared_ptr<Sink<T>> sink;
-
-  virtual void warmup() {}
-
-private:
-
-  std::shared_ptr<std::thread> thread;
-  bool doloop = false;
-
-  void loop(const size_t frames)
-  {
-    struct
-    {
-      Timer<std::chrono::milliseconds> inner;
-      Timer<std::chrono::milliseconds> outer;
-    }
-    timers;
-
-    std::vector<T> output(sink->framesize());
-
-    size_t index = 0;
-
-    timers.outer.tic();
-
-    if (frames > 0)
-    {
-      while (doloop && index < frames)
-      {
-        const bool ok = source->read(index, [&](const voyx::vector<T> input)
-        {
-          timers.outer.toc();
-          timers.outer.tic();
-
-          timers.inner.tic();
-          (*this)(index, input, output);
-          timers.inner.toc();
-        });
-
-        if (ok)
-        {
-          sink->write(index, output);
-        }
-
-        index += ok ? 1 : 0;
-      }
-
-      LOG(INFO)
-        << "Timing: \t"
-        << "inner " << timers.inner.str() << "\t"
-        << "outer " << timers.outer.str();
-
-      timers.inner.cls();
-      timers.outer.cls();
-    }
-    else
-    {
-      const bool sync =
-        (std::dynamic_pointer_cast<AudioSource>(source) == nullptr) &&
-        (std::dynamic_pointer_cast<AudioSink>(sink) != nullptr);
-
-      auto millis = [](const std::chrono::steady_clock::duration& duration)
-      {
-        return std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
-      };
-
-      auto now = []()
-      {
-        return std::chrono::steady_clock::now();
-      };
-
-      auto timestamp = now();
-
-      while(doloop)
-      {
-        if (millis(now() - timestamp) > 5000)
-        {
-          LOG(INFO)
-            << "Timing: \t"
-            << "inner " << timers.inner.str() << "\t"
-            << "outer " << timers.outer.str();
-
-          timers.inner.cls();
-          timers.outer.cls();
-
-          timestamp = now();
-        }
-
-        const bool ok = source->read(index, [&](const voyx::vector<T> input)
-        {
-          timers.outer.toc();
-          timers.outer.tic();
-
-          timers.inner.tic();
-          (*this)(index, input, output);
-          timers.inner.toc();
-        });
-
-        if (ok)
-        {
-          sink->write(index, output);
-
-          if (sync)
-          {
-            sink->sync();
-          }
-        }
-
-        index += ok ? 1 : 0;
-      }
-    }
-  }
+  virtual void onwarmup() {}
+  virtual void onstart(const size_t frames) = 0;
+  virtual void onstop() = 0;
 
 };

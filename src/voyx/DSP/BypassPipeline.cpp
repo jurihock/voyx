@@ -3,7 +3,7 @@
 #include <voyx/Source.h>
 
 BypassPipeline::BypassPipeline(std::shared_ptr<Source<voyx_t>> source, std::shared_ptr<Sink<voyx_t>> sink) :
-  Pipeline(source, sink)
+  SyncPipeline<voyx_t>(source, sink)
 {
 }
 
