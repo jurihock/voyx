@@ -26,6 +26,7 @@
 #include <numeric>
 #include <optional>
 #include <regex>
+#include <semaphore>
 #include <span>
 #include <sstream>
 #include <string>

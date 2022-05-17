@@ -55,8 +55,6 @@ public:
   {
     stop();
 
-    onwarmup();
-
     source->start();
     sink->start();
 
@@ -81,7 +79,6 @@ public:
   const std::shared_ptr<Source<T>> source;
   const std::shared_ptr<Sink<T>> sink;
 
-  virtual void onwarmup() {}
   virtual void onstart(const size_t frames) = 0;
   virtual void onstop() = 0;
 

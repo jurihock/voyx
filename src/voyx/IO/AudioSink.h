@@ -31,12 +31,10 @@ private:
   };
 
   const std::string audio_device_name;
+  std::binary_semaphore audio_sync_semaphore;
   FIFO<OutputFrame> audio_frame_buffer;
 
   RtAudio audio;
-
-  std::condition_variable sync_variable;
-  std::mutex sync_mutex;
 
   static int callback(void* output_frame_data, void* input_frame_data, uint32_t framesize, double timestamp, RtAudioStreamStatus status, void* $this);
   static void error(RtAudioError::Type type, const std::string& error);

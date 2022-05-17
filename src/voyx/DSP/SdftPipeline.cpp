@@ -15,6 +15,7 @@ MTL::Size grid;
 MTL::Size group;
 MTL::Buffer* x;
 MTL::Buffer* y;
+std::binary_semaphore semaphore(0);
 
 SdftPipeline::SdftPipeline(const voyx_t samplerate, const size_t framesize, const size_t dftsize, std::shared_ptr<Source<voyx_t>> source, std::shared_ptr<Sink<voyx_t>> sink) :
   SyncPipeline<voyx_t>(source, sink),
@@ -63,37 +64,41 @@ void SdftPipeline::operator()(const size_t index, const voyx::vector<voyx_t> inp
   voyx::matrix<std::complex<voyx_t>> dfts(data.dfts, dftsize);
 
   // TODO METAL
-  {
-    std::memcpy(x->contents(), input.data(), framesize * sizeof(voyx_t));
+  // {
+  //   std::memcpy(x->contents(), input.data(), framesize * sizeof(voyx_t));
 
-    MTL::CommandBuffer* command = queue->commandBuffer();
-    NULLERROR(command, "Unable to create Metal command buffer!");
+  //   MTL::CommandBuffer* command = queue->commandBuffer();
+  //   NULLERROR(command, "Unable to create Metal command buffer!");
 
-    MTL::ComputeCommandEncoder* encoder = command->computeCommandEncoder();
-    NULLERROR(encoder, "Unable to create Metal command encoder!");
+  //   MTL::ComputeCommandEncoder* encoder = command->computeCommandEncoder();
+  //   NULLERROR(encoder, "Unable to create Metal command encoder!");
 
-    encoder->setComputePipelineState(pipeline);
-    encoder->setBuffer(x, 0, 0);
-    encoder->setBuffer(y, 0, 1);
-    encoder->dispatchThreads(grid, group);
-    encoder->endEncoding();
+  //   encoder->setComputePipelineState(pipeline);
+  //   encoder->setBuffer(x, 0, 0);
+  //   encoder->setBuffer(y, 0, 1);
+  //   encoder->dispatchThreads(grid, group);
+  //   encoder->endEncoding();
 
-    // const auto foo = std::to_string(index);
-    // const auto bar = NS::String::string(foo.c_str(), NS::ASCIIStringEncoding);
-    // command->setLabel(bar);
-    // command->addCompletedHandler([](MTL::CommandBuffer* buffer)
-    // {
-    //   std::cout << buffer->label()->cString(NS::ASCIIStringEncoding) << std::endl;
-    // });
+  //   // const auto foo = std::to_string(index);
+  //   // const auto bar = NS::String::string(foo.c_str(), NS::ASCIIStringEncoding);
+  //   // command->setLabel(bar);
 
-    command->commit();
+  //   command->addCompletedHandler([](MTL::CommandBuffer* buffer)
+  //   {
+  //     // std::cout << buffer->label()->cString(NS::ASCIIStringEncoding) << std::endl;
+  //     semaphore.release();
+  //   });
 
-    //command->waitUntilCompleted();
+  //   command->commit();
 
-    std::memcpy(output.data(), y->contents(), framesize * sizeof(voyx_t));
-  }
+  //   // command->waitUntilCompleted();
 
-  // sdft.sdft(input, dfts);
-  // (*this)(index, dfts);
-  // sdft.isdft(dfts, output);
+  //   semaphore.acquire();
+
+  //   std::memcpy(output.data(), y->contents(), framesize * sizeof(voyx_t));
+  // }
+
+  sdft.sdft(input, dfts);
+  (*this)(index, dfts);
+  sdft.isdft(dfts, output);
 }

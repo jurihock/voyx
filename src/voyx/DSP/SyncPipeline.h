@@ -4,9 +4,6 @@
 
 #include <voyx/DSP/Pipeline.h>
 
-#include <voyx/IO/AudioSource.h>
-#include <voyx/IO/AudioSink.h>
-
 #include <voyx/ETC/Logger.h>
 #include <voyx/ETC/Timer.h>
 
@@ -73,6 +70,7 @@ private:
     std::vector<T> output(this->sink->framesize());
 
     size_t index = 0;
+    bool ok = true;
 
     timers.outer.tic();
 
@@ -80,7 +78,13 @@ private:
     {
       while (doloop && index < frames)
       {
-        const bool ok = this->source->read(index, [&](const voyx::vector<T> input)
+        if (ok)
+        {
+          this->sink->sync();
+          this->sink->write(index, output);
+        }
+
+        ok = this->source->read(index, [&](const voyx::vector<T> input)
         {
           timers.outer.toc();
           timers.outer.tic();
@@ -89,11 +93,6 @@ private:
           (*this)(index, input, output);
           timers.inner.toc();
         });
-
-        if (ok)
-        {
-          this->sink->write(index, output);
-        }
 
         index += ok ? 1 : 0;
       }
@@ -108,10 +107,6 @@ private:
     }
     else
     {
-      const bool sync =
-        (std::dynamic_pointer_cast<AudioSource>(this->source) == nullptr) &&
-        (std::dynamic_pointer_cast<AudioSink>(this->sink) != nullptr);
-
       auto millis = [](const std::chrono::steady_clock::duration& duration)
       {
         return std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
@@ -139,7 +134,13 @@ private:
           timestamp = now();
         }
 
-        const bool ok = this->source->read(index, [&](const voyx::vector<T> input)
+        if (ok)
+        {
+          this->sink->sync();
+          this->sink->write(index, output);
+        }
+
+        ok = this->source->read(index, [&](const voyx::vector<T> input)
         {
           timers.outer.toc();
           timers.outer.tic();
@@ -148,16 +149,6 @@ private:
           (*this)(index, input, output);
           timers.inner.toc();
         });
-
-        if (ok)
-        {
-          this->sink->write(index, output);
-
-          if (sync)
-          {
-            this->sink->sync();
-          }
-        }
 
         index += ok ? 1 : 0;
       }

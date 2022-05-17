@@ -5,6 +5,7 @@
 AudioSink::AudioSink(const std::string& name, voyx_t samplerate, size_t framesize, size_t buffersize) :
   Sink(samplerate, framesize, buffersize),
   audio_device_name(name),
+  audio_sync_semaphore(buffersize),
   audio_frame_buffer(
     buffersize,
     [framesize](size_t index)
@@ -149,8 +150,6 @@ void AudioSink::stop()
     return;
   }
 
-  while(!audio_frame_buffer.empty()) {}
-
   audio.stopStream();
 }
 
@@ -171,10 +170,7 @@ bool AudioSink::write(const size_t index, const voyx::vector<voyx_t> frame)
 
 bool AudioSink::sync()
 {
-  std::unique_lock sync_lock(sync_mutex);
-  std::cv_status sync_status = sync_variable.wait_for(sync_lock, timeout());
-
-  return sync_status != std::cv_status::timeout;
+  return audio_sync_semaphore.try_acquire_for(timeout());
 }
 
 int AudioSink::callback(void* output_frame_data, void* input_frame_data, uint32_t framesize, double timestamp, RtAudioStreamStatus status, void* $this)
@@ -204,7 +200,7 @@ int AudioSink::callback(void* output_frame_data, void* input_frame_data, uint32_
     LOG(WARNING) << $("Audio sink stream status {0}!", status);
   }
 
-  static_cast<AudioSink*>($this)->sync_variable.notify_all();
+  static_cast<AudioSink*>($this)->audio_sync_semaphore.release();
 
   return 0;
 }

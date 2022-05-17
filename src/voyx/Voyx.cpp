@@ -57,7 +57,7 @@ int main(int argc, char** argv)
     ("r,sr",      "Sample rate in hertz", cxxopts::value<voyx_t>()->default_value("44100"))
     ("w,window",  "STFT window size", cxxopts::value<int>()->default_value("1024"))
     ("v,overlap", "STFT window overlap", cxxopts::value<int>()->default_value("4"))
-    ("b,buffer",  "Audio IO buffer size", cxxopts::value<int>()->default_value("1000"))
+    ("b,buffer",  "Audio IO buffer size", cxxopts::value<int>()->default_value("100"))
     ("d,debug",   "Enable debug mode");
 
   const auto args = options.parse(argc, argv);
