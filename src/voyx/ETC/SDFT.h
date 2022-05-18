@@ -30,7 +30,7 @@ public:
     }
 
     buffer.input.resize(size);
-    buffer.output.resize(size);
+    buffer.output.resize(size + 2);
     buffer.cursor = 0;
   }
 
@@ -38,33 +38,24 @@ public:
   {
     assert(dft.size() == size);
 
-    const T bias = std::exchange(buffer.input[buffer.cursor], sample);
-
-    for (size_t i = 0; i < size; ++i)
-    {
-      buffer.output[i] = twiddles[i] * (buffer.output[i] + sample - bias);
-    }
-
-    dft[0] = window(buffer.output[size - 1],
-                    buffer.output[0],
-                    buffer.output[1]);
-
-    for (size_t i = 1; i < size - 1; ++i)
-    {
-      dft[i] = window(buffer.output[i - 1],
-                      buffer.output[i],
-                      buffer.output[i + 1]);
-    }
-
-    dft[size - 1] = window(buffer.output[size - 2],
-                           buffer.output[size - 1],
-                           buffer.output[0]);
-
     const T scale = T(1) / size;
+    const T delta = sample - std::exchange(buffer.input[buffer.cursor], sample);
 
-    for (size_t i = 0; i < size; ++i)
+    for (size_t i = 0, j = 1; i < size; ++i, ++j)
     {
-      dft[i] *= scale;
+      buffer.output[j] += delta;
+      buffer.output[j] *= twiddles[i];
+    }
+
+    buffer.output[0] = buffer.output[size];
+    buffer.output[size + 1] = buffer.output[1];
+
+    for (size_t i = 0, j = 1; i < size; ++i, ++j)
+    {
+      dft[i] = window(buffer.output[j - 1],
+                      buffer.output[j],
+                      buffer.output[j + 1],
+                      scale);
     }
 
     if (++buffer.cursor >= size)
@@ -123,9 +114,10 @@ private:
 
   inline static std::complex<T> window(const std::complex<T>& left,
                                        const std::complex<T>& middle,
-                                       const std::complex<T>& right)
+                                       const std::complex<T>& right,
+                                       const T scale)
   {
-    return T(0.5) * middle - T(0.25) * (left + right);
+    return T(0.25) * ((middle + middle) - (left + right)) * scale;
   }
 
 };
