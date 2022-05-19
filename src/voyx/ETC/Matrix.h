@@ -72,7 +72,30 @@ namespace voyx
 
     // CONST CONSTRUCTORS
 
-    // ...
+    matrix(const T* data, const size_t size, const size_t stride) :
+      matrix((T*)data, size, stride)
+    {
+    }
+
+    matrix(std::span<const T> other, const size_t stride) :
+      matrix(other.data(), other.size(), stride)
+    {
+    }
+
+    matrix(const std::vector<T>& other, const size_t stride) :
+      matrix(other.data(), other.size(), stride)
+    {
+    }
+
+    matrix(const voyx::vector<T>& other, const size_t stride) :
+      matrix(other.data(), other.size(), stride)
+    {
+    }
+
+    matrix(const voyx::matrix<T>& other) :
+      matrix(other.data(), other.size() * other.stride(), other.stride())
+    {
+    }
 
     // BASICS
 

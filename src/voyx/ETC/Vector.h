@@ -66,8 +66,7 @@ namespace voyx
     // CONST CONSTRUCTORS
 
     vector(const T* data, const size_t size) :
-      vector_data((T*)data),
-      vector_size(size)
+      vector((T*)data, size)
     {
     }
 
