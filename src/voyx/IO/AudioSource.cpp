@@ -189,7 +189,11 @@ int AudioSource::callback(void* output_frame_data, void* input_frame_data, uint3
     LOG(WARNING) << $("Audio source fifo overflow!");
   }
 
-  if (status)
+  if (status == RTAUDIO_INPUT_OVERFLOW)
+  {
+    LOG(WARNING) << $("Audio source stream overflow!");
+  }
+  else if (status)
   {
     LOG(WARNING) << $("Audio source stream status {0}!", status);
   }

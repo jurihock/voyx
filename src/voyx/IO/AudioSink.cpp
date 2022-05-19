@@ -195,7 +195,11 @@ int AudioSink::callback(void* output_frame_data, void* input_frame_data, uint32_
     LOG(WARNING) << $("Audio sink fifo underflow!");
   }
 
-  if (status)
+  if (status == RTAUDIO_OUTPUT_UNDERFLOW)
+  {
+    LOG(WARNING) << $("Audio sink stream underflow!");
+  }
+  else if (status)
   {
     LOG(WARNING) << $("Audio sink stream status {0}!", status);
   }
