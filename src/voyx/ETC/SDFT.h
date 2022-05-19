@@ -29,6 +29,9 @@ public:
       }
     }
 
+    roi.analysis = { 0, size };
+    roi.synthesis = { 0, size };
+
     buffer.input.resize(size);
     buffer.output.resize(size + 2);
     buffer.cursor = 0;
@@ -41,7 +44,7 @@ public:
     const T scale = T(1) / size;
     const T delta = sample - std::exchange(buffer.input[buffer.cursor], sample);
 
-    for (size_t i = 0, j = 1; i < size; ++i, ++j)
+    for (size_t i = roi.analysis.first, j = roi.analysis.first + 1; i < roi.analysis.second; ++i, ++j)
     {
       buffer.output[j] += delta;
       buffer.output[j] *= twiddles[i];
@@ -50,7 +53,7 @@ public:
     buffer.output[0] = buffer.output[size];
     buffer.output[size + 1] = buffer.output[1];
 
-    for (size_t i = 0, j = 1; i < size; ++i, ++j)
+    for (size_t i = roi.analysis.first, j = roi.analysis.first + 1; i < roi.analysis.second; ++i, ++j)
     {
       dft[i] = window(buffer.output[j - 1],
                       buffer.output[j],
@@ -80,7 +83,7 @@ public:
 
     T sample = T(0);
 
-    for (size_t i = 0; i < size; ++i)
+    for (size_t i = roi.synthesis.first; i < roi.synthesis.second; ++i)
     {
       sample += dft[i].real() * (i % 2 ? -1 : +1);
     }
@@ -103,6 +106,13 @@ private:
   const size_t size;
 
   std::vector<std::complex<T>> twiddles;
+
+  struct
+  {
+    std::pair<size_t, size_t> analysis;
+    std::pair<size_t, size_t> synthesis;
+  }
+  roi;
 
   struct
   {
