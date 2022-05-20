@@ -40,7 +40,7 @@ public:
 
   void real(const voyx::vector<T>& dft, std::span<T> envelope)
   {
-    assert(dft.size() == envelope.size());
+    voyxassert(dft.size() == envelope.size());
 
     for (size_t i = 0; i < spectrum.size(); ++i)
     {
@@ -59,7 +59,7 @@ public:
 
   void real(const voyx::vector<std::complex<T>>& dft, std::span<T> envelope)
   {
-    assert(dft.size() == envelope.size());
+    voyxassert(dft.size() == envelope.size());
 
     for (size_t i = 0; i < spectrum.size(); ++i)
     {
@@ -78,7 +78,7 @@ public:
 
   void abs(const voyx::vector<std::complex<T>>& dft, std::span<T> envelope)
   {
-    assert(dft.size() == envelope.size());
+    voyxassert(dft.size() == envelope.size());
 
     for (size_t i = 0; i < spectrum.size(); ++i)
     {

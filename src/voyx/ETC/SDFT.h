@@ -39,7 +39,7 @@ public:
 
   void sdft(const T sample, voyx::vector<std::complex<T>> dft)
   {
-    assert(dft.size() == size);
+    voyxassert(dft.size() == size);
 
     const T scale = T(1) / size;
     const T delta = sample - std::exchange(buffer.input[buffer.cursor], sample);
@@ -69,7 +69,7 @@ public:
 
   void sdft(const voyx::vector<T> samples, voyx::matrix<std::complex<T>> dfts)
   {
-    assert(samples.size() == dfts.size());
+    voyxassert(samples.size() == dfts.size());
 
     for (size_t i = 0; i < samples.size(); ++i)
     {
@@ -79,7 +79,7 @@ public:
 
   T isdft(const voyx::vector<std::complex<T>> dft)
   {
-    assert(dft.size() == size);
+    voyxassert(dft.size() == size);
 
     T sample = T(0);
 
@@ -93,7 +93,7 @@ public:
 
   void isdft(const voyx::matrix<std::complex<T>> dfts, voyx::vector<T> samples)
   {
-    assert(samples.size() == dfts.size());
+    voyxassert(samples.size() == dfts.size());
 
     for (size_t i = 0; i < samples.size(); ++i)
     {

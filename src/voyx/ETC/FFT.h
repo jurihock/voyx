@@ -14,7 +14,7 @@ public:
   FFT(const size_t size) :
     size(size)
   {
-    assert(size && !(size & (size - 1)));
+    voyxassert(size && !(size & (size - 1)));
   }
 
   /**
@@ -35,8 +35,8 @@ public:
 
   void fft(const voyx::vector<T> signal, voyx::vector<std::complex<T>> dft) const
   {
-    assert(signal.size() == tdsize());
-    assert(dft.size() == fdsize());
+    voyxassert(signal.size() == tdsize());
+    voyxassert(dft.size() == fdsize());
 
     pocketfft::r2c(
       { signal.size() },
@@ -51,9 +51,9 @@ public:
 
   void fft(const voyx::matrix<T> signals, voyx::matrix<std::complex<T>> dfts) const
   {
-    assert(signals.size() == dfts.size());
-    assert(signals.stride() == tdsize());
-    assert(dfts.stride() == fdsize());
+    voyxassert(signals.size() == dfts.size());
+    voyxassert(signals.stride() == tdsize());
+    voyxassert(dfts.stride() == fdsize());
 
     const ptrdiff_t X = signals.stride() * sizeof(T);
     const ptrdiff_t Y = dfts.stride() * sizeof(std::complex<T>);
@@ -71,8 +71,8 @@ public:
 
   void ifft(const voyx::vector<std::complex<T>> dft, voyx::vector<T> signal) const
   {
-    assert(signal.size() == tdsize());
-    assert(dft.size() == fdsize());
+    voyxassert(signal.size() == tdsize());
+    voyxassert(dft.size() == fdsize());
 
     pocketfft::c2r(
       { signal.size() },
@@ -87,9 +87,9 @@ public:
 
   void ifft(const voyx::matrix<std::complex<T>> dfts, voyx::matrix<T> signals) const
   {
-    assert(signals.size() == dfts.size());
-    assert(signals.stride() == tdsize());
-    assert(dfts.stride() == fdsize());
+    voyxassert(signals.size() == dfts.size());
+    voyxassert(signals.stride() == tdsize());
+    voyxassert(dfts.stride() == fdsize());
 
     const ptrdiff_t X = dfts.stride() * sizeof(std::complex<T>);
     const ptrdiff_t Y = signals.stride() * sizeof(T);
@@ -107,7 +107,7 @@ public:
 
   std::vector<std::complex<T>> fft(const voyx::vector<T> signal) const
   {
-    assert(signal.size() == tdsize());
+    voyxassert(signal.size() == tdsize());
 
     const std::vector<T> window = Window<T>(tdsize());
 
@@ -116,8 +116,8 @@ public:
 
   std::vector<std::complex<T>> fft(const voyx::vector<T> signal, const voyx::vector<T> window) const
   {
-    assert(signal.size() == tdsize());
-    assert(window.size() == tdsize());
+    voyxassert(signal.size() == tdsize());
+    voyxassert(window.size() == tdsize());
 
     std::vector<T> sigwin(tdsize());
     std::vector<std::complex<T>> dft(fdsize());
@@ -134,7 +134,7 @@ public:
 
   std::vector<T> ifft(const voyx::vector<std::complex<T>> dft) const
   {
-    assert(dft.size() == fdsize());
+    voyxassert(dft.size() == fdsize());
 
     std::vector<T> signal(tdsize());
 

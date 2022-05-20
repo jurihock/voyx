@@ -9,8 +9,8 @@ namespace $$
   template<typename T>
   static inline void interp(const voyx::vector<T> x1, voyx::vector<T> y1, const voyx::vector<T> x0, const voyx::vector<T> y0)
   {
-    assert(x0.size() == y0.size());
-    assert(x1.size() == y1.size());
+    voyxassert(x0.size() == y0.size());
+    voyxassert(x1.size() == y1.size());
 
     const size_t n0[] = { x0.size() };
     const size_t n1 = x1.size();
@@ -24,8 +24,8 @@ namespace $$
   template<typename T>
   static inline void interp(const std::vector<T>& x1, std::vector<T>& y1, const std::vector<T>& x0, const std::vector<T>& y0)
   {
-    assert(x0.size() == y0.size());
-    assert(x1.size() == y1.size());
+    voyxassert(x0.size() == y0.size());
+    voyxassert(x1.size() == y1.size());
 
     const size_t n0[] = { x0.size() };
     const size_t n1 = x1.size();
@@ -106,14 +106,14 @@ namespace $$
   template<typename T>
   static inline void interp(const voyx::vector<T> x, voyx::vector<T> y, const voyx_t factor)
   {
-    assert(x.size() == y.size());
+    voyxassert(x.size() == y.size());
     $$::interp(x.size(), x.data(), y.data(), factor);
   }
 
   template<typename T>
   static inline void interp(const std::vector<T>& x, std::vector<T>& y, const voyx_t factor)
   {
-    assert(x.size() == y.size());
+    voyxassert(x.size() == y.size());
     $$::interp(x.size(), x.data(), y.data(), factor);
   }
 
