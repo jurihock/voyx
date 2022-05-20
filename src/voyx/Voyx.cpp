@@ -4,8 +4,9 @@
 #include <voyx/Metal.h>
 
 // TODO object factory
-#include <voyx/DSP/TestPipeline.h>
 #include <voyx/DSP/MetalTestPipeline.h>
+#include <voyx/DSP/StftTestPipeline.h>
+#include <voyx/DSP/SdftTestPipeline.h>
 #include <voyx/DSP/InverseSynthPipeline.h>
 #include <voyx/DSP/VoiceSynthPipeline.h>
 #include <voyx/DSP/BypassPipeline.h>
@@ -153,9 +154,10 @@ int main(int argc, char** argv)
   std::shared_ptr<Plot> plot = nullptr;
   #endif
 
-  // auto pipe = std::make_shared<BypassPipeline>(source, sink);
-  auto pipe = std::make_shared<TestPipeline>(samplerate, framesize, 2048, source, sink, observer, plot);
   // auto pipe = std::make_shared<MetalTestPipeline>(samplerate, framesize, 2048, source, sink);
+  // auto pipe = std::make_shared<StftTestPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
+  auto pipe = std::make_shared<SdftTestPipeline>(samplerate, framesize, 2048, source, sink, observer, plot);
+  // auto pipe = std::make_shared<BypassPipeline>(source, sink);
   // auto pipe = std::make_shared<InverseSynthPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
   // auto pipe = std::make_shared<VoiceSynthPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
 
