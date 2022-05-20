@@ -2,89 +2,34 @@
 
 #include <voyx/Header.h>
 
+#define voyxassert(condition) \
+  voyx::assert::check(        \
+    (condition),              \
+    (#condition),             \
+    __FILE__,                 \
+    __LINE__);
+
 namespace voyx
 {
   struct assert
   {
-
-    inline static void fail(const std::string& message)
+    static void fail(const std::string_view message, const std::string_view file, const int line)
     {
-      throw std::runtime_error(message);
+      std::ostringstream error;
+
+      error << message << " "
+            << "in "   << std::filesystem::path(file).filename().string() << " "
+            << "at "   << line;
+
+      throw std::runtime_error(error.str());
     }
 
-    inline static void fail(const std::string& message, const std::string& altmessage)
+    static void check(const bool condition, const std::string_view message, const std::string_view file, const int line)
     {
-      if (message.empty())
+      if (!condition)
       {
-        throw std::runtime_error(altmessage);
-      }
-      else
-      {
-        throw std::runtime_error(message);
+        fail(message, file, line);
       }
     }
-
-    inline static void ok(const bool x, const std::string& message = "")
-    {
-      if (x == true)
-      {
-        return;
-      }
-
-      fail(message, "Expected true, got false!");
-    }
-
-    inline static void nok(const bool x, const std::string& message = "")
-    {
-      if (x == false)
-      {
-        return;
-      }
-
-      fail(message, "Expected false, got true!");
-    }
-
-    inline static void null(const void* x, const std::string& message = "")
-    {
-      if (x == nullptr)
-      {
-        return;
-      }
-
-      fail(message, "Expected nullptr, got something!");
-    }
-
-    inline static void notnull(const void* x, const std::string& message = "")
-    {
-      if (x != nullptr)
-      {
-        return;
-      }
-
-      fail(message, "Expected something, got nullptr!");
-    }
-
-    template<class T>
-    inline static void eq(const T& x, const T& y, const std::string& message = "")
-    {
-      if (x == y)
-      {
-        return;
-      }
-
-      fail(message, $("Expected {0}, got {1}!", y, x));
-    }
-
-    template<class T>
-    inline static void neq(const T& x, const T& y, const std::string& message = "")
-    {
-      if (x != y)
-      {
-        return;
-      }
-
-      fail(message, $("Unexpected {0}!", x));
-    }
-
   };
 }
