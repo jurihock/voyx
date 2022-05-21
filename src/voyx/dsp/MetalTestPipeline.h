@@ -23,8 +23,6 @@ protected:
 
   void begin(const size_t index, const voyx::vector<voyx_t> input) override;
 
-  // virtual void operator()(const size_t index, voyx::matrix<std::complex<voyx_t>> dfts) = 0;
-
 private:
 
 };

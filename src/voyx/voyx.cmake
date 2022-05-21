@@ -22,6 +22,7 @@ target_link_libraries(voyx
           fmt
           metal
           mlinterp
+          opencl
           openmp
           pocketfft
           qcustomplot
@@ -84,5 +85,12 @@ if (METAL)
     ALL DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/default.metallib")
 
   add_dependencies(xcrun_default_metallib xcrun_default_air)
+
+endif()
+
+if (OPENCL)
+
+  target_compile_definitions(voyx
+    PRIVATE VOYXOPENCL)
 
 endif()

@@ -24,6 +24,7 @@
 #include <voyx/dsp/BypassPipeline.h>
 #include <voyx/dsp/InverseSynthPipeline.h>
 #include <voyx/dsp/MetalTestPipeline.h>
+#include <voyx/dsp/OpenclTestPipeline.h>
 #include <voyx/dsp/SdftTestPipeline.h>
 #include <voyx/dsp/StftTestPipeline.h>
 #include <voyx/dsp/VoiceSynthPipeline.h>
@@ -160,8 +161,9 @@ int main(int argc, char** argv)
   // auto pipe = std::make_shared<BypassPipeline>(source, sink);
   // auto pipe = std::make_shared<InverseSynthPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
   // auto pipe = std::make_shared<MetalTestPipeline>(samplerate, framesize, 2048, source, sink);
-  // auto pipe = std::make_shared<SdftTestPipeline>(samplerate, framesize, 2048, source, sink, observer, plot);
-  auto pipe = std::make_shared<StftTestPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
+  // auto pipe = std::make_shared<OpenclTestPipeline>(samplerate, framesize, 2048, source, sink);
+  auto pipe = std::make_shared<SdftTestPipeline>(samplerate, framesize, 2048, source, sink, observer, plot);
+  // auto pipe = std::make_shared<StftTestPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
   // auto pipe = std::make_shared<VoiceSynthPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
 
   pipe->open();
