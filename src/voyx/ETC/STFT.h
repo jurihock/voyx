@@ -54,14 +54,14 @@ public:
     return data.input;
   }
 
-  void stft(const voyx::vector<T> input, voyx::matrix<std::complex<T>> dfts)
+  void stft(const voyx::vector<T> samples, voyx::matrix<std::complex<T>> dfts)
   {
     for (size_t i = 0; i < framesize; ++i)
     {
       const size_t j = i + framesize;
 
       data.input[i] = data.input[j];
-      data.input[j] = input[i];
+      data.input[j] = samples[i];
 
       data.output[i] = data.output[j];
       data.output[j] = 0;
@@ -73,7 +73,7 @@ public:
     fft.fft(frames, dfts);
   }
 
-  void istft(const voyx::matrix<std::complex<T>> dfts, voyx::vector<T> output)
+  void istft(const voyx::matrix<std::complex<T>> dfts, voyx::vector<T> samples)
   {
     voyx::matrix<T> frames(data.frames, framesize);
 
@@ -82,7 +82,7 @@ public:
 
     for (size_t i = 0; i < framesize; ++i)
     {
-      output[i] = data.output[i];
+      samples[i] = data.output[i];
     }
   }
 
