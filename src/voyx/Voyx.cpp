@@ -1,27 +1,28 @@
+#include <voyx/Source.h>
+
 // TODO METAL
 #define NS_PRIVATE_IMPLEMENTATION
 #define MTL_PRIVATE_IMPLEMENTATION
 #include <voyx/Metal.h>
 
-// TODO object factory
-#include <voyx/DSP/MetalTestPipeline.h>
-#include <voyx/DSP/StftTestPipeline.h>
-#include <voyx/DSP/SdftTestPipeline.h>
-#include <voyx/DSP/InverseSynthPipeline.h>
-#include <voyx/DSP/VoiceSynthPipeline.h>
 #include <voyx/DSP/BypassPipeline.h>
-#include <voyx/IO/AudioSource.h>
+#include <voyx/DSP/InverseSynthPipeline.h>
+#include <voyx/DSP/MetalTestPipeline.h>
+#include <voyx/DSP/SdftTestPipeline.h>
+#include <voyx/DSP/StftTestPipeline.h>
+#include <voyx/DSP/VoiceSynthPipeline.h>
+
 #include <voyx/IO/AudioSink.h>
-#include <voyx/IO/FileSource.h>
+#include <voyx/IO/AudioSource.h>
 #include <voyx/IO/FileSink.h>
-#include <voyx/IO/NullSource.h>
+#include <voyx/IO/FileSource.h>
 #include <voyx/IO/NullSink.h>
+#include <voyx/IO/NullSource.h>
 #include <voyx/IO/SineSource.h>
 
-#include <voyx/Source.h>
 #include <voyx/IO/AudioProbe.h>
-#include <voyx/IO/MidiProbe.h>
 #include <voyx/IO/MidiObserver.h>
+#include <voyx/IO/MidiProbe.h>
 #include <voyx/UI/Plot.h>
 #include <voyx/UI/QPlot.h>
 
@@ -59,7 +60,7 @@ int main(int argc, char** argv)
     ("r,sr",      "Sample rate in hertz", cxxopts::value<voyx_t>()->default_value("44100"))
     ("w,window",  "STFT window size", cxxopts::value<int>()->default_value("1024"))
     ("v,overlap", "STFT window overlap", cxxopts::value<int>()->default_value("4"))
-    ("b,buffer",  "Audio IO buffer size", cxxopts::value<int>()->default_value("100"))
+    ("b,buffer",  "Audio fifo size", cxxopts::value<int>()->default_value("100"))
     ("d,debug",   "Enable debug mode");
 
   const auto args = options.parse(argc, argv);
@@ -154,11 +155,11 @@ int main(int argc, char** argv)
   std::shared_ptr<Plot> plot = nullptr;
   #endif
 
-  // auto pipe = std::make_shared<MetalTestPipeline>(samplerate, framesize, 2048, source, sink);
-  // auto pipe = std::make_shared<StftTestPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
-  auto pipe = std::make_shared<SdftTestPipeline>(samplerate, framesize, 2048, source, sink, observer, plot);
   // auto pipe = std::make_shared<BypassPipeline>(source, sink);
   // auto pipe = std::make_shared<InverseSynthPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
+  // auto pipe = std::make_shared<MetalTestPipeline>(samplerate, framesize, 2048, source, sink);
+  // auto pipe = std::make_shared<SdftTestPipeline>(samplerate, framesize, 2048, source, sink, observer, plot);
+  auto pipe = std::make_shared<StftTestPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
   // auto pipe = std::make_shared<VoiceSynthPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
 
   pipe->open();

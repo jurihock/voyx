@@ -1,8 +1,7 @@
 #pragma once
 
 #include <voyx/Header.h>
-#include <voyx/ETC/FFT.h>
-#include <voyx/ETC/Window.h>
+#include <voyx/ALG/FFT.h>
 
 /**
  * Short-Time Fourier Transform implementation.

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <voyx/Header.h>
+#include <voyx/ALG/Vocoder.h>
 #include <voyx/DSP/StftPipeline.h>
-#include <voyx/ETC/Vocoder.h>
 #include <voyx/IO/MidiObserver.h>
 #include <voyx/UI/Plot.h>
 

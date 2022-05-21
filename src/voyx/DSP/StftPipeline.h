@@ -1,7 +1,7 @@
 #pragma once
 
 #include <voyx/Header.h>
-#include <voyx/ETC/STFT.h>
+#include <voyx/ALG/STFT.h>
 #include <voyx/DSP/SyncPipeline.h>
 
 class StftPipeline : public SyncPipeline<voyx_t>
