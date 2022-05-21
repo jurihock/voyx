@@ -61,7 +61,7 @@ void VoiceSynthPipeline::operator()(const size_t index,
     {
       const size_t j = mask[i];
 
-      dft[i] = buffers[j][i];
+      dft[i] = buffers(j, i);
 
       dft[i].imag(dft[i].imag() * factors[j]);
     }
