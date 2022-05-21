@@ -9,6 +9,8 @@ if (UI AND NOT Qt5_FOUND)
 
 endif()
 
+add_library(qt INTERFACE)
+
 if (UI)
 
   set(CMAKE_AUTOMOC ON)
@@ -18,15 +20,9 @@ if (UI)
     PrintSupport
     Widgets)
 
-  add_library(qt INTERFACE)
-
   target_link_libraries(qt
     INTERFACE Qt5::Core
               Qt5::PrintSupport
               Qt5::Widgets)
-
-else()
-
-  add_library(qt INTERFACE)
 
 endif()

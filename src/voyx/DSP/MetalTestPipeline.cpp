@@ -1,3 +1,5 @@
+#ifdef VOYXMETAL
+
 #include <voyx/DSP/MetalTestPipeline.h>
 
 #include <voyx/Source.h>
@@ -96,3 +98,5 @@ void MetalTestPipeline::begin(const size_t index, const voyx::vector<voyx_t> inp
 
   // semaphore.acquire();
 }
+
+#endif

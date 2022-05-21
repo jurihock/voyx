@@ -1,4 +1,4 @@
-#include "SDFT.h"
+#include "SDFT.metal"
 
 kernel void bypass(device const float* input,
                    device float* output,

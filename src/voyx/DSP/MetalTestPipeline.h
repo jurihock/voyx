@@ -1,8 +1,12 @@
+#ifdef VOYXMETAL
+
 #pragma once
 
 #include <voyx/Header.h>
-#include <voyx/Metal.h>
 #include <voyx/DSP/AsyncPipeline.h>
+
+#include <Foundation/Foundation.hpp>
+#include <Metal/Metal.hpp>
 
 class MetalTestPipeline : public AsyncPipeline<voyx_t>
 {
@@ -24,3 +28,5 @@ protected:
 private:
 
 };
+
+#endif

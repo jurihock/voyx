@@ -1,16 +1,17 @@
 #include <voyx/Source.h>
 
-// TODO METAL
+#ifdef VOYXMETAL
 #define NS_PRIVATE_IMPLEMENTATION
+#include <Foundation/Foundation.hpp>
 #define MTL_PRIVATE_IMPLEMENTATION
-#include <voyx/Metal.h>
+#include <Metal/Metal.hpp>
+#endif
 
-#include <voyx/DSP/BypassPipeline.h>
-#include <voyx/DSP/InverseSynthPipeline.h>
-#include <voyx/DSP/MetalTestPipeline.h>
-#include <voyx/DSP/SdftTestPipeline.h>
-#include <voyx/DSP/StftTestPipeline.h>
-#include <voyx/DSP/VoiceSynthPipeline.h>
+#include <voyx/IO/AudioProbe.h>
+#include <voyx/IO/MidiObserver.h>
+#include <voyx/IO/MidiProbe.h>
+#include <voyx/UI/Plot.h>
+#include <voyx/UI/QPlot.h>
 
 #include <voyx/IO/AudioSink.h>
 #include <voyx/IO/AudioSource.h>
@@ -20,11 +21,12 @@
 #include <voyx/IO/NullSource.h>
 #include <voyx/IO/SineSource.h>
 
-#include <voyx/IO/AudioProbe.h>
-#include <voyx/IO/MidiObserver.h>
-#include <voyx/IO/MidiProbe.h>
-#include <voyx/UI/Plot.h>
-#include <voyx/UI/QPlot.h>
+#include <voyx/DSP/BypassPipeline.h>
+#include <voyx/DSP/InverseSynthPipeline.h>
+#include <voyx/DSP/MetalTestPipeline.h>
+#include <voyx/DSP/SdftTestPipeline.h>
+#include <voyx/DSP/StftTestPipeline.h>
+#include <voyx/DSP/VoiceSynthPipeline.h>
 
 #include <cxxopts.hpp>
 
