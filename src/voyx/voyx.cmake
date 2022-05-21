@@ -4,6 +4,11 @@ file(GLOB_RECURSE
   HDR "${CMAKE_CURRENT_LIST_DIR}/*.h"
   CPP "${CMAKE_CURRENT_LIST_DIR}/*.cpp")
 
+source_group(
+  TREE "${CMAKE_CURRENT_LIST_DIR}"
+  FILES ${HDR} ${CPP}
+  PREFIX voyx)
+
 target_sources(voyx
   PRIVATE ${HDR} ${CPP})
 
@@ -65,5 +70,7 @@ if (METAL)
 
   add_custom_target(xcrun_default_metallib
     ALL DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/default.metallib")
+
+  add_dependencies(xcrun_default_metallib xcrun_default_air)
 
 endif()
