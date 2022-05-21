@@ -69,7 +69,8 @@ public:
 
     voyx::matrix<T> frames(data.frames, framesize);
 
-    reject(data.hops, data.input, frames, windows.analysis);
+    reject(frames, data.input, data.hops, windows.analysis);
+
     fft.fft(frames, dfts);
   }
 
@@ -78,7 +79,8 @@ public:
     voyx::matrix<T> frames(data.frames, framesize);
 
     fft.ifft(dfts, frames);
-    inject(data.hops, data.output, frames, windows.synthesis);
+
+    inject(frames, data.output, data.hops, windows.synthesis);
 
     for (size_t i = 0; i < framesize; ++i)
     {
@@ -109,24 +111,30 @@ private:
   }
   data;
 
-  static void reject(const std::vector<size_t>& hops, const voyx::vector<T> input, voyx::matrix<T> frames, const std::vector<T>& window)
+  static void reject(voyx::matrix<T> frames, const voyx::vector<T> input, const std::vector<size_t>& hops, const std::vector<T>& window)
   {
     for (size_t i = 0; i < hops.size(); ++i)
     {
+      const auto hop = hops[i];
+      auto frame = frames[i];
+
       for (size_t j = 0; j < window.size(); ++j)
       {
-        frames[i][j] = input[hops[i] + j] * window[j];
+        frame[j] = input[hop + j] * window[j];
       }
     }
   }
 
-  static void inject(const std::vector<size_t>& hops, voyx::vector<T> output, const voyx::matrix<T> frames, const std::vector<T>& window)
+  static void inject(const voyx::matrix<T> frames, voyx::vector<T> output, const std::vector<size_t>& hops, const std::vector<T>& window)
   {
     for (size_t i = 0; i < hops.size(); ++i)
     {
+      const auto hop = hops[i];
+      const auto frame = frames[i];
+
       for (size_t j = 0; j < window.size(); ++j)
       {
-        output[hops[i] + j] += frames[i][j] * window[j];
+        output[hop + j] += frame[j] * window[j];
       }
     }
   }
