@@ -34,6 +34,18 @@ target_link_libraries(voyx
 target_compile_features(voyx
   PRIVATE cxx_std_20)
 
+if (MSVC)
+
+  target_compile_options(voyx
+    PRIVATE /fp:fast)
+
+else()
+
+  target_compile_options(voyx
+    PRIVATE -ffast-math)
+
+endif()
+
 if (UNIX)
 
   target_link_libraries(voyx
