@@ -1,4 +1,4 @@
-#include <voyx/IO/MidiObserver.h>
+#include <voyx/io/MidiObserver.h>
 
 #include <voyx/Source.h>
 

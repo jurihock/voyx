@@ -1,7 +1,7 @@
 #pragma once
 
 #include <voyx/Header.h>
-#include <voyx/IO/Sink.h>
+#include <voyx/io/Sink.h>
 
 class FileSink : public Sink<voyx_t>
 {

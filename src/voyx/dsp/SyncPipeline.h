@@ -1,9 +1,9 @@
 #pragma once
 
 #include <voyx/Header.h>
-#include <voyx/ETC/Logger.h>
-#include <voyx/ETC/Timer.h>
-#include <voyx/DSP/Pipeline.h>
+#include <voyx/etc/Logger.h>
+#include <voyx/etc/Timer.h>
+#include <voyx/dsp/Pipeline.h>
 
 template<typename T = voyx_t>
 class SyncPipeline : public Pipeline<T>

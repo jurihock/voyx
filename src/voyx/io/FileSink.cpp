@@ -1,7 +1,7 @@
-#include <voyx/IO/FileSink.h>
+#include <voyx/io/FileSink.h>
 
 #include <voyx/Source.h>
-#include <voyx/ETC/WAV.h>
+#include <voyx/etc/WAV.h>
 
 FileSink::FileSink(const std::string& path, voyx_t samplerate, size_t framesize, size_t buffersize) :
   Sink(samplerate, framesize, buffersize),

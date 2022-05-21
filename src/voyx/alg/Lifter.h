@@ -1,7 +1,7 @@
 #pragma once
 
 #include <voyx/Header.h>
-#include <voyx/ALG/FFT.h>
+#include <voyx/alg/FFT.h>
 
 template<typename T>
 class Lifter

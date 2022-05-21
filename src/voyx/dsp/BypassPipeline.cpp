@@ -1,4 +1,4 @@
-#include <voyx/DSP/BypassPipeline.h>
+#include <voyx/dsp/BypassPipeline.h>
 
 #include <voyx/Source.h>
 

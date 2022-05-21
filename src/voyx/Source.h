@@ -5,6 +5,6 @@
  * and is to be included in .cpp project files.
  **/
 
-#include <voyx/ETC/Convert.h>
-#include <voyx/ETC/Format.h>
-#include <voyx/ETC/Logger.h>
+#include <voyx/etc/Convert.h>
+#include <voyx/etc/Format.h>
+#include <voyx/etc/Logger.h>

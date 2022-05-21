@@ -1,7 +1,7 @@
 #pragma once
 
 #include <voyx/Header.h>
-#include <voyx/ALG/Window.h>
+#include <voyx/alg/Window.h>
 
 #include <pocketfft_hdronly.h>
 

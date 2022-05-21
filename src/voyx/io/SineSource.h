@@ -1,7 +1,7 @@
 #pragma once
 
 #include <voyx/Header.h>
-#include <voyx/IO/Source.h>
+#include <voyx/io/Source.h>
 
 class SineSource : public Source<voyx_t>
 {

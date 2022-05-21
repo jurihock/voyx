@@ -1,8 +1,8 @@
 #pragma once
 
 #include <voyx/Header.h>
-#include <voyx/ALG/SDFT.h>
-#include <voyx/DSP/SyncPipeline.h>
+#include <voyx/alg/SDFT.h>
+#include <voyx/dsp/SyncPipeline.h>
 
 class SdftPipeline : public SyncPipeline<voyx_t>
 {

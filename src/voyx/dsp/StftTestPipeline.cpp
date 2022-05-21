@@ -1,4 +1,4 @@
-#include <voyx/DSP/StftTestPipeline.h>
+#include <voyx/dsp/StftTestPipeline.h>
 
 #include <voyx/Source.h>
 

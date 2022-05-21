@@ -1,6 +1,6 @@
 #ifdef VOYXMETAL
 
-#include <voyx/DSP/MetalTestPipeline.h>
+#include <voyx/dsp/MetalTestPipeline.h>
 
 #include <voyx/Source.h>
 

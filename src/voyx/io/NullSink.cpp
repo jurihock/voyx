@@ -1,4 +1,4 @@
-#include <voyx/IO/NullSink.h>
+#include <voyx/io/NullSink.h>
 
 #include <voyx/Source.h>
 

@@ -41,9 +41,9 @@
  * Following by custom types.
  **/
 
-#include <voyx/ETC/Assert.h>
-#include <voyx/ETC/Vector.h>
-#include <voyx/ETC/Matrix.h>
+#include <voyx/etc/Assert.h>
+#include <voyx/etc/Vector.h>
+#include <voyx/etc/Matrix.h>
 
 /**
  * And finally common data type definition,

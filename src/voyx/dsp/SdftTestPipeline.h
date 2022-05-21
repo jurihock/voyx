@@ -1,9 +1,9 @@
 #pragma once
 
 #include <voyx/Header.h>
-#include <voyx/DSP/SdftPipeline.h>
-#include <voyx/IO/MidiObserver.h>
-#include <voyx/UI/Plot.h>
+#include <voyx/dsp/SdftPipeline.h>
+#include <voyx/io/MidiObserver.h>
+#include <voyx/ui/Plot.h>
 
 class SdftTestPipeline : public SdftPipeline
 {

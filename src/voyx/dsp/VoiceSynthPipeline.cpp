@@ -1,4 +1,4 @@
-#include <voyx/DSP/VoiceSynthPipeline.h>
+#include <voyx/dsp/VoiceSynthPipeline.h>
 
 #include <voyx/Source.h>
 

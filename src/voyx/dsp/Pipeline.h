@@ -1,8 +1,8 @@
 #pragma once
 
 #include <voyx/Header.h>
-#include <voyx/IO/Sink.h>
-#include <voyx/IO/Source.h>
+#include <voyx/io/Sink.h>
+#include <voyx/io/Source.h>
 
 template<typename T = voyx_t>
 class Pipeline

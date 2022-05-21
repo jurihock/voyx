@@ -1,4 +1,4 @@
-#include <voyx/DSP/InverseSynthPipeline.h>
+#include <voyx/dsp/InverseSynthPipeline.h>
 
 #include <voyx/Source.h>
 

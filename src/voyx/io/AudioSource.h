@@ -1,8 +1,8 @@
 #pragma once
 
 #include <voyx/Header.h>
-#include <voyx/ETC/FIFO.h>
-#include <voyx/IO/Source.h>
+#include <voyx/etc/FIFO.h>
+#include <voyx/io/Source.h>
 
 #include <RtAudio.h>
 

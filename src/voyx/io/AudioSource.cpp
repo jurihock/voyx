@@ -1,4 +1,4 @@
-#include <voyx/IO/AudioSource.h>
+#include <voyx/io/AudioSource.h>
 
 #include <voyx/Source.h>
 

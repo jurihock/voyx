@@ -3,7 +3,7 @@
 #pragma once
 
 #include <voyx/Header.h>
-#include <voyx/DSP/AsyncPipeline.h>
+#include <voyx/dsp/AsyncPipeline.h>
 
 #include <Foundation/Foundation.hpp>
 #include <Metal/Metal.hpp>

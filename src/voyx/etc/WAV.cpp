@@ -1,4 +1,4 @@
-#include <voyx/ETC/WAV.h>
+#include <voyx/etc/WAV.h>
 
 #include <voyx/Source.h>
 

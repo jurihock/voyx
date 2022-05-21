@@ -1,4 +1,4 @@
-#include <voyx/IO/MidiProbe.h>
+#include <voyx/io/MidiProbe.h>
 
 #include <voyx/Source.h>
 

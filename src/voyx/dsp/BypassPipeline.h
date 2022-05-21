@@ -1,7 +1,7 @@
 #pragma once
 
 #include <voyx/Header.h>
-#include <voyx/DSP/SyncPipeline.h>
+#include <voyx/dsp/SyncPipeline.h>
 
 class BypassPipeline : public SyncPipeline<voyx_t>
 {

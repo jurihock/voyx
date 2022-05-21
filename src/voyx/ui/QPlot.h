@@ -3,7 +3,7 @@
 #pragma once
 
 #include <voyx/Header.h>
-#include <voyx/UI/Plot.h>
+#include <voyx/ui/Plot.h>
 
 #include <qcustomplot.h>
 

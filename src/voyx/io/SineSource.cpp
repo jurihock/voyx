@@ -1,4 +1,4 @@
-#include <voyx/IO/SineSource.h>
+#include <voyx/io/SineSource.h>
 
 #include <voyx/Source.h>
 

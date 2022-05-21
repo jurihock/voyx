@@ -7,26 +7,26 @@
 #include <Metal/Metal.hpp>
 #endif
 
-#include <voyx/IO/AudioProbe.h>
-#include <voyx/IO/MidiObserver.h>
-#include <voyx/IO/MidiProbe.h>
-#include <voyx/UI/Plot.h>
-#include <voyx/UI/QPlot.h>
+#include <voyx/io/AudioProbe.h>
+#include <voyx/io/MidiObserver.h>
+#include <voyx/io/MidiProbe.h>
+#include <voyx/ui/Plot.h>
+#include <voyx/ui/QPlot.h>
 
-#include <voyx/IO/AudioSink.h>
-#include <voyx/IO/AudioSource.h>
-#include <voyx/IO/FileSink.h>
-#include <voyx/IO/FileSource.h>
-#include <voyx/IO/NullSink.h>
-#include <voyx/IO/NullSource.h>
-#include <voyx/IO/SineSource.h>
+#include <voyx/io/AudioSink.h>
+#include <voyx/io/AudioSource.h>
+#include <voyx/io/FileSink.h>
+#include <voyx/io/FileSource.h>
+#include <voyx/io/NullSink.h>
+#include <voyx/io/NullSource.h>
+#include <voyx/io/SineSource.h>
 
-#include <voyx/DSP/BypassPipeline.h>
-#include <voyx/DSP/InverseSynthPipeline.h>
-#include <voyx/DSP/MetalTestPipeline.h>
-#include <voyx/DSP/SdftTestPipeline.h>
-#include <voyx/DSP/StftTestPipeline.h>
-#include <voyx/DSP/VoiceSynthPipeline.h>
+#include <voyx/dsp/BypassPipeline.h>
+#include <voyx/dsp/InverseSynthPipeline.h>
+#include <voyx/dsp/MetalTestPipeline.h>
+#include <voyx/dsp/SdftTestPipeline.h>
+#include <voyx/dsp/StftTestPipeline.h>
+#include <voyx/dsp/VoiceSynthPipeline.h>
 
 #include <cxxopts.hpp>
 
