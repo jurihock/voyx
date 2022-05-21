@@ -28,8 +28,6 @@ include("${CMAKE_CURRENT_LIST_DIR}/lib/thread_pool.cmake")
 
 include("${CMAKE_CURRENT_LIST_DIR}/src/voyx/voyx.cmake")
 
-include("${CMAKE_CURRENT_LIST_DIR}/src/test-metal/test-metal.cmake")
-
 set(FOLDERS "lib;src")
 
 foreach(FOLDER ${FOLDERS})
