@@ -44,7 +44,7 @@ public:
     const T scale = T(1) / size;
     const T delta = sample - std::exchange(buffer.input[buffer.cursor], sample);
 
-    for (size_t i = roi.analysis.first, j = roi.analysis.first + 1; i < roi.analysis.second; ++i, ++j)
+    for (size_t i = roi.analysis.first, j = i + 1; i < roi.analysis.second; ++i, ++j)
     {
       buffer.output[j] += delta;
       buffer.output[j] *= twiddles[i];
@@ -53,7 +53,7 @@ public:
     buffer.output[0] = buffer.output[size];
     buffer.output[size + 1] = buffer.output[1];
 
-    for (size_t i = roi.analysis.first, j = roi.analysis.first + 1; i < roi.analysis.second; ++i, ++j)
+    for (size_t i = roi.analysis.first, j = i + 1; i < roi.analysis.second; ++i, ++j)
     {
       dft[i] = window(buffer.output[j - 1],
                       buffer.output[j],
