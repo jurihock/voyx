@@ -63,22 +63,81 @@ OpenclTestPipeline::OpenclTestPipeline(const voyx_t samplerate, const size_t fra
     }
   }
 
-  bypass = cl::Kernel(program, "bypass");
+  sdft1 = cl::Kernel(program, "sdft1");
+  sdft2 = cl::Kernel(program, "sdft2");
+
+  buffer.inputs.resize(dftsize);
+  buffer.outputs.resize((dftsize + 2) * framesize);
+  buffer.dfts.resize(dftsize * framesize);
+  buffer.cursor = 0;
 }
+
+#define CLBUFFER(vector, type) cl::Buffer(context, CL_MEM_USE_HOST_PTR, vector.size() * sizeof(type), (void*)vector.data());
 
 void OpenclTestPipeline::operator()(const size_t index, const voyx::vector<voyx_t> input, voyx::vector<voyx_t> output)
 {
-  cl::Buffer x = cl::Buffer(context, CL_MEM_USE_HOST_PTR, framesize * sizeof(voyx_t), (void*)input.data());
-  cl::Buffer y = cl::Buffer(context, CL_MEM_USE_HOST_PTR, framesize * sizeof(voyx_t), (void*)output.data());
-
-  bypass.setArg<cl::Buffer>(0, x);
-  bypass.setArg<cl::Buffer>(1, y);
-
   cl::Event event;
+  {
+    cl::Buffer samples = CLBUFFER(input, voyx_t);
+    cl::Buffer inputs = CLBUFFER(buffer.inputs, voyx_t);
+    cl::Buffer outputs = CLBUFFER(buffer.outputs, std::complex<voyx_t>);
 
-  queue.enqueueNDRangeKernel(bypass, cl::NullRange, cl::NDRange(framesize), cl::NullRange, nullptr, &event);
+    sdft1.setArg<cl::Buffer>(0, samples);
+    sdft1.setArg<cl::Buffer>(1, inputs);
+    sdft1.setArg<cl::Buffer>(2, outputs);
+
+    sdft1.setArg<int>(3, framesize);
+    sdft1.setArg<int>(4, dftsize);
+    sdft1.setArg<int>(5, buffer.cursor);
+
+    queue.enqueueNDRangeKernel(sdft1, cl::NullRange, cl::NDRange(dftsize), cl::NullRange);
+  }
+  {
+    cl::Buffer samples = CLBUFFER(input, voyx_t);
+    cl::Buffer inputs = CLBUFFER(buffer.inputs, voyx_t);
+    cl::Buffer outputs = CLBUFFER(buffer.outputs, std::complex<voyx_t>);
+    cl::Buffer dfts = CLBUFFER(buffer.dfts, std::complex<voyx_t>);
+
+    sdft2.setArg<cl::Buffer>(0, outputs);
+    sdft2.setArg<cl::Buffer>(1, dfts);
+
+    sdft2.setArg<int>(2, dftsize);
+    sdft2.setArg<voyx_t>(3, voyx_t(1) / dftsize);
+
+    queue.enqueueNDRangeKernel(sdft2, cl::NullRange, cl::NDRange(dftsize, framesize), cl::NullRange, nullptr, &event);
+  }
 
   event.wait();
+
+  voyx::matrix<std::complex<voyx_t>> dfts(buffer.dfts, dftsize);
+
+  for (size_t i = 0; i < framesize; ++i)
+  {
+    const voyx::vector<std::complex<voyx_t>> dft = dfts[i];
+
+    voyx_t sample = 0;
+
+    for (size_t j = 0; j < dftsize; ++j)
+    {
+      sample += dft[j].real() * (j % 2 ? -1 : +1);
+    }
+
+    output[i] = sample;
+  }
+
+  size_t cursor = buffer.cursor;
+
+  for (size_t i = 0; i < framesize; ++i)
+  {
+    buffer.inputs[cursor] = input[i];
+
+    if (++cursor >= buffer.inputs.size())
+    {
+      cursor = 0;
+    }
+  }
+
+  buffer.cursor = cursor;
 }
 
 #endif

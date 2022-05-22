@@ -158,11 +158,13 @@ int main(int argc, char** argv)
   std::shared_ptr<Plot> plot = nullptr;
   #endif
 
+  const size_t dftsize = 2*1024;
+
   // auto pipe = std::make_shared<BypassPipeline>(source, sink);
   // auto pipe = std::make_shared<InverseSynthPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
-  // auto pipe = std::make_shared<MetalTestPipeline>(samplerate, framesize, 2048, source, sink);
-  // auto pipe = std::make_shared<OpenclTestPipeline>(samplerate, framesize, 2048, source, sink);
-  auto pipe = std::make_shared<SdftTestPipeline>(samplerate, framesize, 2048, source, sink, observer, plot);
+  // auto pipe = std::make_shared<MetalTestPipeline>(samplerate, framesize, dftsize, source, sink);
+  auto pipe = std::make_shared<OpenclTestPipeline>(samplerate, framesize, dftsize, source, sink);
+  // auto pipe = std::make_shared<SdftTestPipeline>(samplerate, framesize, dftsize, source, sink, observer, plot);
   // auto pipe = std::make_shared<StftTestPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
   // auto pipe = std::make_shared<VoiceSynthPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
 
