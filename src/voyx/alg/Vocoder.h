@@ -9,11 +9,17 @@ class Vocoder
 public:
 
   Vocoder(const voyx_t samplerate, const size_t framesize, const size_t hopsize) :
-    stft_freq_inc(samplerate / framesize),
-    stft_phase_inc(PI2 * hopsize / framesize)
+    framesize(framesize),
+    hopsize(hopsize),
+    dftsize(framesize / 2),
+    freqinc(samplerate / framesize),
+    phaseinc(pi * hopsize / framesize)
   {
-    encode_phase_buffer.resize(framesize / 2 + 1);
-    decode_phase_buffer.resize(framesize / 2 + 1);
+    cursor.encode = 0;
+    cursor.decode = 0;
+
+    buffer.encode.resize(dftsize + 1);
+    buffer.decode.resize(dftsize + 1);
   }
 
   void encode(voyx::matrix<std::complex<T>> dfts)
@@ -43,16 +49,23 @@ public:
     {
       phase = std::arg(dft[i]);
 
-      delta = phase - encode_phase_buffer[i];
-      encode_phase_buffer[i] = phase;
+      delta = phase - buffer.encode[i];
+      buffer.encode[i] = phase;
 
-      j = wrap(delta - i * stft_phase_inc) / stft_phase_inc;
+      j = wrap(delta - i * phaseinc) / phaseinc;
 
-      frequency = (i + j) * stft_freq_inc;
+      frequency = (i + j) * freqinc;
 
       dft[i] = std::complex<T>(
         std::abs(dft[i]),
         frequency);
+    }
+
+    if ((cursor.encode += hopsize) >= dftsize)
+    {
+      cursor.encode = 0;
+
+      std::fill(buffer.encode.begin(), buffer.encode.end(), 0);
     }
   }
 
@@ -67,32 +80,54 @@ public:
     {
       frequency = dft[i].imag();
 
-      j = (frequency - i * stft_freq_inc) / stft_freq_inc;
+      j = (frequency - i * freqinc) / freqinc;
 
-      delta = (i + j) * stft_phase_inc;
+      delta = (i + j) * phaseinc;
 
-      decode_phase_buffer[i] += delta;
-      phase = decode_phase_buffer[i];
+      buffer.decode[i] += delta;
+      phase = buffer.decode[i];
 
       dft[i] = std::polar<T>(
         dft[i].real(),
         phase);
     }
+
+    if ((cursor.decode += hopsize) >= dftsize)
+    {
+      cursor.decode = 0;
+
+      std::fill(buffer.decode.begin(), buffer.decode.end(), 0);
+    }
   }
 
 private:
 
-  const T PI2 = T(2) * std::acos(T(-1));
+  const T pi = T(2) * std::acos(T(-1));
 
-  const T stft_freq_inc;
-  const T stft_phase_inc;
+  const size_t framesize;
+  const size_t hopsize;
+  const size_t dftsize;
 
-  std::vector<T> encode_phase_buffer;
-  std::vector<T> decode_phase_buffer;
+  const T freqinc;
+  const T phaseinc;
+
+  struct
+  {
+    size_t encode;
+    size_t decode;
+  }
+  cursor;
+
+  struct
+  {
+    std::vector<T> encode;
+    std::vector<T> decode;
+  }
+  buffer;
 
   inline T wrap(const T phase) const
   {
-    return phase - PI2 * std::floor(phase / PI2 + T(0.5));
+    return phase - pi * std::floor(phase / pi + T(0.5));
   }
 
 };
