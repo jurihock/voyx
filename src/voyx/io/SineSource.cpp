@@ -3,7 +3,7 @@
 #include <voyx/Source.h>
 
 SineSource::SineSource(voyx_t frequency, voyx_t samplerate, size_t framesize, size_t buffersize) :
-  SineSource(1.0f, frequency, samplerate, framesize, buffersize)
+  SineSource(1, frequency, samplerate, framesize, buffersize)
 {
 }
 
@@ -11,25 +11,19 @@ SineSource::SineSource(voyx_t amplitude, voyx_t frequency, voyx_t samplerate, si
   Source(samplerate, framesize, buffersize),
   amplitude(amplitude),
   frequency(frequency),
-  phase(0),
+  omega(std::polar<voyx_t>(1, pi * frequency / samplerate)),
+  phasor(1),
   frame(framesize)
 {
 }
 
 bool SineSource::read(const size_t index, std::function<void(const voyx::vector<voyx_t> frame)> callback)
 {
-  const voyx_t phaseinc = frequency / samplerate();
-
   for (size_t i = 0; i < frame.size(); ++i)
   {
-    phase += phaseinc;
+    frame[i] = amplitude * phasor.imag();
 
-    if (phase >= 1)
-    {
-      phase -= 1;
-    }
-
-    frame[i] = amplitude * std::sin(PI2 * phase);
+    phasor *= omega;
   }
 
   callback(frame);

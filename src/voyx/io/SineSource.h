@@ -15,11 +15,13 @@ public:
 
 private:
 
-  const voyx_t PI2 = voyx_t(2) * std::acos(voyx_t(-1));
+  const voyx_t pi = voyx_t(2) * std::acos(voyx_t(-1));
 
   const voyx_t amplitude;
   const voyx_t frequency;
-  voyx_t phase;
+
+  std::complex<voyx_t> omega;
+  std::complex<voyx_t> phasor;
 
   std::vector<voyx_t> frame;
 
