@@ -14,9 +14,9 @@ namespace args
 class QCloseOnEscapeWidget : public QWidget
 {
 
-protected:
+private:
 
-  void keyPressEvent(QKeyEvent* event)
+  void keyPressEvent(QKeyEvent* event) override
   {
     if (event->key() == Qt::Key_Escape)
     {
@@ -25,6 +25,46 @@ protected:
     else
     {
       QWidget::keyPressEvent(event);
+    }
+  }
+
+};
+
+class QCustomTouchPlot : public QCustomPlot
+{
+
+public:
+
+  void touch(std::function<void(bool state)> callback)
+  {
+    this->callback = callback;
+  }
+
+private:
+
+  std::function<void(bool)> callback = [](bool state){};
+
+  void mousePressEvent(QMouseEvent* event) override
+  {
+    if (event->button() == Qt::LeftButton)
+    {
+      callback(true);
+    }
+    else
+    {
+      QCustomPlot::mousePressEvent(event);
+    }
+  }
+
+  void mouseReleaseEvent(QMouseEvent* event) override
+  {
+    if (event->button() == Qt::LeftButton)
+    {
+      callback(false);
+    }
+    else
+    {
+      QCustomPlot::mouseReleaseEvent(event);
     }
   }
 
@@ -124,19 +164,29 @@ void QPlot::xrange(const double min, const double max)
 
 void QPlot::plot(const std::span<const float> y)
 {
+  if (pause)
+  {
+    return;
+  }
+
   std::lock_guard lock(mutex);
   data.ydata = std::vector<double>(y.begin(), y.end());
 }
 
 void QPlot::plot(const std::span<const double> y)
 {
+  if (pause)
+  {
+    return;
+  }
+
   std::lock_guard lock(mutex);
   data.ydata = std::vector<double>(y.begin(), y.end());
 }
 
 void QPlot::addPlot(const size_t row, const size_t col, const size_t graphs)
 {
-  auto plot = std::make_shared<QCustomPlot>();
+  auto plot = std::make_shared<QCustomTouchPlot>();
 
   for (size_t i = 0; i < graphs; ++i)
   {
@@ -151,6 +201,11 @@ void QPlot::addPlot(const size_t row, const size_t col, const size_t graphs)
   }
 
   layout->addWidget(plot.get(), row, col);
+
+  plot->touch([&](bool state)
+  {
+    pause = state;
+  });
 
   plots.push_back(plot);
 }

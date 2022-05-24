@@ -65,6 +65,7 @@ private:
   std::shared_ptr<std::thread> thread;
   std::mutex mutex;
   bool doloop = false;
+  bool pause = false;
 
   void loop();
 
