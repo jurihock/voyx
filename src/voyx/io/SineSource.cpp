@@ -11,8 +11,7 @@ SineSource::SineSource(voyx_t amplitude, voyx_t frequency, voyx_t samplerate, si
   Source(samplerate, framesize, buffersize),
   amplitude(amplitude),
   frequency(frequency),
-  omega(std::polar<voyx_t>(1, pi * frequency / samplerate)),
-  phasor(1),
+  sine(frequency, samplerate),
   frame(framesize)
 {
 }
@@ -21,9 +20,7 @@ bool SineSource::read(const size_t index, std::function<void(const voyx::vector<
 {
   for (size_t i = 0; i < frame.size(); ++i)
   {
-    frame[i] = amplitude * phasor.imag();
-
-    phasor *= omega;
+    frame[i] = amplitude * sine();
   }
 
   callback(frame);

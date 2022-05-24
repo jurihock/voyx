@@ -1,6 +1,7 @@
 #pragma once
 
 #include <voyx/Header.h>
+#include <voyx/alg/Oscillator.h>
 #include <voyx/io/Source.h>
 
 class SineSource : public Source<voyx_t>
@@ -15,13 +16,10 @@ public:
 
 private:
 
-  const voyx_t pi = voyx_t(2) * std::acos(voyx_t(-1));
-
   const voyx_t amplitude;
   const voyx_t frequency;
 
-  std::complex<voyx_t> omega;
-  std::complex<voyx_t> phasor;
+  Oscillator<voyx_t> sine;
 
   std::vector<voyx_t> frame;
 
