@@ -2,6 +2,9 @@
 
 #include <voyx/Header.h>
 
+// TODO is amplitude drift fix required?
+// https://dsp.stackexchange.com/a/1087
+
 template<class T>
 class Oscillator
 {
