@@ -1,7 +1,7 @@
 #pragma once
 
 #include <voyx/Header.h>
-#include <voyx/alg/MSDFT.h>
+#include <voyx/alg/SDFT.h>
 #include <voyx/dsp/SyncPipeline.h>
 
 class SdftPipeline : public SyncPipeline<voyx_t>
@@ -23,7 +23,7 @@ protected:
 
 private:
 
-  MSDFT<voyx_t> sdft;
+  SDFT<voyx_t> sdft;
 
   struct
   {

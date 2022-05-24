@@ -3,9 +3,14 @@
 #include <voyx/Header.h>
 
 /**
- * Sliding DFT implementation according to [1].
+ * Modulated Sliding DFT implementation according to [1] combined with [2].
  *
- * [1] Russell Bradford and Richard Dobson and John ffitch
+ * [1] Krzysztof Duda
+ *     Accurate, Guaranteed Stable, Sliding Discrete Fourier Transform
+ *     IEEE Signal Processing Magazine (2010)
+ *     https://ieeexplore.ieee.org/document/5563098
+ *
+ * [2] Russell Bradford and Richard Dobson and John ffitch
  *     Sliding is Smoother than Jumping
  *     International Computer Music Conference (2005)
  *     https://quod.lib.umich.edu/cgi/p/pod/dod-idx/sliding-is-smoother-than-jumping.pdf?c=icmc;idno=bbp2372.2005.086;format=pdf
@@ -24,14 +29,17 @@ public:
 
     buffer.cursor = 0;
     buffer.input.resize(size);
-    buffer.output.resize(size + 2);
+    buffer.accoutput.resize(size);
+    buffer.auxoutput.resize(size + 2);
     buffer.twiddles.resize(size);
+    buffer.fiddles.resize(size);
 
-    const T pi = T(+2) * std::acos(T(-1)) / size;
+    const T pi = T(-2) * std::acos(T(-1)) / size;
 
     for (size_t i = 0; i < size; ++i)
     {
       buffer.twiddles[i] = std::polar(T(1), pi * i);
+      buffer.fiddles[i] = 1;
     }
   }
 
@@ -44,24 +52,31 @@ public:
 
     for (size_t i = roi.analysis.first, j = i + 1; i < roi.analysis.second; ++i, ++j)
     {
-      buffer.output[j] += delta;
-      buffer.output[j] *= buffer.twiddles[i];
+      const std::complex<T> oldfiddle = buffer.fiddles[i];
+      const std::complex<T> newfiddle = oldfiddle * buffer.twiddles[i];
+
+      buffer.fiddles[i] = newfiddle;
+
+      buffer.accoutput[i] += delta * oldfiddle;
+      buffer.auxoutput[j] = buffer.accoutput[i] * std::conj(newfiddle);
     }
 
-    buffer.output[0] = buffer.output[size];
-    buffer.output[size + 1] = buffer.output[1];
+    buffer.auxoutput[0] = buffer.auxoutput[size];
+    buffer.auxoutput[size + 1] = buffer.auxoutput[1];
 
     for (size_t i = roi.analysis.first, j = i + 1; i < roi.analysis.second; ++i, ++j)
     {
-      dft[i] = window(buffer.output[j - 1],
-                      buffer.output[j],
-                      buffer.output[j + 1],
+      dft[i] = window(buffer.auxoutput[j - 1],
+                      buffer.auxoutput[j],
+                      buffer.auxoutput[j + 1],
                       scale);
     }
 
     if (++buffer.cursor >= size)
     {
       buffer.cursor = 0;
+
+      std::fill(buffer.fiddles.begin(), buffer.fiddles.end(), 1);
     }
   }
 
@@ -114,8 +129,10 @@ private:
   {
     size_t cursor;
     std::vector<T> input;
-    std::vector<std::complex<T>> output;
+    std::vector<std::complex<T>> accoutput;
+    std::vector<std::complex<T>> auxoutput;
     std::vector<std::complex<T>> twiddles;
+    std::vector<std::complex<T>> fiddles;
   }
   buffer;
 
