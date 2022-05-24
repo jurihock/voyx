@@ -39,6 +39,7 @@ public:
     for (size_t i = 0; i < size; ++i)
     {
       buffer.twiddles[i] = std::polar(T(1), pi * i);
+      buffer.fiddles[i] = 1;
     }
   }
 
@@ -51,7 +52,7 @@ public:
 
     for (size_t i = roi.analysis.first, j = i + 1; i < roi.analysis.second; ++i, ++j)
     {
-      const std::complex<T> oldfiddle = buffer.cursor ? buffer.fiddles[i] : 1;
+      const std::complex<T> oldfiddle = buffer.fiddles[i];
       const std::complex<T> newfiddle = oldfiddle * buffer.twiddles[i];
 
       buffer.fiddles[i] = newfiddle;
@@ -74,6 +75,8 @@ public:
     if (++buffer.cursor >= size)
     {
       buffer.cursor = 0;
+
+      std::fill(buffer.fiddles.begin(), buffer.fiddles.end(), 1);
     }
   }
 
