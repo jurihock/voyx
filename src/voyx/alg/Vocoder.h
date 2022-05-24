@@ -49,16 +49,13 @@ public:
     {
       phase = std::arg(dft[i]);
 
-      delta = phase - buffer.encode[i];
-      buffer.encode[i] = phase;
+      delta = phase - std::exchange(buffer.encode[i], phase);
 
       j = wrap(delta - i * phaseinc) / phaseinc;
 
       frequency = (i + j) * freqinc;
 
-      dft[i] = std::complex<T>(
-        std::abs(dft[i]),
-        frequency);
+      dft[i] = std::complex<T>(std::abs(dft[i]), frequency);
     }
 
     if ((cursor.encode += hopsize) >= dftsize)
@@ -84,12 +81,9 @@ public:
 
       delta = (i + j) * phaseinc;
 
-      buffer.decode[i] += delta;
-      phase = buffer.decode[i];
+      phase = buffer.decode[i] += delta;
 
-      dft[i] = std::polar<T>(
-        dft[i].real(),
-        phase);
+      dft[i] = std::polar<T>(dft[i].real(), phase);
     }
 
     if ((cursor.decode += hopsize) >= dftsize)
