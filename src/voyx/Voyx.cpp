@@ -20,6 +20,7 @@
 #include <voyx/io/NullSink.h>
 #include <voyx/io/NullSource.h>
 #include <voyx/io/SineSource.h>
+#include <voyx/io/SweepSource.h>
 
 #include <voyx/dsp/BypassPipeline.h>
 #include <voyx/dsp/InverseSynthPipeline.h>
@@ -128,6 +129,14 @@ int main(int argc, char** argv)
   {
     source = std::make_shared<NullSource>(samplerate, framesize, buffersize);
   }
+  else if ($$::imatch(input, "sine"))
+  {
+    source = std::make_shared<SineSource>(0.5, concertpitch, samplerate, framesize, buffersize);
+  }
+  else if ($$::imatch(input, "sweep"))
+  {
+    source = std::make_shared<SweepSource>(0.5, std::make_pair(concertpitch / 2, concertpitch * 2), 10, samplerate, framesize, buffersize);
+  }
   else if ($$::imatch(input, ".*.wav"))
   {
     source = std::make_shared<FileSource>(input, samplerate, framesize, buffersize);
@@ -163,8 +172,8 @@ int main(int argc, char** argv)
   // auto pipe = std::make_shared<BypassPipeline>(source, sink);
   // auto pipe = std::make_shared<InverseSynthPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
   // auto pipe = std::make_shared<MetalTestPipeline>(samplerate, framesize, dftsize, source, sink);
-  auto pipe = std::make_shared<OpenclTestPipeline>(samplerate, framesize, dftsize, source, sink);
-  // auto pipe = std::make_shared<SdftTestPipeline>(samplerate, framesize, dftsize, source, sink, observer, plot);
+  // auto pipe = std::make_shared<OpenclTestPipeline>(samplerate, framesize, dftsize, source, sink);
+  auto pipe = std::make_shared<SdftTestPipeline>(samplerate, framesize, dftsize, source, sink, observer, plot);
   // auto pipe = std::make_shared<StftTestPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
   // auto pipe = std::make_shared<VoiceSynthPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
 
