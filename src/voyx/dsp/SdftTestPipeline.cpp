@@ -6,6 +6,7 @@ SdftTestPipeline::SdftTestPipeline(const voyx_t samplerate, const size_t framesi
                                    std::shared_ptr<Source<voyx_t>> source, std::shared_ptr<Sink<voyx_t>> sink,
                                    std::shared_ptr<MidiObserver> midi, std::shared_ptr<Plot> plot) :
   SdftPipeline(samplerate, framesize, dftsize, source, sink),
+  vocoder(samplerate, dftsize * 2, 1),
   midi(midi),
   plot(plot)
 {
@@ -33,4 +34,8 @@ void SdftTestPipeline::operator()(const size_t index,
 
     plot->plot(abs);
   }
+
+  // vocoder test
+  // vocoder.encode(dfts);
+  // vocoder.decode(dfts);
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <voyx/Header.h>
+#include <voyx/alg/Vocoder.h>
 #include <voyx/dsp/StftPipeline.h>
 #include <voyx/io/MidiObserver.h>
 #include <voyx/ui/Plot.h>
@@ -19,6 +20,8 @@ public:
                   voyx::matrix<std::complex<voyx_t>> dfts) override;
 
 private:
+
+  Vocoder<voyx_t> vocoder;
 
   std::shared_ptr<MidiObserver> midi;
   std::shared_ptr<Plot> plot;
