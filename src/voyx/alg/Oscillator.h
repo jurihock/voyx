@@ -14,20 +14,20 @@ public:
   Oscillator(const T frequency, const T samplerate) :
     samplerate(samplerate),
     omega(std::polar<T>(T(1), pi * frequency / samplerate)),
-    phasor(1)
+    phasor(-1)
   {
   }
 
   T operator()()
   {
-    return (phasor *= omega).imag();
+    return (phasor *= omega).real();
   }
 
   T operator()(const T frequency)
   {
     omega = std::polar<T>(T(1), pi * frequency / samplerate);
 
-    return (phasor *= omega).imag();
+    return (phasor *= omega).real();
   }
 
 private:
