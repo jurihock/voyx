@@ -47,7 +47,7 @@ public:
   {
     voyxassert(dft.size() == size);
 
-    const T scale = T(1) / (size * 2);
+    const T scale = T(1) / size;
     const T delta = sample - std::exchange(buffer.input[buffer.cursor], sample);
 
     for (size_t i = roi.analysis.first, j = i + 1; i < roi.analysis.second; ++i, ++j)
