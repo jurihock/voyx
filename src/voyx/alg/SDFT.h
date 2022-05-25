@@ -28,13 +28,13 @@ public:
     roi.synthesis = { 0, size };
 
     buffer.cursor = 0;
-    buffer.input.resize(size);
+    buffer.input.resize(size * 2);
     buffer.accoutput.resize(size);
     buffer.auxoutput.resize(size + 2);
     buffer.twiddles.resize(size);
     buffer.fiddles.resize(size);
 
-    const T pi = T(-2) * std::acos(T(-1)) / size;
+    const T pi = T(-2) * std::acos(T(-1)) / (size * 2);
 
     for (size_t i = 0; i < size; ++i)
     {
@@ -47,7 +47,7 @@ public:
   {
     voyxassert(dft.size() == size);
 
-    const T scale = T(1) / size;
+    const T scale = T(1) / (size * 2);
     const T delta = sample - std::exchange(buffer.input[buffer.cursor], sample);
 
     for (size_t i = roi.analysis.first, j = i + 1; i < roi.analysis.second; ++i, ++j)
@@ -61,8 +61,9 @@ public:
       buffer.auxoutput[j] = buffer.accoutput[i] * std::conj(newfiddle);
     }
 
-    buffer.auxoutput[0] = buffer.auxoutput[size];
-    buffer.auxoutput[size + 1] = buffer.auxoutput[1];
+    // FIXME size vs. size * 2
+    // buffer.auxoutput[0] = buffer.auxoutput[size];
+    // buffer.auxoutput[size + 1] = buffer.auxoutput[1];
 
     for (size_t i = roi.analysis.first, j = i + 1; i < roi.analysis.second; ++i, ++j)
     {
@@ -72,7 +73,11 @@ public:
                       scale);
     }
 
-    if (++buffer.cursor >= size)
+    // FIXME size vs. size * 2
+    dft[0] = 0;
+    dft[size - 1] = 0;
+
+    if (++buffer.cursor >= buffer.input.size())
     {
       buffer.cursor = 0;
 
