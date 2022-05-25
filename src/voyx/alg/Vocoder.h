@@ -58,7 +58,7 @@ public:
       dft[i] = std::complex<T>(std::abs(dft[i]), frequency);
     }
 
-    if ((cursor.encode += hopsize) >= dftsize)
+    if ((cursor.encode += hopsize) >= (dftsize * 2))
     {
       cursor.encode = 0;
 
@@ -86,7 +86,7 @@ public:
       dft[i] = std::polar<T>(dft[i].real(), phase);
     }
 
-    if ((cursor.decode += hopsize) >= dftsize)
+    if ((cursor.decode += hopsize) >= (dftsize * 2))
     {
       cursor.decode = 0;
 
