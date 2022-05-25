@@ -76,12 +76,6 @@ private:
     {
       while (doloop && index < frames)
       {
-        if (ok)
-        {
-          this->sink->sync();
-          this->sink->write(index, output);
-        }
-
         ok = this->source->read(index, [&](const voyx::vector<T> input)
         {
           timers.outer.toc();
@@ -91,6 +85,12 @@ private:
           (*this)(index, input, output);
           timers.inner.toc();
         });
+
+        if (ok)
+        {
+          this->sink->sync();
+          this->sink->write(index, output);
+        }
 
         index += ok ? 1 : 0;
       }
@@ -132,12 +132,6 @@ private:
           timestamp = now();
         }
 
-        if (ok)
-        {
-          this->sink->sync();
-          this->sink->write(index, output);
-        }
-
         ok = this->source->read(index, [&](const voyx::vector<T> input)
         {
           timers.outer.toc();
@@ -147,6 +141,12 @@ private:
           (*this)(index, input, output);
           timers.inner.toc();
         });
+
+        if (ok)
+        {
+          this->sink->sync();
+          this->sink->write(index, output);
+        }
 
         index += ok ? 1 : 0;
       }
