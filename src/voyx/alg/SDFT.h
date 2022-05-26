@@ -21,25 +21,29 @@ class SDFT
 
 public:
 
-  SDFT(const size_t size) :
-    size(size)
+  SDFT(const size_t size, const T latency = 1) :
+    size(size),
+    latency(latency)
   {
-    roi.analysis = { 0, size };
-    roi.synthesis = { 0, size };
+    analysis.roi = { 0, size };
+    synthesis.roi = { 0, size };
 
-    buffer.cursor = 0;
-    buffer.input.resize(size * 2);
-    buffer.accoutput.resize(size);
-    buffer.auxoutput.resize(size + 2);
-    buffer.twiddles.resize(size);
-    buffer.fiddles.resize(size);
+    analysis.twiddles.resize(size);
+    synthesis.twiddles.resize(size);
+
+    analysis.cursor = 0;
+    analysis.input.resize(size * 2);
+    analysis.accoutput.resize(size);
+    analysis.auxoutput.resize(size + 2);
+    analysis.fiddles.resize(size, 1);
 
     const T pi = T(-2) * std::acos(T(-1)) / (size * 2);
+    const T weight = T(2) / (T(1) - std::cos(pi * size * latency));
 
     for (size_t i = 0; i < size; ++i)
     {
-      buffer.twiddles[i] = std::polar(T(1), pi * i);
-      buffer.fiddles[i] = 1;
+      analysis.twiddles[i] = std::polar(T(1), pi * i);
+      synthesis.twiddles[i] = std::polar(weight, pi * i * size * latency);
     }
   }
 
@@ -47,41 +51,44 @@ public:
   {
     voyxassert(dft.size() == size);
 
-    const T scale = T(1) / size;
-    const T delta = sample - std::exchange(buffer.input[buffer.cursor], sample);
+    // actually the weight denominator needs to be size*2 to get proper magnitude scaling,
+    // but then requires a correction by factor 2 in synthesis and is therefore omitted
 
-    for (size_t i = roi.analysis.first, j = i + 1; i < roi.analysis.second; ++i, ++j)
+    const T weight = T(0.25) / size;
+    const T delta = sample - std::exchange(analysis.input[analysis.cursor], sample);
+
+    for (size_t i = analysis.roi.first, j = i + 1; i < analysis.roi.second; ++i, ++j)
     {
-      const std::complex<T> oldfiddle = buffer.fiddles[i];
-      const std::complex<T> newfiddle = oldfiddle * buffer.twiddles[i];
+      const std::complex<T> oldfiddle = analysis.fiddles[i];
+      const std::complex<T> newfiddle = oldfiddle * analysis.twiddles[i];
 
-      buffer.fiddles[i] = newfiddle;
+      analysis.fiddles[i] = newfiddle;
 
-      buffer.accoutput[i] += delta * oldfiddle;
-      buffer.auxoutput[j] = buffer.accoutput[i] * std::conj(newfiddle);
+      analysis.accoutput[i] += delta * oldfiddle;
+      analysis.auxoutput[j] = analysis.accoutput[i] * std::conj(newfiddle);
     }
 
     // FIXME size vs. size * 2
-    // buffer.auxoutput[0] = buffer.auxoutput[size];
-    // buffer.auxoutput[size + 1] = buffer.auxoutput[1];
+    // analysis.auxoutput[0] = analysis.auxoutput[size];
+    // analysis.auxoutput[size + 1] = analysis.auxoutput[1];
 
-    for (size_t i = roi.analysis.first, j = i + 1; i < roi.analysis.second; ++i, ++j)
+    for (size_t i = analysis.roi.first, j = i + 1; i < analysis.roi.second; ++i, ++j)
     {
-      dft[i] = window(buffer.auxoutput[j - 1],
-                      buffer.auxoutput[j],
-                      buffer.auxoutput[j + 1],
-                      scale);
+      dft[i] = window(analysis.auxoutput[j - 1],
+                      analysis.auxoutput[j],
+                      analysis.auxoutput[j + 1],
+                      weight);
     }
 
     // FIXME size vs. size * 2
     dft[0] = 0;
     dft[size - 1] = 0;
 
-    if (++buffer.cursor >= buffer.input.size())
+    if (++analysis.cursor >= analysis.input.size())
     {
-      buffer.cursor = 0;
+      analysis.cursor = 0;
 
-      std::fill(buffer.fiddles.begin(), buffer.fiddles.end(), 1);
+      std::fill(analysis.fiddles.begin(), analysis.fiddles.end(), 1);
     }
   }
 
@@ -101,9 +108,19 @@ public:
 
     T sample = T(0);
 
-    for (size_t i = roi.synthesis.first; i < roi.synthesis.second; ++i)
+    if (latency == 1)
     {
-      sample += dft[i].real() * (i % 2 ? -1 : +1);
+      for (size_t i = synthesis.roi.first; i < synthesis.roi.second; ++i)
+      {
+        sample += dft[i].real() * (i % 2 ? -1 : +1);
+      }
+    }
+    else
+    {
+      for (size_t i = synthesis.roi.first; i < synthesis.roi.second; ++i)
+      {
+        sample += (dft[i] * synthesis.twiddles[i]).real();
+      }
     }
 
     return sample;
@@ -122,31 +139,36 @@ public:
 private:
 
   const size_t size;
+  const T latency;
 
   struct
   {
-    std::pair<size_t, size_t> analysis;
-    std::pair<size_t, size_t> synthesis;
-  }
-  roi;
+    std::pair<size_t, size_t> roi;
+    std::vector<std::complex<T>> twiddles;
 
-  struct
-  {
     size_t cursor;
     std::vector<T> input;
     std::vector<std::complex<T>> accoutput;
     std::vector<std::complex<T>> auxoutput;
-    std::vector<std::complex<T>> twiddles;
     std::vector<std::complex<T>> fiddles;
   }
-  buffer;
+  analysis;
+
+  struct
+  {
+    std::pair<size_t, size_t> roi;
+    std::vector<std::complex<T>> twiddles;
+  }
+  synthesis;
 
   inline static std::complex<T> window(const std::complex<T>& left,
                                        const std::complex<T>& middle,
                                        const std::complex<T>& right,
-                                       const T scale)
+                                       const T weight)
   {
-    return T(0.25) * ((middle + middle) - (left + right)) * scale;
+    // the factor 1/4 is already included in weight
+
+    return /* T(0.25) */ ((middle + middle) - (left + right)) * weight;
   }
 
 };
