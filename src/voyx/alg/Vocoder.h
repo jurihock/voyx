@@ -15,11 +15,11 @@ public:
     freqinc(samplerate / framesize),
     phaseinc(pi * hopsize / framesize)
   {
-    cursor.encode = 0;
-    cursor.decode = 0;
+    analysis.cursor = 0;
+    synthesis.cursor = 0;
 
-    buffer.encode.resize(dftsize + 1);
-    buffer.decode.resize(dftsize + 1);
+    analysis.buffer.resize(dftsize + 1);
+    synthesis.buffer.resize(dftsize + 1);
   }
 
   void encode(voyx::matrix<std::complex<T>> dfts)
@@ -49,7 +49,7 @@ public:
     {
       phase = std::arg(dft[i]);
 
-      delta = phase - std::exchange(buffer.encode[i], phase);
+      delta = phase - std::exchange(analysis.buffer[i], phase);
 
       j = wrap(delta - i * phaseinc) / phaseinc;
 
@@ -58,11 +58,11 @@ public:
       dft[i] = std::complex<T>(std::abs(dft[i]), frequency);
     }
 
-    if ((cursor.encode += hopsize) >= (dftsize * 2))
+    if ((analysis.cursor += hopsize) >= (dftsize * 2))
     {
-      cursor.encode = 0;
+      analysis.cursor = 0;
 
-      std::fill(buffer.encode.begin(), buffer.encode.end(), 0);
+      std::fill(analysis.buffer.begin(), analysis.buffer.end(), 0);
     }
   }
 
@@ -81,16 +81,16 @@ public:
 
       delta = (i + j) * phaseinc;
 
-      phase = buffer.decode[i] += delta;
+      phase = synthesis.buffer[i] += delta;
 
       dft[i] = std::polar<T>(dft[i].real(), phase);
     }
 
-    if ((cursor.decode += hopsize) >= (dftsize * 2))
+    if ((synthesis.cursor += hopsize) >= (dftsize * 2))
     {
-      cursor.decode = 0;
+      synthesis.cursor = 0;
 
-      std::fill(buffer.decode.begin(), buffer.decode.end(), 0);
+      std::fill(synthesis.buffer.begin(), synthesis.buffer.end(), 0);
     }
   }
 
@@ -107,17 +107,17 @@ private:
 
   struct
   {
-    size_t encode;
-    size_t decode;
+    size_t cursor;
+    std::vector<T> buffer;
   }
-  cursor;
+  analysis;
 
   struct
   {
-    std::vector<T> encode;
-    std::vector<T> decode;
+    size_t cursor;
+    std::vector<T> buffer;
   }
-  buffer;
+  synthesis;
 
   inline T wrap(const T phase) const
   {
