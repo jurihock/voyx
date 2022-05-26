@@ -101,7 +101,7 @@ namespace voyx
 
     size_t size() const { return vector_size; }
 
-    bool empty() const { return vector_size > 0; }
+    bool empty() const { return vector_size == 0; }
 
     // SUBSCRIPT OPERATORS
 

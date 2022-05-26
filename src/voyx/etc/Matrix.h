@@ -114,7 +114,7 @@ namespace voyx
     size_t size() const { return matrix_size; }
     size_t stride() const { return matrix_stride; }
 
-    bool empty() const { return matrix_size > 0 && matrix_stride > 0; }
+    bool empty() const { return matrix_size == 0 || matrix_stride == 0; }
 
     // SUBSCRIPT OPERATORS
 
