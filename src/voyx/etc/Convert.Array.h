@@ -10,6 +10,8 @@ namespace $$
     using value_t = typename $$::typeofvalue<T>::type;
     const value_getter_t getvalue;
 
+    static_assert(std::is_arithmetic<value_t>::value);
+
     if (vector.empty())
     {
       return -1;
@@ -35,6 +37,8 @@ namespace $$
   {
     using value_t = typename $$::typeofvalue<T>::type;
     const value_getter_t getvalue;
+
+    static_assert(std::is_arithmetic<value_t>::value);
 
     std::vector<size_t> indices;
 
