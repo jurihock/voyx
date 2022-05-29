@@ -4,6 +4,12 @@
 
 namespace $$
 {
+  template<typename T>
+  struct typeofvalue { typedef T type; };
+
+  template<typename T>
+  struct typeofvalue<std::complex<T>> { typedef T type; };
+
   struct real
   {
     template<typename T>
@@ -39,13 +45,4 @@ namespace $$
     template<typename T>
     T operator()(const std::complex<T>& value) const { return std::arg(value); };
   };
-}
-
-namespace $$
-{
-  template<typename T>
-  struct typeofvalue { typedef T type; };
-
-  template<typename T>
-  struct typeofvalue<std::complex<T>> { typedef T type; };
 }
