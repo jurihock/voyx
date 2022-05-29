@@ -58,7 +58,7 @@ public:
       dft[i] = std::complex<T>(std::abs(dft[i]), frequency);
     }
 
-    if ((analysis.cursor += hopsize) >= (dftsize * 2))
+    if ((analysis.cursor += hopsize) >= framesize) // sync with sdft
     {
       analysis.cursor = 0;
 
@@ -86,7 +86,7 @@ public:
       dft[i] = std::polar<T>(dft[i].real(), phase);
     }
 
-    if ((synthesis.cursor += hopsize) >= (dftsize * 2))
+    if ((synthesis.cursor += hopsize) >= framesize) // sync with sdft
     {
       synthesis.cursor = 0;
 
