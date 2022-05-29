@@ -15,7 +15,7 @@
  *     International Computer Music Conference (2005)
  *     https://quod.lib.umich.edu/cgi/p/pod/dod-idx/sliding-is-smoother-than-jumping.pdf?c=icmc;idno=bbp2372.2005.086;format=pdf
  **/
-template <class T>
+template <typename T>
 class SDFT
 {
 

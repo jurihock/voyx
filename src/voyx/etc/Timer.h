@@ -2,13 +2,13 @@
 
 #include <voyx/Header.h>
 
-template<class> struct WellKnownTimerDuration : std::false_type {};
+template<typename> struct WellKnownTimerDuration : std::false_type {};
 template<> struct WellKnownTimerDuration<std::chrono::seconds> : std::true_type {};
 template<> struct WellKnownTimerDuration<std::chrono::milliseconds> : std::true_type {};
 template<> struct WellKnownTimerDuration<std::chrono::microseconds> : std::true_type {};
 template<> struct WellKnownTimerDuration<std::chrono::nanoseconds> : std::true_type {};
 
-template<class T>
+template<typename T>
 class Timer
 {
 

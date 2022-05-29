@@ -4,7 +4,7 @@
 
 namespace $$
 {
-  template<class value_getter_t, class T>
+  template<typename value_getter_t, typename T>
   size_t argmax(const voyx::vector<T> vector)
   {
     using value_t = typename $$::typeofvalue<T>::type;
@@ -32,7 +32,7 @@ namespace $$
     return index;
   }
 
-  template<class value_getter_t, class T>
+  template<typename value_getter_t, typename T>
   std::vector<size_t> argmax(const voyx::matrix<T> matrix, size_t axis = 0)
   {
     using value_t = typename $$::typeofvalue<T>::type;

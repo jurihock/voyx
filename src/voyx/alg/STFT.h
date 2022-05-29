@@ -6,7 +6,7 @@
 /**
  * Short-Time Fourier Transform implementation.
  **/
-template<class T>
+template<typename T>
 class STFT
 {
 

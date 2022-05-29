@@ -4,7 +4,7 @@
 
 namespace voyx
 {
-  template<class T>
+  template<typename T>
   class matrix
   {
 
