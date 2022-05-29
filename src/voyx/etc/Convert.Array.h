@@ -5,6 +5,32 @@
 namespace $$
 {
   template<class value_getter_t, class T>
+  size_t argmax(const voyx::vector<T> vector)
+  {
+    using value_t = typename $$::typeofvalue<T>::type;
+    const value_getter_t getvalue;
+
+    if (vector.empty())
+    {
+      return -1;
+    }
+
+    value_t value = getvalue(vector[0]);
+    size_t index = 0;
+
+    for (size_t i = 1; i < vector.size(); ++i)
+    {
+      if (getvalue(vector[i]) > value)
+      {
+        value = getvalue(vector[i]);
+        index = i;
+      }
+    }
+
+    return index;
+  }
+
+  template<class value_getter_t, class T>
   std::vector<size_t> argmax(const voyx::matrix<T> matrix, size_t axis = 0)
   {
     using value_t = typename $$::typeofvalue<T>::type;
