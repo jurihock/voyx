@@ -11,85 +11,63 @@ public:
 
   Lifter(const voyx_t quefrency, const voyx_t samplerate, const size_t framesize) :
     quefrency(static_cast<size_t>(quefrency * samplerate)),
-    spectrum(framesize / 2 + 1),
-    cepstrum(framesize),
-    fft(framesize)
+    fft(framesize),
+    spectrum(fft.fdsize()),
+    cepstrum(fft.tdsize())
   {
   }
 
-  std::vector<T> real(const voyx::vector<T>& dft)
+  std::vector<T> lowpass(const voyx::vector<T>& dft)
   {
     std::vector<T> envelope(dft.size());
-    real(dft, envelope);
+    lowpass(dft, envelope);
     return envelope;
   }
 
-  std::vector<T> real(const voyx::vector<std::complex<T>>& dft)
-  {
-    std::vector<T> envelope(dft.size());
-    real(dft, envelope);
-    return envelope;
-  }
-
-  std::vector<T> abs(const voyx::vector<std::complex<T>>& dft)
-  {
-    std::vector<T> envelope(dft.size());
-    abs(dft, envelope);
-    return envelope;
-  }
-
-  void real(const voyx::vector<T>& dft, std::span<T> envelope)
+  void lowpass(const voyx::vector<T>& dft, std::span<T> envelope)
   {
     voyxassert(dft.size() == envelope.size());
 
-    for (size_t i = 0; i < spectrum.size(); ++i)
+    for (size_t i = 0; i < dft.size(); ++i)
     {
-      spectrum[i] = std::log10(dft[i]); // as is
+      spectrum[i] = std::log10(dft[i]);
     }
 
     fft.ifft(spectrum, cepstrum);
     lowpass(cepstrum, quefrency);
     fft.fft(cepstrum, spectrum);
 
-    for (size_t i = 0; i < spectrum.size(); ++i)
+    for (size_t i = 0; i < dft.size(); ++i)
     {
       envelope[i] = std::pow(T(10), spectrum[i].real());
     }
   }
 
-  void real(const voyx::vector<std::complex<T>>& dft, std::span<T> envelope)
+  template<typename value_getter_t = $$::real>
+  std::vector<T> lowpass(const voyx::vector<std::complex<T>>& dft)
   {
-    voyxassert(dft.size() == envelope.size());
-
-    for (size_t i = 0; i < spectrum.size(); ++i)
-    {
-      spectrum[i] = std::log10(std::real(dft[i])); // real
-    }
-
-    fft.ifft(spectrum, cepstrum);
-    lowpass(cepstrum, quefrency);
-    fft.fft(cepstrum, spectrum);
-
-    for (size_t i = 0; i < spectrum.size(); ++i)
-    {
-      envelope[i] = std::pow(T(10), spectrum[i].real());
-    }
+    std::vector<T> envelope(dft.size());
+    lowpass<value_getter_t>(dft, envelope);
+    return envelope;
   }
 
-  void abs(const voyx::vector<std::complex<T>>& dft, std::span<T> envelope)
+  template<typename value_getter_t = $$::real>
+  void lowpass(const voyx::vector<std::complex<T>>& dft, std::span<T> envelope)
   {
+    const value_getter_t getvalue;
+
     voyxassert(dft.size() == envelope.size());
 
-    for (size_t i = 0; i < spectrum.size(); ++i)
+    for (size_t i = 0; i < dft.size(); ++i)
     {
-      spectrum[i] = std::log10(std::abs(dft[i])); // abs
+      spectrum[i] = std::log10(getvalue(dft[i]));
     }
 
     fft.ifft(spectrum, cepstrum);
     lowpass(cepstrum, quefrency);
     fft.fft(cepstrum, spectrum);
 
-    for (size_t i = 0; i < spectrum.size(); ++i)
+    for (size_t i = 0; i < dft.size(); ++i)
     {
       envelope[i] = std::pow(T(10), spectrum[i].real());
     }
@@ -99,10 +77,10 @@ private:
 
   const size_t quefrency;
 
+  const FFT<T> fft;
+
   std::vector<std::complex<T>> spectrum;
   std::vector<T> cepstrum;
-
-  FFT<T> fft;
 
   static void lowpass(std::span<T> cepstrum, const size_t quefrency)
   {
