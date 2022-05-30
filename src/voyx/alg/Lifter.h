@@ -12,8 +12,8 @@ public:
   Lifter(const voyx_t quefrency, const voyx_t samplerate, const size_t framesize) :
     quefrency(static_cast<size_t>(quefrency * samplerate)),
     fft(framesize),
-    spectrum(fft.fdsize()),
-    cepstrum(fft.tdsize())
+    spectrum(fft.dftsize()),
+    cepstrum(fft.framesize())
   {
   }
 

@@ -13,6 +13,11 @@ public:
   {
   }
 
+  size_t size() const
+  {
+    return framesize;
+  }
+
   operator std::vector<T>() const
   {
     return hann();

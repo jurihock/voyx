@@ -23,7 +23,7 @@ public:
     windows.synthesis = window;
 
     const T unitygain = hopsize / std::inner_product(
-      windows.synthesis.begin(), windows.synthesis.end(), windows.synthesis.begin(), 0.0f);
+      windows.synthesis.begin(), windows.synthesis.end(), windows.synthesis.begin(), T(0));
 
     std::transform(windows.synthesis.begin(), windows.synthesis.end(), windows.synthesis.begin(),
       [unitygain](T value) { return value * unitygain; });
@@ -33,14 +33,14 @@ public:
       data.hops.push_back(hop);
     }
 
-    data.input.resize(2 * framesize);
-    data.output.resize(2 * framesize);
-    data.frames.resize(data.hops.size() * framesize);
+    data.input.resize(framesize * 2);
+    data.output.resize(framesize * 2);
+    data.frames.resize(framesize * data.hops.size());
   }
 
   size_t size() const
   {
-    return fft.fdsize();
+    return fft.dftsize();
   }
 
   const std::vector<size_t>& hops() const

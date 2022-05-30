@@ -47,6 +47,11 @@ public:
     }
   }
 
+  size_t size() const
+  {
+    return dftsize;
+  }
+
   void sdft(const T sample, voyx::vector<std::complex<T>> dft)
   {
     voyxassert(dft.size() == dftsize);

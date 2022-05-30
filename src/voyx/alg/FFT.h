@@ -12,26 +12,26 @@ class FFT
 public:
 
   FFT(const size_t framesize) :
-    framesize(framesize),
-    dftsize(framesize / 2 + 1)
+    fullsize(framesize),
+    halfsize(framesize / 2 + 1)
   {
     voyxassert(framesize && !(framesize & (framesize - 1)));
   }
 
-  size_t tdsize() const
+  size_t framesize() const
   {
-    return framesize;
+    return fullsize;
   }
 
-  size_t fdsize() const
+  size_t dftsize() const
   {
-    return dftsize;
+    return halfsize;
   }
 
   void fft(const voyx::vector<T> samples, voyx::vector<std::complex<T>> dft) const
   {
-    voyxassert(samples.size() == tdsize());
-    voyxassert(dft.size() == fdsize());
+    voyxassert(samples.size() == framesize());
+    voyxassert(dft.size() == dftsize());
 
     pocketfft::r2c(
       { samples.size() },
@@ -47,8 +47,8 @@ public:
   void fft(const voyx::matrix<T> samples, voyx::matrix<std::complex<T>> dfts) const
   {
     voyxassert(samples.size() == dfts.size());
-    voyxassert(samples.stride() == tdsize());
-    voyxassert(dfts.stride() == fdsize());
+    voyxassert(samples.stride() == framesize());
+    voyxassert(dfts.stride() == dftsize());
 
     const ptrdiff_t X = samples.stride() * sizeof(T);
     const ptrdiff_t Y = dfts.stride() * sizeof(std::complex<T>);
@@ -66,8 +66,8 @@ public:
 
   void ifft(const voyx::vector<std::complex<T>> dft, voyx::vector<T> samples) const
   {
-    voyxassert(samples.size() == tdsize());
-    voyxassert(dft.size() == fdsize());
+    voyxassert(samples.size() == framesize());
+    voyxassert(dft.size() == dftsize());
 
     pocketfft::c2r(
       { samples.size() },
@@ -83,8 +83,8 @@ public:
   void ifft(const voyx::matrix<std::complex<T>> dfts, voyx::matrix<T> samples) const
   {
     voyxassert(samples.size() == dfts.size());
-    voyxassert(samples.stride() == tdsize());
-    voyxassert(dfts.stride() == fdsize());
+    voyxassert(samples.stride() == framesize());
+    voyxassert(dfts.stride() == dftsize());
 
     const ptrdiff_t X = dfts.stride() * sizeof(std::complex<T>);
     const ptrdiff_t Y = samples.stride() * sizeof(T);
@@ -102,22 +102,22 @@ public:
 
   std::vector<std::complex<T>> fft(const voyx::vector<T> samples) const
   {
-    voyxassert(samples.size() == tdsize());
+    voyxassert(samples.size() == framesize());
 
-    const std::vector<T> window = Window<T>(tdsize());
+    const std::vector<T> window = Window<T>(framesize());
 
     return fft(samples, window);
   }
 
   std::vector<std::complex<T>> fft(const voyx::vector<T> samples, const voyx::vector<T> window) const
   {
-    voyxassert(samples.size() == tdsize());
-    voyxassert(window.size() == tdsize());
+    voyxassert(samples.size() == framesize());
+    voyxassert(window.size() == framesize());
 
-    std::vector<T> product(tdsize());
-    std::vector<std::complex<T>> dft(fdsize());
+    std::vector<T> product(framesize());
+    std::vector<std::complex<T>> dft(dftsize());
 
-    for (size_t i = 0; i < tdsize(); ++i)
+    for (size_t i = 0; i < framesize(); ++i)
     {
       product[i] = samples[i] * window[i];
     }
@@ -129,9 +129,9 @@ public:
 
   std::vector<T> ifft(const voyx::vector<std::complex<T>> dft) const
   {
-    voyxassert(dft.size() == fdsize());
+    voyxassert(dft.size() == dftsize());
 
-    std::vector<T> samples(tdsize());
+    std::vector<T> samples(framesize());
 
     ifft(dft, samples);
 
@@ -140,7 +140,7 @@ public:
 
 private:
 
-  const size_t framesize;
-  const size_t dftsize;
+  const size_t fullsize;
+  const size_t halfsize;
 
 };
