@@ -11,26 +11,21 @@ class FFT
 
 public:
 
-  FFT(const size_t size) :
-    size(size)
+  FFT(const size_t framesize) :
+    framesize(framesize),
+    dftsize(framesize / 2 + 1)
   {
-    voyxassert(size && !(size & (size - 1)));
+    voyxassert(framesize && !(framesize & (framesize - 1)));
   }
 
-  /**
-   * Time domain real vector size.
-   **/
   size_t tdsize() const
   {
-    return size;
+    return framesize;
   }
 
-  /**
-   * Frequency domain complex vector size.
-   **/
   size_t fdsize() const
   {
-    return size / 2 + 1;
+    return dftsize;
   }
 
   void fft(const voyx::vector<T> samples, voyx::vector<std::complex<T>> dft) const
@@ -145,6 +140,7 @@ public:
 
 private:
 
-  const size_t size;
+  const size_t framesize;
+  const size_t dftsize;
 
 };

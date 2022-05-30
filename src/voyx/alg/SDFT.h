@@ -21,40 +21,40 @@ class SDFT
 
 public:
 
-  SDFT(const size_t size, const T latency = 1) :
-    size(size),
+  SDFT(const size_t dftsize, const T latency = 1) :
+    dftsize(dftsize),
     latency(latency)
   {
-    analysis.roi = { 0, size };
-    synthesis.roi = { 0, size };
+    analysis.roi = { 0, dftsize };
+    synthesis.roi = { 0, dftsize };
 
-    analysis.twiddles.resize(size);
-    synthesis.twiddles.resize(size);
+    analysis.twiddles.resize(dftsize);
+    synthesis.twiddles.resize(dftsize);
 
     analysis.cursor = 0;
-    analysis.input.resize(size * 2);
-    analysis.accoutput.resize(size);
-    analysis.auxoutput.resize(size + 2);
-    analysis.fiddles.resize(size, 1);
+    analysis.input.resize(dftsize * 2);
+    analysis.accoutput.resize(dftsize);
+    analysis.auxoutput.resize(dftsize + 2);
+    analysis.fiddles.resize(dftsize, 1);
 
-    const T pi = T(-2) * std::acos(T(-1)) / (size * 2);
-    const T weight = T(2) / (T(1) - std::cos(pi * size * latency));
+    const T pi = T(-2) * std::acos(T(-1)) / (dftsize * 2);
+    const T weight = T(2) / (T(1) - std::cos(pi * dftsize * latency));
 
-    for (size_t i = 0; i < size; ++i)
+    for (size_t i = 0; i < dftsize; ++i)
     {
       analysis.twiddles[i] = std::polar(T(1), pi * i);
-      synthesis.twiddles[i] = std::polar(weight, pi * i * size * latency);
+      synthesis.twiddles[i] = std::polar(weight, pi * i * dftsize * latency);
     }
   }
 
   void sdft(const T sample, voyx::vector<std::complex<T>> dft)
   {
-    voyxassert(dft.size() == size);
+    voyxassert(dft.size() == dftsize);
 
-    // actually the weight denominator needs to be size*2 to get proper magnitude scaling,
+    // actually the weight denominator needs to be dftsize*2 to get proper magnitude scaling,
     // but then requires a correction by factor 2 in synthesis and is therefore omitted
 
-    const T weight = T(0.25) / size;
+    const T weight = T(0.25) / dftsize;
     const T delta = sample - std::exchange(analysis.input[analysis.cursor], sample);
 
     for (size_t i = analysis.roi.first, j = i + 1; i < analysis.roi.second; ++i, ++j)
@@ -68,9 +68,9 @@ public:
       analysis.auxoutput[j] = analysis.accoutput[i] * std::conj(newfiddle);
     }
 
-    // FIXME size vs. size * 2
-    // analysis.auxoutput[0] = analysis.auxoutput[size];
-    // analysis.auxoutput[size + 1] = analysis.auxoutput[1];
+    // FIXME dftsize vs. dftsize * 2
+    // analysis.auxoutput[0] = analysis.auxoutput[dftsize];
+    // analysis.auxoutput[dftsize + 1] = analysis.auxoutput[1];
 
     for (size_t i = analysis.roi.first, j = i + 1; i < analysis.roi.second; ++i, ++j)
     {
@@ -80,9 +80,9 @@ public:
                       weight);
     }
 
-    // FIXME size vs. size * 2
+    // FIXME dftsize vs. dftsize * 2
     dft[0] = 0;
-    dft[size - 1] = 0;
+    dft[dftsize - 1] = 0;
 
     if (++analysis.cursor >= analysis.input.size())
     {
@@ -104,7 +104,7 @@ public:
 
   T isdft(const voyx::vector<std::complex<T>> dft)
   {
-    voyxassert(dft.size() == size);
+    voyxassert(dft.size() == dftsize);
 
     T sample = T(0);
 
@@ -138,7 +138,7 @@ public:
 
 private:
 
-  const size_t size;
+  const size_t dftsize;
   const T latency;
 
   struct
