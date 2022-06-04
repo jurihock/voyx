@@ -23,7 +23,6 @@ private:
   std::shared_ptr<MidiObserver> midi;
   std::shared_ptr<Plot> plot;
 
-  std::vector<Oscillator<voyx_t>> osc;
-  voyx_t f0;
+  std::map<voyx_t, std::vector<Oscillator<voyx_t>>> osc;
 
 };

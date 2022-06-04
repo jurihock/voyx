@@ -7,50 +7,57 @@ RobotPipeline::RobotPipeline(const voyx_t samplerate, const size_t framesize, co
                              std::shared_ptr<MidiObserver> midi, std::shared_ptr<Plot> plot) :
   SdftPipeline(samplerate, framesize, dftsize, source, sink),
   midi(midi),
-  plot(plot),
-  osc(dftsize),
-  f0(0)
+  plot(plot)
 {
 }
 
 void RobotPipeline::operator()(const size_t index,
                                voyx::matrix<std::complex<voyx_t>> dfts)
 {
-  voyx_t f0 = 0;
+  std::vector<voyx_t> frequencies;
 
   if (midi != nullptr)
   {
-    const auto state = midi->state();
+    frequencies = midi->frequencies();
+  }
 
-    for (voyx_t i = 0; i < state.size(); ++i)
+  if (frequencies.empty())
+  {
+    return;
+  }
+
+  for (const voyx_t frequency : frequencies)
+  {
+    if (osc.count(frequency))
     {
-      if (state[i])
-      {
-        f0 = $$::midi::freq(i, midi->concertpitch());
-        break;
-      }
+      continue;
+    }
+
+    osc[frequency].resize(dftsize);
+
+    for (size_t i = 0; i < dftsize; ++i)
+    {
+      osc[frequency][i] = { i * frequency, samplerate };
     }
   }
 
-  if (f0)
-  {
-    if (f0 != this->f0)
-    {
-      this->f0 = f0;
+  std::vector<voyx_t> abs(dftsize);
 
-      for (size_t i = 0; i < dftsize; ++i)
-      {
-        osc[i] = { i * f0, samplerate };
-      }
+  for (size_t i = 0; i < dfts.size(); ++i)
+  {
+    auto dft = dfts[i];
+
+    for (size_t j = 0; j < dft.size(); ++j)
+    {
+      abs[j] = std::abs(dft[j]);
+      dft[j] = 0;
     }
 
-    for (size_t i = 0; i < dfts.size(); ++i)
+    for (const voyx_t frequency : frequencies)
     {
-      auto dft = dfts[i];
-
       for (size_t j = 0; j < dft.size(); ++j)
       {
-        dft[j] = std::abs(dft[j]) * osc[j];
+        dft[j] += abs[j] * osc[frequency][j];
       }
     }
   }

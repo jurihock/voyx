@@ -15,6 +15,7 @@ public:
   voyx_t concertpitch() const;
 
   std::vector<int> state();
+  std::vector<voyx_t> frequencies();
 
   std::vector<voyx_t> mask();
   std::vector<voyx_t> imask();

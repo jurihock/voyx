@@ -28,6 +28,27 @@ std::vector<int> MidiObserver::state()
   return midi_key_state;
 }
 
+std::vector<voyx_t> MidiObserver::frequencies()
+{
+  const std::vector<int> state = this->state();
+
+  std::vector<voyx_t> frequencies;
+
+  frequencies.reserve(state.size());
+
+  for (voyx_t key = 0; key < state.size(); ++key)
+  {
+    if (state[key])
+    {
+      const voyx_t frequency = $$::midi::freq(key, concertpitch());
+
+      frequencies.push_back(frequency);
+    }
+  }
+
+  return frequencies;
+}
+
 std::vector<voyx_t> MidiObserver::mask()
 {
   const std::vector<int> src = state();
