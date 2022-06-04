@@ -21,7 +21,7 @@ private:
   const voyx_t duration;
 
   Oscillator<voyx_t> lfo;
-  Oscillator<voyx_t> sine;
+  Oscillator<voyx_t> osc;
 
   std::vector<voyx_t> frame;
 

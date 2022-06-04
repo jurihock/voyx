@@ -19,7 +19,7 @@ private:
   const voyx_t amplitude;
   const voyx_t frequency;
 
-  Oscillator<voyx_t> sine;
+  Oscillator<voyx_t> osc;
 
   std::vector<voyx_t> frame;
 

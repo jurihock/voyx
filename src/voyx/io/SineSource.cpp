@@ -11,7 +11,7 @@ SineSource::SineSource(voyx_t amplitude, voyx_t frequency, voyx_t samplerate, si
   Source(samplerate, framesize, buffersize),
   amplitude(amplitude),
   frequency(frequency),
-  sine(frequency, samplerate),
+  osc(frequency, samplerate),
   frame(framesize)
 {
 }
@@ -20,7 +20,7 @@ bool SineSource::read(const size_t index, std::function<void(const voyx::vector<
 {
   for (size_t i = 0; i < frame.size(); ++i)
   {
-    frame[i] = amplitude * sine();
+    frame[i] = amplitude * osc.sin();
   }
 
   callback(frame);
