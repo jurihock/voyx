@@ -20,6 +20,8 @@ public:
   std::vector<voyx_t> mask();
   std::vector<voyx_t> imask();
 
+  bool sustain();
+
   void start();
   void stop();
 
@@ -29,6 +31,7 @@ private:
   const voyx_t midi_concert_pitch;
 
   std::vector<int> midi_key_state;
+  bool midi_control_sustain;
 
   RtMidiIn midi;
 

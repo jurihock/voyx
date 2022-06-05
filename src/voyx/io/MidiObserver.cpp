@@ -5,7 +5,8 @@
 MidiObserver::MidiObserver(const std::string& name, const voyx_t concertpitch) :
   midi_device_name(name),
   midi_concert_pitch(concertpitch),
-  midi_key_state(128)
+  midi_key_state(128),
+  midi_control_sustain(false)
 {
   midi.setErrorCallback(&MidiObserver::error, this);
 
@@ -69,6 +70,12 @@ std::vector<voyx_t> MidiObserver::imask()
     [](voyx_t value) { return (127 - value) / voyx_t(127); });
 
   return dst;
+}
+
+bool MidiObserver::sustain()
+{
+  std::lock_guard lock(mutex);
+  return midi_control_sustain;
 }
 
 void MidiObserver::start()
@@ -176,21 +183,41 @@ void MidiObserver::callback(double timestamp, std::vector<unsigned char>* messag
 
   const uint8_t status = ((*message)[0] >> 4);
 
-  const bool on = (status == 0b1001) || (status == 0b1010);
-  const bool off = (status == 0b1000);
+  const bool control = (status == 0b1011);
 
-  const int key = (*message)[1] & 0b0111'1111;
-  const int velocity = (*message)[2] & 0b0111'1111;
-
-  if (on || off)
+  if (control)
   {
-    auto observer = static_cast<MidiObserver*>($this);
+    const bool sustain = (*message)[1] == 64;
 
-    std::lock_guard lock(observer->mutex);
+    if (sustain)
+    {
+      const bool state = (*message)[2] >= 64;
 
-    observer->midi_key_state[key] = on ? velocity : 0;
+      auto observer = static_cast<MidiObserver*>($this);
 
-    // LOG(INFO) << $("MIDI: {0} key={1:03d} velocity={2:03d}", on ? "on " : "off", key, velocity);
+      std::lock_guard lock(observer->mutex);
+
+      observer->midi_control_sustain = state;
+    }
+  }
+  else
+  {
+    const bool on = (status == 0b1001) || (status == 0b1010);
+    const bool off = (status == 0b1000);
+
+    const int key = (*message)[1] & 0b0111'1111;
+    const int velocity = (*message)[2] & 0b0111'1111;
+
+    if (on || off)
+    {
+      auto observer = static_cast<MidiObserver*>($this);
+
+      std::lock_guard lock(observer->mutex);
+
+      observer->midi_key_state[key] = on ? velocity : 0;
+
+      // LOG(INFO) << $("MIDI: {0} key={1:03d} velocity={2:03d}", on ? "on " : "off", key, velocity);
+    }
   }
 }
 
