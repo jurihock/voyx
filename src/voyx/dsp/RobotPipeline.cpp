@@ -14,17 +14,23 @@ RobotPipeline::RobotPipeline(const voyx_t samplerate, const size_t framesize, co
 void RobotPipeline::operator()(const size_t index,
                                voyx::matrix<std::complex<voyx_t>> dfts)
 {
-  std::vector<voyx_t> frequencies;
+  std::set<voyx_t> frequencies;
+  bool sustain = false;
 
   if (midi != nullptr)
   {
-    frequencies = midi->frequencies();
+    const auto values = midi->frequencies();
+    frequencies.insert(values.begin(), values.end());
+
+    sustain = midi->sustain();
   }
 
-  if (frequencies.empty())
+  if (sustain)
   {
-    return;
+    frequencies.merge(this->frequencies);
   }
+
+  this->frequencies = frequencies;
 
   for (const voyx_t frequency : frequencies)
   {

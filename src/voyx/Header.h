@@ -28,6 +28,7 @@
 #include <optional>
 #include <regex>
 #include <semaphore>
+#include <set>
 #include <span>
 #include <sstream>
 #include <string>

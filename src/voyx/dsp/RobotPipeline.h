@@ -24,5 +24,6 @@ private:
   std::shared_ptr<Plot> plot;
 
   std::map<voyx_t, std::vector<Oscillator<voyx_t>>> osc;
+  std::set<voyx_t> frequencies;
 
 };
