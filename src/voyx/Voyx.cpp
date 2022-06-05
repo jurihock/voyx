@@ -17,6 +17,7 @@
 #include <voyx/io/AudioSource.h>
 #include <voyx/io/FileSink.h>
 #include <voyx/io/FileSource.h>
+#include <voyx/io/NoiseSource.h>
 #include <voyx/io/NullSink.h>
 #include <voyx/io/NullSource.h>
 #include <voyx/io/SineSource.h>
@@ -130,6 +131,10 @@ int main(int argc, char** argv)
   {
     source = std::make_shared<NullSource>(samplerate, framesize, buffersize);
   }
+  else if ($$::imatch(input, "noise"))
+  {
+    source = std::make_shared<NoiseSource>(0.5, samplerate, framesize, buffersize);
+  }
   else if ($$::imatch(input, "sine"))
   {
     source = std::make_shared<SineSource>(0.5, concertpitch, samplerate, framesize, buffersize);
@@ -168,7 +173,7 @@ int main(int argc, char** argv)
   std::shared_ptr<Plot> plot = nullptr;
   #endif
 
-  const size_t dftsize = 3*64;
+  const size_t dftsize = 300;
 
   // auto pipe = std::make_shared<BypassPipeline>(source, sink);
   // auto pipe = std::make_shared<InverseSynthPipeline>(samplerate, framesize, hopsize, source, sink, observer, plot);
