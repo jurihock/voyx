@@ -47,30 +47,26 @@ public:
 
       arg[i] += (i + j) * inc;
 
-      const T phi = arg[i];
-
-      T bin;
+      size_t bin;
 
       if (j > 0)
       {
         bin = i + 1;
 
-        arg[bin] = phi + pi;
+        arg[bin] = arg[i] + pi;
 
         bin = i - 1;
 
         while((bin > 1) && (abs[bin] < abs[bin + 1]))
         {
-          arg[bin] = phi + pi;
-          bin = bin - 1;
+          arg[bin--] = arg[i] + pi;
         }
 
         bin = i + 2;
 
         while((bin < dft.size()) && (abs[bin] < abs[bin - 1]))
         {
-          arg[bin] = phi;
-          bin = bin + 1;
+          arg[bin++] = arg[i];
         }
       }
 
@@ -78,22 +74,20 @@ public:
       {
         bin = i - 1;
 
-        arg[bin] = phi + pi;
+        arg[bin] = arg[i] + pi;
 
         bin = i + 1;
 
         while((bin < dft.size()) && (abs[bin] < abs[bin - 1]))
         {
-          arg[bin] = phi + pi;
-          bin = bin + 1;
+          arg[bin++] = arg[i] + pi;
         }
 
         bin = i - 2;
 
         while((bin > 1) && (abs[bin] < abs[bin + 1]))
         {
-          arg[bin] = phi;
-          bin = bin - 1;
+          arg[bin--] = arg[i];
         }
       }
     }
