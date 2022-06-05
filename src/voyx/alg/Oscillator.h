@@ -82,6 +82,36 @@ public:
   }
 
   template<typename V>
+  friend std::complex<V> operator+(Oscillator<T>& o, const V v)
+  {
+    return v + o();
+  }
+
+  template<typename V>
+  friend std::complex<V> operator+(Oscillator<T>& o, const std::complex<V>& v)
+  {
+    return v + o();
+  }
+
+  template<typename V>
+  friend std::complex<V> operator+(const V v, Oscillator<T>& o)
+  {
+    return v + o();
+  }
+
+  template<typename V>
+  friend std::complex<V> operator+(const std::complex<V>& v, Oscillator<T>& o)
+  {
+    return v + o();
+  }
+
+  template<typename V>
+  friend std::complex<V>& operator+=(std::complex<V>& v, Oscillator<T>& o)
+  {
+    return v += o();
+  }
+
+  template<typename V>
   friend std::complex<V> operator*(Oscillator<T>& o, const V v)
   {
     return v * o();
@@ -103,6 +133,12 @@ public:
   friend std::complex<V> operator*(const std::complex<V>& v, Oscillator<T>& o)
   {
     return v * o();
+  }
+
+  template<typename V>
+  friend std::complex<V>& operator*=(std::complex<V>& v, Oscillator<T>& o)
+  {
+    return v *= o();
   }
 
 private:
