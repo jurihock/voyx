@@ -57,8 +57,13 @@ void RobotPipeline::operator()(const size_t index,
     {
       for (size_t j = 0; j < dft.size(); ++j)
       {
-        dft[j] += abs[j] * osc[frequency][j];
+        dft[j] += osc[frequency][j];
       }
+    }
+
+    for (size_t j = 0; j < dft.size(); ++j)
+    {
+      dft[j] *= abs[j];
     }
   }
 }
