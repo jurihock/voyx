@@ -67,9 +67,12 @@ void RobotPipeline::operator()(const size_t index,
       }
     }
 
+    const voyx_t weight = frequencies.empty()
+      ? voyx_t(0) : voyx_t(1) / frequencies.size();
+
     for (size_t j = 0; j < dft.size(); ++j)
     {
-      dft[j] *= abs[j];
+      dft[j] *= abs[j] * weight;
     }
   }
 }
