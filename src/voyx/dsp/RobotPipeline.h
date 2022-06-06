@@ -1,9 +1,9 @@
 #pragma once
 
 #include <voyx/Header.h>
-#include <voyx/alg/Oscillator.h>
 #include <voyx/dsp/SdftPipeline.h>
 #include <voyx/io/MidiObserver.h>
+#include <voyx/sign/Oscillator.h>
 #include <voyx/ui/Plot.h>
 
 class RobotPipeline : public SdftPipeline

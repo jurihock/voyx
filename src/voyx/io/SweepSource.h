@@ -1,8 +1,8 @@
 #pragma once
 
 #include <voyx/Header.h>
-#include <voyx/alg/Wobbulator.h>
 #include <voyx/io/Source.h>
+#include <voyx/sign/Wobbulator.h>
 
 class SweepSource : public Source<voyx_t>
 {

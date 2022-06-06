@@ -1,8 +1,8 @@
 #pragma once
 
 #include <voyx/Header.h>
-#include <voyx/alg/Oscillator.h>
 #include <voyx/io/Source.h>
+#include <voyx/sign/Oscillator.h>
 
 class SineSource : public Source<voyx_t>
 {
