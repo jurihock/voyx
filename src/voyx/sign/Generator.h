@@ -22,6 +22,16 @@ public:
     return (*this)().imag();
   }
 
+  T operator++(int)
+  {
+    return (*this)().real();
+  }
+
+  T operator--(int)
+  {
+    return (*this)().imag();
+  }
+
   operator std::complex<T>()
   {
     return (*this)();
