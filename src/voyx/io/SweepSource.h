@@ -1,7 +1,7 @@
 #pragma once
 
 #include <voyx/Header.h>
-#include <voyx/alg/Oscillator.h>
+#include <voyx/alg/Wobbulator.h>
 #include <voyx/io/Source.h>
 
 class SweepSource : public Source<voyx_t>
@@ -20,8 +20,7 @@ private:
   const std::pair<voyx_t, voyx_t> frequencies;
   const voyx_t duration;
 
-  Oscillator<voyx_t> lfo;
-  Oscillator<voyx_t> osc;
+  Wobbulator<voyx_t> osc;
 
   std::vector<voyx_t> frame;
 

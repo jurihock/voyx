@@ -12,22 +12,16 @@ SweepSource::SweepSource(voyx_t amplitude, std::pair<voyx_t, voyx_t> frequencies
   amplitude(amplitude),
   frequencies(frequencies),
   duration(duration),
-  lfo(1 / duration, samplerate),
-  osc(frequencies.first, samplerate),
+  osc(frequencies, duration, samplerate),
   frame(framesize)
 {
 }
 
 bool SweepSource::read(const size_t index, std::function<void(const voyx::vector<voyx_t> frame)> callback)
 {
-  const voyx_t slope = (frequencies.second - frequencies.first) / 2;
-  const voyx_t intercept = (frequencies.second + frequencies.first) / 2;
-
   for (size_t i = 0; i < frame.size(); ++i)
   {
-    const voyx_t frequency = lfo.cos() * slope + intercept;
-
-    frame[i] = amplitude * osc.sin(frequency);
+    frame[i] = amplitude * osc.sin();
   }
 
   callback(frame);
