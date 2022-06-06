@@ -12,6 +12,16 @@ public:
 
   virtual std::complex<T> operator()() = 0;
 
+  operator std::complex<T>()
+  {
+    return (*this)();
+  }
+
+  operator T()
+  {
+    return (*this)().real();
+  }
+
   T operator++(int)
   {
     return (*this)().real();
@@ -20,11 +30,6 @@ public:
   T operator--(int)
   {
     return (*this)().imag();
-  }
-
-  operator std::complex<T>()
-  {
-    return (*this)();
   }
 
   // ADDITION
