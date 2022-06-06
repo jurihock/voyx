@@ -18,10 +18,10 @@ public:
   {
   }
 
-  Wobbulator(std::pair<T, T> frequencies, T duration, const T samplerate) :
+  Wobbulator(std::pair<T, T> frequencies, T period, const T samplerate) :
     slope((frequencies.first - frequencies.second) / T(2)),
     intercept((frequencies.first + frequencies.second) / T(2)),
-    lfo(T(1) / duration, samplerate),
+    lfo(T(1) / period, samplerate),
     osc(frequencies.first, samplerate)
   {
   }
@@ -50,6 +50,16 @@ public:
   std::complex<T> operator()() override
   {
     return osc(lfo.cos() * slope + intercept);
+  }
+
+  T cos()
+  {
+    return (*this)().real();
+  }
+
+  T sin()
+  {
+    return (*this)().imag();
   }
 
 private:

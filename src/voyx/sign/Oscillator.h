@@ -57,7 +57,7 @@ public:
     return phasor *= omega;
   }
 
-  T cos() override
+  T cos()
   {
     return (*this)().real();
   }
@@ -67,7 +67,7 @@ public:
     return (*this)(frequency).real();
   }
 
-  T sin() override
+  T sin()
   {
     return (*this)().imag();
   }

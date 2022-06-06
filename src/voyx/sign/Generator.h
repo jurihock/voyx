@@ -12,16 +12,6 @@ public:
 
   virtual std::complex<T> operator()() = 0;
 
-  virtual T cos()
-  {
-    return (*this)().real();
-  }
-
-  virtual T sin()
-  {
-    return (*this)().imag();
-  }
-
   T operator++(int)
   {
     return (*this)().real();

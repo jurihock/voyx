@@ -2,17 +2,17 @@
 
 #include <voyx/Source.h>
 
-SweepSource::SweepSource(std::pair<voyx_t, voyx_t> frequencies, voyx_t duration, voyx_t samplerate, size_t framesize, size_t buffersize) :
-  SweepSource(1, frequencies, duration, samplerate, framesize, buffersize)
+SweepSource::SweepSource(std::pair<voyx_t, voyx_t> frequencies, voyx_t period, voyx_t samplerate, size_t framesize, size_t buffersize) :
+  SweepSource(1, frequencies, period, samplerate, framesize, buffersize)
 {
 }
 
-SweepSource::SweepSource(voyx_t amplitude, std::pair<voyx_t, voyx_t> frequencies, voyx_t duration, voyx_t samplerate, size_t framesize, size_t buffersize) :
+SweepSource::SweepSource(voyx_t amplitude, std::pair<voyx_t, voyx_t> frequencies, voyx_t period, voyx_t samplerate, size_t framesize, size_t buffersize) :
   Source(samplerate, framesize, buffersize),
   amplitude(amplitude),
   frequencies(frequencies),
-  duration(duration),
-  osc(frequencies, duration, samplerate),
+  period(period),
+  osc(frequencies, period, samplerate),
   frame(framesize)
 {
 }
