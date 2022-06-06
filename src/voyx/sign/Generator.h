@@ -27,6 +27,8 @@ public:
     return (*this)();
   }
 
+  // ADDITION
+
   template<typename V>
   friend std::complex<V> operator+(Generator<T>& g, const V v)
   {
@@ -57,6 +59,40 @@ public:
     return v += g();
   }
 
+  // SUBTRACTION
+
+  template<typename V>
+  friend std::complex<V> operator-(Generator<T>& g, const V v)
+  {
+    return v - g();
+  }
+
+  template<typename V>
+  friend std::complex<V> operator-(Generator<T>& g, const std::complex<V>& v)
+  {
+    return v - g();
+  }
+
+  template<typename V>
+  friend std::complex<V> operator-(const V v, Generator<T>& g)
+  {
+    return v - g();
+  }
+
+  template<typename V>
+  friend std::complex<V> operator-(const std::complex<V>& v, Generator<T>& g)
+  {
+    return v - g();
+  }
+
+  template<typename V>
+  friend std::complex<V>& operator-=(std::complex<V>& v, Generator<T>& g)
+  {
+    return v -= g();
+  }
+
+  // MULTIPLICATION
+
   template<typename V>
   friend std::complex<V> operator*(Generator<T>& g, const V v)
   {
@@ -85,6 +121,38 @@ public:
   friend std::complex<V>& operator*=(std::complex<V>& v, Generator<T>& g)
   {
     return v *= g();
+  }
+
+  // DIVISION
+
+  template<typename V>
+  friend std::complex<V> operator/(Generator<T>& g, const V v)
+  {
+    return v / g();
+  }
+
+  template<typename V>
+  friend std::complex<V> operator/(Generator<T>& g, const std::complex<V>& v)
+  {
+    return v / g();
+  }
+
+  template<typename V>
+  friend std::complex<V> operator/(const V v, Generator<T>& g)
+  {
+    return v / g();
+  }
+
+  template<typename V>
+  friend std::complex<V> operator/(const std::complex<V>& v, Generator<T>& g)
+  {
+    return v / g();
+  }
+
+  template<typename V>
+  friend std::complex<V>& operator/=(std::complex<V>& v, Generator<T>& g)
+  {
+    return v /= g();
   }
 
 };
