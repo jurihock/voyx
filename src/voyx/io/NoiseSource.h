@@ -2,6 +2,7 @@
 
 #include <voyx/Header.h>
 #include <voyx/io/Source.h>
+#include <voyx/sign/Noise.h>
 
 class NoiseSource : public Source<voyx_t>
 {
@@ -17,9 +18,8 @@ private:
 
   const voyx_t amplitude;
 
-  std::random_device seed;
-  std::mt19937 generator;
-  std::uniform_real_distribution<voyx_t> distribution;
+  Noise<voyx_t> noise;
+
   std::vector<voyx_t> frame;
 
 };

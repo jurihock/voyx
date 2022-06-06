@@ -10,8 +10,7 @@ NoiseSource::NoiseSource(voyx_t samplerate, size_t framesize, size_t buffersize)
 NoiseSource::NoiseSource(voyx_t amplitude, voyx_t samplerate, size_t framesize, size_t buffersize) :
   Source(samplerate, framesize, buffersize),
   amplitude(amplitude),
-  generator(seed()),
-  distribution(-1, +1),
+  noise(),
   frame(framesize)
 {
 }
@@ -20,7 +19,7 @@ bool NoiseSource::read(const size_t index, std::function<void(const voyx::vector
 {
   for (size_t i = 0; i < frame.size(); ++i)
   {
-    frame[i] = amplitude * distribution(generator);
+    frame[i] = amplitude * noise++;
   }
 
   callback(frame);
