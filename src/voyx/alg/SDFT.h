@@ -59,7 +59,8 @@ public:
     // actually the weight denominator needs to be dftsize*2 to get proper magnitude scaling,
     // but then requires a correction by factor 2 in synthesis and is therefore omitted
 
-    const T weight = T(0.25) / dftsize;
+    const T weight = T(0.25) / dftsize; // incl. factor 1/4 for windowing
+
     const T delta = sample - std::exchange(analysis.input[analysis.cursor], sample);
 
     for (size_t i = analysis.roi.first, j = i + 1; i < analysis.roi.second; ++i, ++j)
@@ -73,7 +74,10 @@ public:
       analysis.auxoutput[j] = analysis.accoutput[i] * std::conj(newfiddle);
     }
 
-    // FIXME dftsize vs. dftsize * 2
+    // theoretically the DFT symmetry needs to be preserved for proper windowing,
+    // but the both outer bins seem to be noisy for an unclear reason
+    // and will be suppressed anyway after windowing
+
     // analysis.auxoutput[0] = analysis.auxoutput[dftsize];
     // analysis.auxoutput[dftsize + 1] = analysis.auxoutput[1];
 
@@ -85,9 +89,9 @@ public:
                       weight);
     }
 
-    // FIXME dftsize vs. dftsize * 2
-    dft[0] = 0;
-    dft[dftsize - 1] = 0;
+    // finally suppress outer DFT bins as announced in the comment above
+
+    dft[0] = dft[dftsize - 1] = 0;
 
     if (++analysis.cursor >= analysis.input.size())
     {
@@ -171,7 +175,7 @@ private:
                                        const std::complex<T>& right,
                                        const T weight)
   {
-    // the factor 1/4 is already included in weight
+    // the factor 1/4 is already included in the weight
 
     return /* T(0.25) */ ((middle + middle) - (left + right)) * weight;
   }
