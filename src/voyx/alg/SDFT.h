@@ -74,7 +74,7 @@ public:
       analysis.auxoutput[j] = analysis.accoutput[i] * std::conj(newfiddle);
     }
 
-    // theoretically the DFT symmetry needs to be preserved for proper windowing,
+    // theoretically the DFT periodicity needs to be preserved for proper windowing,
     // but the both outer bins seem to be noisy for an unclear reason
     // and will be suppressed anyway after windowing
 

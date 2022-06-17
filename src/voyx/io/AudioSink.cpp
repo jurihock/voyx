@@ -81,14 +81,29 @@ void AudioSink::open()
         audio_device_name));
   }
 
+  const RtAudio::DeviceInfo device = audio.getDeviceInfo(id.value());
+
   RtAudio::StreamParameters stream_parameters;
   stream_parameters.deviceId = id.value();
   stream_parameters.nChannels = 1;
   stream_parameters.firstChannel = 0;
 
   const RtAudioFormat stream_format = (typeid(voyx_t) == typeid(float)) ? RTAUDIO_FLOAT32 : RTAUDIO_FLOAT64;
-  const uint32_t stream_samplerate = static_cast<uint32_t>(samplerate());
+  uint32_t stream_samplerate = device.preferredSampleRate;
   uint32_t stream_framesize = static_cast<uint32_t>(framesize());
+
+  for (const uint32_t native_samplerate : device.sampleRates)
+  {
+    if (native_samplerate == samplerate())
+    {
+      stream_samplerate = native_samplerate;
+      break;
+    }
+  }
+
+  audio_samplerate_converter = { samplerate(), stream_samplerate };
+
+  stream_framesize *= audio_samplerate_converter.quotient();
 
   audio.openStream(
     &stream_parameters,
@@ -101,12 +116,11 @@ void AudioSink::open()
     nullptr,
     &AudioSink::error);
 
-  if (stream_framesize != framesize())
+  if (stream_framesize != framesize() * audio_samplerate_converter.quotient())
   {
     throw std::runtime_error(
-      $("Unexpected audio sink stream frame size {0} != {1}!",
-        stream_framesize,
-        framesize()));
+      $("Unexpected audio sink stream frame size {0} != {1} * {2}!",
+        stream_framesize, framesize(), audio_samplerate_converter.quotient()));
   }
 }
 
@@ -176,18 +190,21 @@ bool AudioSink::sync()
 int AudioSink::callback(void* output_frame_data, void* input_frame_data, uint32_t framesize, double timestamp, RtAudioStreamStatus status, void* $this)
 {
   auto& audio_frame_buffer = static_cast<AudioSink*>($this)->audio_frame_buffer;
+  auto& audio_samplerate_converter = static_cast<AudioSink*>($this)->audio_samplerate_converter;
+  auto& audio_sync_semaphore = static_cast<AudioSink*>($this)->audio_sync_semaphore;
 
   const auto ok = audio_frame_buffer.read([&](OutputFrame& output)
   {
-    if (framesize != output.frame.size())
+    if (framesize != output.frame.size() * audio_samplerate_converter.quotient())
     {
-      LOG(WARNING) << $("Unexpected output frame size {0} != {1}!", framesize, output.frame.size());
+      LOG(WARNING) << $("Unexpected output frame size {0} != {1} * {2}!",
+                        framesize, output.frame.size(), audio_samplerate_converter.quotient());
     }
 
-    const size_t size = std::min(output.frame.size(), static_cast<size_t>(framesize));
-    const size_t bytes = size * sizeof(output.frame.front());
+    voyx::vector<voyx_t> src = { output.frame.data(), output.frame.size() };
+    voyx::vector<voyx_t> dst = { static_cast<voyx_t*>(output_frame_data), framesize };
 
-    std::memcpy(output_frame_data, output.frame.data(), bytes);
+    audio_samplerate_converter(src, dst);
   });
 
   if (!ok)
@@ -204,7 +221,7 @@ int AudioSink::callback(void* output_frame_data, void* input_frame_data, uint32_
     LOG(WARNING) << $("Audio sink stream status {0}!", status);
   }
 
-  static_cast<AudioSink*>($this)->audio_sync_semaphore.release();
+  audio_sync_semaphore.release();
 
   return 0;
 }
