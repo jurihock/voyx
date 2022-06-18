@@ -15,9 +15,6 @@ public:
     freqinc(samplerate / framesize),
     phaseinc(pi * hopsize / framesize)
   {
-    analysis.cursor = 0;
-    synthesis.cursor = 0;
-
     analysis.buffer.resize(dftsize + 1);
     synthesis.buffer.resize(dftsize + 1);
   }
@@ -47,7 +44,7 @@ public:
 
     for (size_t i = 0; i < dft.size(); ++i)
     {
-      phase = std::arg(dft[i]);
+      phase = arg(dft[i]); // instead of std::arg(dft[i])
 
       delta = phase - std::exchange(analysis.buffer[i], phase);
 
@@ -56,13 +53,6 @@ public:
       frequency = (i + j) * freqinc;
 
       dft[i] = std::complex<T>(std::abs(dft[i]), frequency);
-    }
-
-    if ((analysis.cursor += hopsize) >= framesize) // sync with sdft
-    {
-      analysis.cursor = 0;
-
-      std::fill(analysis.buffer.begin(), analysis.buffer.end(), 0);
     }
   }
 
@@ -85,13 +75,6 @@ public:
 
       dft[i] = std::polar<T>(dft[i].real(), phase);
     }
-
-    if ((synthesis.cursor += hopsize) >= framesize) // sync with sdft
-    {
-      synthesis.cursor = 0;
-
-      std::fill(synthesis.buffer.begin(), synthesis.buffer.end(), 0);
-    }
   }
 
 private:
@@ -107,21 +90,129 @@ private:
 
   struct
   {
-    size_t cursor;
     std::vector<T> buffer;
   }
   analysis;
 
   struct
   {
-    size_t cursor;
     std::vector<T> buffer;
   }
   synthesis;
 
-  inline T wrap(const T phase) const
+  /**
+   * Converts the specified arbitrary phase value
+   * to be within the interval from -pi to pi.
+   **/
+  inline static T wrap(const T phase)
   {
-    return phase - pi * std::floor(phase / pi + T(0.5));
+    const T PI = T(2) * T(M_PI);
+
+    return phase - PI * std::floor(phase / PI + T(0.5));
   }
 
+  /**
+   * Approximates the phase angle of the complex number z.
+   **/
+  inline static T arg(const std::complex<T>& z)
+  {
+    return atan2(z.imag(), z.real());
+  }
+
+  /**
+   * Approximates the arcus tangent of y/x according to [1] and [2].
+   *
+   * [1] Sreeraman Rajan and Sichun Wang and Robert Inkol and Alain Joyal
+   *     Efficient approximations for the arctangent function
+   *     IEEE Signal Processing Magazine (2006)
+   *     https://ieeexplore.ieee.org/document/1628884
+   *
+   * [2] Dmytro Mishkin
+   *     https://github.com/ducha-aiki/fast_atan2
+   **/
+  inline static T atan2(const T y, const T x)
+  {
+    const T PI = T(M_PI);
+    const T PI2 = T(M_PI_2);
+    const T PI4 = T(M_PI_4);
+
+    const T A = PI4 + T(0.273);
+    const T B = T(0.273);
+
+    const T absy = std::abs(y);
+    const T absx = std::abs(x);
+
+    const int octant = ((absx <= absy) << 2) + ((y < 0) << 1) + ((x < 0) << 0);
+
+    if (x == 0 && y == 0)
+    {
+      return T(0);
+    }
+
+    if (x == 0)
+    {
+      return (y > 0) ? +PI2 : -PI2;
+    }
+
+    if (y == 0)
+    {
+      return (x > 0) ? 0 : PI;
+    }
+
+    switch (octant)
+    {
+      case 0: // i
+      {
+        const T q = absy / absx;
+
+        return +(A - B * q) * q;
+      }
+      case 4: // ii
+      {
+        const T q = absx / absy;
+
+        return +PI2 - (A - B * q) * q;
+      }
+      case 5: // iii
+      {
+        const T q = absx / absy;
+
+        return +PI2 + (A - B * q) * q;
+      }
+      case 1: // iv
+      {
+        const T q = absy / absx;
+
+        return +PI - (A - B * q) * q;
+      }
+      case 3: // v
+      {
+        const T q = absy / absx;
+
+        return -PI + (A - B * q) * q;
+      }
+      case 7: // vi
+      {
+        const T q = absx / absy;
+
+        return -PI2 - (A - B * q) * q;
+      }
+      case 6: // vii
+      {
+        const T q = absx / absy;
+
+        return -PI2 + (A - B * q) * q;
+      }
+      case 2: // viii
+      {
+        const T q = absy / absx;
+
+        return -(A - B * q) * q;
+      }
+      default:
+      {
+        return T(0);
+      }
+    }
+  }
 };
