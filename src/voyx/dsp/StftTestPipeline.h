@@ -6,7 +6,7 @@
 #include <voyx/io/MidiObserver.h>
 #include <voyx/ui/Plot.h>
 
-class StftTestPipeline : public StftPipeline
+class StftTestPipeline : public StftPipeline<double>
 {
 
 public:
@@ -17,11 +17,11 @@ public:
 
   void operator()(const size_t index,
                   const voyx::vector<voyx_t> signal,
-                  voyx::matrix<std::complex<voyx_t>> dfts) override;
+                  voyx::matrix<std::complex<double>> dfts) override;
 
 private:
 
-  Vocoder<voyx_t> vocoder;
+  Vocoder<double> vocoder;
 
   std::shared_ptr<MidiObserver> midi;
   std::shared_ptr<Plot> plot;

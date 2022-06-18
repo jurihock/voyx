@@ -6,7 +6,7 @@
 #include <voyx/io/MidiObserver.h>
 #include <voyx/ui/Plot.h>
 
-class InverseSynthPipeline : public StftPipeline
+class InverseSynthPipeline : public StftPipeline<>
 {
 
 public:

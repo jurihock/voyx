@@ -6,7 +6,7 @@
 /**
  * Short-Time Fourier Transform implementation.
  **/
-template<typename T>
+template <typename T, typename F>
 class STFT
 {
 
@@ -17,16 +17,16 @@ public:
     hopsize(hopsize),
     fft(framesize)
   {
-    const std::vector<T> window = Window<T>(framesize);
+    const std::vector<F> window = Window<F>(framesize);
 
     windows.analysis = window;
     windows.synthesis = window;
 
-    const T unitygain = hopsize / std::inner_product(
-      windows.synthesis.begin(), windows.synthesis.end(), windows.synthesis.begin(), T(0));
+    const F unitygain = hopsize / std::inner_product(
+      windows.synthesis.begin(), windows.synthesis.end(), windows.synthesis.begin(), F(0));
 
     std::transform(windows.synthesis.begin(), windows.synthesis.end(), windows.synthesis.begin(),
-      [unitygain](T value) { return value * unitygain; });
+      [unitygain](F value) { return value * unitygain; });
 
     for (size_t hop = 0; (hop + framesize) < (framesize * 2); hop += hopsize)
     {
@@ -53,7 +53,7 @@ public:
     return data.input;
   }
 
-  void stft(const voyx::vector<T> samples, voyx::matrix<std::complex<T>> dfts)
+  void stft(const voyx::vector<T> samples, voyx::matrix<std::complex<F>> dfts)
   {
     for (size_t i = 0; i < framesize; ++i)
     {
@@ -66,16 +66,16 @@ public:
       data.output[j] = 0;
     }
 
-    voyx::matrix<T> frames(data.frames, framesize);
+    voyx::matrix<F> frames(data.frames, framesize);
 
     reject(frames, data.input, data.hops, windows.analysis);
 
     fft.fft(frames, dfts);
   }
 
-  void istft(const voyx::matrix<std::complex<T>> dfts, voyx::vector<T> samples)
+  void istft(const voyx::matrix<std::complex<F>> dfts, voyx::vector<T> samples)
   {
-    voyx::matrix<T> frames(data.frames, framesize);
+    voyx::matrix<F> frames(data.frames, framesize);
 
     fft.ifft(dfts, frames);
 
@@ -92,12 +92,12 @@ private:
   const size_t framesize;
   const size_t hopsize;
 
-  const FFT<T> fft;
+  const FFT<F> fft;
 
   struct
   {
-    std::vector<T> analysis;
-    std::vector<T> synthesis;
+    std::vector<F> analysis;
+    std::vector<F> synthesis;
   }
   windows;
 
@@ -105,12 +105,12 @@ private:
   {
     std::vector<T> input;
     std::vector<T> output;
-    std::vector<T> frames;
+    std::vector<F> frames;
     std::vector<size_t> hops;
   }
   data;
 
-  static void reject(voyx::matrix<T> frames, const voyx::vector<T> input, const std::vector<size_t>& hops, const std::vector<T>& window)
+  static void reject(voyx::matrix<F> frames, const voyx::vector<T> input, const std::vector<size_t>& hops, const std::vector<F>& window)
   {
     for (size_t i = 0; i < hops.size(); ++i)
     {
@@ -124,7 +124,7 @@ private:
     }
   }
 
-  static void inject(const voyx::matrix<T> frames, voyx::vector<T> output, const std::vector<size_t>& hops, const std::vector<T>& window)
+  static void inject(const voyx::matrix<F> frames, voyx::vector<T> output, const std::vector<size_t>& hops, const std::vector<F>& window)
   {
     for (size_t i = 0; i < hops.size(); ++i)
     {

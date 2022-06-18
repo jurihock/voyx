@@ -6,7 +6,7 @@
 #include <voyx/io/MidiObserver.h>
 #include <voyx/ui/Plot.h>
 
-class VoiceSynthPipeline : public StftPipeline
+class VoiceSynthPipeline : public StftPipeline<>
 {
 
 public:
