@@ -47,27 +47,57 @@ public:
 
   void operator()(const voyx::vector<T> src, voyx::vector<T> dst) const
   {
+    voyxassert(dst.size() * samplerates.first ==
+               src.size() * samplerates.second);
+
     if (samplerates.second == samplerates.first)
     {
-      voyxassert(dst.size() == src.size());
-
       dst = src;
+    }
+    else if (samplerates.second == samplerates.first * 4)
+    {
+      for (size_t i = 0, j = 0; i < src.size(); i+=1, j+=4)
+      {
+        dst[j + 0] = src[i];
+        dst[j + 1] = src[i];
+        dst[j + 2] = src[i];
+        dst[j + 3] = src[i];
+      }
+    }
+    else if (samplerates.second == samplerates.first * 3)
+    {
+      for (size_t i = 0, j = 0; i < src.size(); i+=1, j+=3)
+      {
+        dst[j + 0] = src[i];
+        dst[j + 1] = src[i];
+        dst[j + 2] = src[i];
+      }
     }
     else if (samplerates.second == samplerates.first * 2)
     {
-      voyxassert(dst.size() == src.size() * 2);
-
       for (size_t i = 0, j = 0; i < src.size(); i+=1, j+=2)
       {
         dst[j + 0] = src[i];
         dst[j + 1] = src[i];
       }
     }
-    else if (samplerates.second == samplerates.first / 2)
+    else if (samplerates.second * 2 == samplerates.first)
     {
-      voyxassert(dst.size() == src.size() / 2);
-
       for (size_t i = 0, j = 0; i < src.size(); i+=2, j+=1)
+      {
+        dst[j] = src[i];
+      }
+    }
+    else if (samplerates.second * 3 == samplerates.first)
+    {
+      for (size_t i = 0, j = 0; i < src.size(); i+=3, j+=1)
+      {
+        dst[j] = src[i];
+      }
+    }
+    else if (samplerates.second * 4 == samplerates.first)
+    {
+      for (size_t i = 0, j = 0; i < src.size(); i+=4, j+=1)
       {
         dst[j] = src[i];
       }
