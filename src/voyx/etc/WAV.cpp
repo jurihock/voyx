@@ -1,6 +1,7 @@
 #include <voyx/etc/WAV.h>
 
 #include <voyx/Source.h>
+#include <voyx/alg/SRC.h>
 
 #include <dr_wav.h>
 
@@ -21,14 +22,6 @@ void WAV::read(const std::string& path, std::vector<float>& data, const voyx_t s
   {
     throw std::runtime_error(
       $("Unable to open \"{0}\"!", path));
-  }
-
-  if (wav.sampleRate != samplerate)
-  {
-    drwav_uninit(&wav);
-
-    throw std::runtime_error(
-      $("Invalid file sample rate {0} != {1}!", wav.sampleRate, samplerate));
   }
 
   const size_t samples = wav.totalPCMFrameCount;
@@ -70,6 +63,17 @@ void WAV::read(const std::string& path, std::vector<float>& data, const voyx_t s
     }
 
     data.resize(samples);
+  }
+
+  if (wav.sampleRate != samplerate)
+  {
+    SRC<float> convert({ wav.sampleRate, samplerate });
+
+    std::vector<float> buffer(data.size() * convert.quotient());
+
+    convert(data, buffer);
+
+    data.assign(buffer.begin(), buffer.end());
   }
 }
 
