@@ -19,7 +19,7 @@ SdftTestPipeline::SdftTestPipeline(const voyx_t samplerate, const size_t framesi
 }
 
 void SdftTestPipeline::operator()(const size_t index,
-                                  voyx::matrix<std::complex<voyx_t>> dfts)
+                                  voyx::matrix<std::complex<double>> dfts)
 {
   if (plot != nullptr)
   {

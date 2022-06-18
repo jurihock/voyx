@@ -21,8 +21,7 @@ public:
     hopsize(hopsize),
     dftsize(framesize / 2),
     abs(dftsize + 1),
-    arg(dftsize + 1),
-    cursor(0)
+    arg(dftsize + 1)
   {
   }
 
@@ -98,13 +97,6 @@ public:
     }
 
     // TODO fix phase drift
-
-    // if ((cursor += hopsize) >= framesize) // sync with sdft
-    // {
-    //   cursor = 0;
-
-    //   std::fill(arg.begin(), arg.end(), 0);
-    // }
   }
 
   void operator()(voyx::matrix<std::complex<T>> dfts)
@@ -123,8 +115,6 @@ private:
 
   std::vector<T> abs;
   std::vector<T> arg;
-
-  size_t cursor;
 
   inline static T interp(const T left, const T middle, const T right)
   {

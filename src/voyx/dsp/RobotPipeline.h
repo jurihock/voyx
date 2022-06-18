@@ -6,7 +6,7 @@
 #include <voyx/sign/Oscillator.h>
 #include <voyx/ui/Plot.h>
 
-class RobotPipeline : public SdftPipeline
+class RobotPipeline : public SdftPipeline<>
 {
 
 public:

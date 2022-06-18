@@ -15,7 +15,7 @@
  *     International Computer Music Conference (2005)
  *     https://quod.lib.umich.edu/cgi/p/pod/dod-idx/sliding-is-smoother-than-jumping.pdf?c=icmc;idno=bbp2372.2005.086;format=pdf
  **/
-template <typename T>
+template <typename T, typename F>
 class SDFT
 {
 
@@ -37,12 +37,12 @@ public:
     analysis.auxoutput.resize(dftsize + 2);
     analysis.fiddles.resize(dftsize, 1);
 
-    const T pi = T(-2) * std::acos(T(-1)) / (dftsize * 2);
-    const T weight = T(2) / (T(1) - std::cos(pi * dftsize * latency));
+    const F pi = F(-2) * std::acos(F(-1)) / (dftsize * 2);
+    const F weight = F(2) / (F(1) - std::cos(pi * dftsize * latency));
 
     for (size_t i = 0; i < dftsize; ++i)
     {
-      analysis.twiddles[i] = std::polar(T(1), pi * i);
+      analysis.twiddles[i] = std::polar(F(1), pi * i);
       synthesis.twiddles[i] = std::polar(weight, pi * i * dftsize * latency);
     }
   }
@@ -52,21 +52,21 @@ public:
     return dftsize;
   }
 
-  void sdft(const T sample, voyx::vector<std::complex<T>> dft)
+  void sdft(const T sample, voyx::vector<std::complex<F>> dft)
   {
     voyxassert(dft.size() == dftsize);
 
     // actually the weight denominator needs to be dftsize*2 to get proper magnitude scaling,
     // but then requires a correction by factor 2 in synthesis and is therefore omitted
 
-    const T weight = T(0.25) / dftsize; // incl. factor 1/4 for windowing
+    const F weight = F(0.25) / dftsize; // incl. factor 1/4 for windowing
 
-    const T delta = sample - std::exchange(analysis.input[analysis.cursor], sample);
+    const F delta = sample - std::exchange(analysis.input[analysis.cursor], sample);
 
     for (size_t i = analysis.roi.first, j = i + 1; i < analysis.roi.second; ++i, ++j)
     {
-      const std::complex<T> oldfiddle = analysis.fiddles[i];
-      const std::complex<T> newfiddle = oldfiddle * analysis.twiddles[i];
+      const std::complex<F> oldfiddle = analysis.fiddles[i];
+      const std::complex<F> newfiddle = oldfiddle * analysis.twiddles[i];
 
       analysis.fiddles[i] = newfiddle;
 
@@ -97,11 +97,11 @@ public:
     {
       analysis.cursor = 0;
 
-      std::fill(analysis.fiddles.begin(), analysis.fiddles.end(), 1);
+      // TODO std::fill(analysis.fiddles.begin(), analysis.fiddles.end(), 1);
     }
   }
 
-  void sdft(const voyx::vector<T> samples, voyx::matrix<std::complex<T>> dfts)
+  void sdft(const voyx::vector<T> samples, voyx::matrix<std::complex<F>> dfts)
   {
     voyxassert(samples.size() == dfts.size());
 
@@ -111,11 +111,11 @@ public:
     }
   }
 
-  T isdft(const voyx::vector<std::complex<T>> dft)
+  T isdft(const voyx::vector<std::complex<F>> dft)
   {
     voyxassert(dft.size() == dftsize);
 
-    T sample = T(0);
+    F sample = F(0);
 
     if (latency == 1)
     {
@@ -132,10 +132,10 @@ public:
       }
     }
 
-    return sample;
+    return static_cast<T>(sample);
   }
 
-  void isdft(const voyx::matrix<std::complex<T>> dfts, voyx::vector<T> samples)
+  void isdft(const voyx::matrix<std::complex<F>> dfts, voyx::vector<T> samples)
   {
     voyxassert(samples.size() == dfts.size());
 
@@ -153,31 +153,31 @@ private:
   struct
   {
     std::pair<size_t, size_t> roi;
-    std::vector<std::complex<T>> twiddles;
+    std::vector<std::complex<F>> twiddles;
 
     size_t cursor;
     std::vector<T> input;
-    std::vector<std::complex<T>> accoutput;
-    std::vector<std::complex<T>> auxoutput;
-    std::vector<std::complex<T>> fiddles;
+    std::vector<std::complex<F>> accoutput;
+    std::vector<std::complex<F>> auxoutput;
+    std::vector<std::complex<F>> fiddles;
   }
   analysis;
 
   struct
   {
     std::pair<size_t, size_t> roi;
-    std::vector<std::complex<T>> twiddles;
+    std::vector<std::complex<F>> twiddles;
   }
   synthesis;
 
-  inline static std::complex<T> window(const std::complex<T>& left,
-                                       const std::complex<T>& middle,
-                                       const std::complex<T>& right,
-                                       const T weight)
+  inline static std::complex<F> window(const std::complex<F>& left,
+                                       const std::complex<F>& middle,
+                                       const std::complex<F>& right,
+                                       const F weight)
   {
     // the factor 1/4 is already included in the weight
 
-    return /* T(0.25) */ ((middle + middle) - (left + right)) * weight;
+    return /* F(0.25) */ ((middle + middle) - (left + right)) * weight;
   }
 
 };
