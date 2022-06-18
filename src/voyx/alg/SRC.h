@@ -47,8 +47,7 @@ public:
 
   void operator()(const voyx::vector<T> src, voyx::vector<T> dst) const
   {
-    voyxassert(dst.size() * samplerates.first ==
-               src.size() * samplerates.second);
+    voyxassert(dst.size() == static_cast<size_t>(src.size() * quotient()));
 
     if (samplerates.second == samplerates.first)
     {
