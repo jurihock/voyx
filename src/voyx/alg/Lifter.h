@@ -43,7 +43,7 @@ public:
     }
   }
 
-  template<typename value_getter_t = $$::real>
+  template<typename value_getter_t>
   std::vector<T> lowpass(const voyx::vector<std::complex<T>>& dft)
   {
     std::vector<T> envelope(dft.size());
@@ -51,7 +51,7 @@ public:
     return envelope;
   }
 
-  template<typename value_getter_t = $$::real>
+  template<typename value_getter_t>
   void lowpass(const voyx::vector<std::complex<T>>& dft, std::span<T> envelope)
   {
     const value_getter_t getvalue;
