@@ -1,6 +1,7 @@
 #pragma once
 
 #include <voyx/Header.h>
+#include <voyx/alg/SRC.h>
 #include <voyx/etc/FIFO.h>
 #include <voyx/io/Source.h>
 
@@ -31,6 +32,7 @@ private:
 
   const std::string audio_device_name;
   FIFO<InputFrame> audio_frame_buffer;
+  SRC<voyx_t> audio_samplerate_converter;
 
   RtAudio audio;
 

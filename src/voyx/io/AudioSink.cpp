@@ -105,6 +105,12 @@ void AudioSink::open()
 
   stream_framesize *= audio_samplerate_converter.quotient();
 
+  if (stream_samplerate != samplerate())
+  {
+    LOG(INFO) << $("Opening audio sink stream with sr={0} and fs={1}.",
+                   stream_samplerate, stream_framesize);
+  }
+
   audio.openStream(
     &stream_parameters,
     nullptr,
