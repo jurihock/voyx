@@ -33,7 +33,7 @@ public:
     {
       const T value = dft[i];
 
-      spectrum[i] = value ? std::log10(value) : -120;
+      spectrum[i] = value ? std::log10(value) : -12;
     }
 
     fft.ifft(spectrum, cepstrum);
@@ -65,7 +65,7 @@ public:
     {
       const T value = getvalue(dft[i]);
 
-      spectrum[i] = value ? std::log10(value) : -120;
+      spectrum[i] = value ? std::log10(value) : -12;
     }
 
     fft.ifft(spectrum, cepstrum);
@@ -79,7 +79,7 @@ public:
   }
 
   template<typename value_getter_t>
-  void lowpass(const voyx::vector<std::complex<T>> dft, voyx::vector<T> envelope, voyx::vector<T> logcepstrum)
+  void lowpass(const voyx::vector<std::complex<T>> dft, voyx::vector<T> envelope, voyx::vector<T> logspectrum, voyx::vector<T> logcepstrum)
   {
     const value_getter_t getvalue;
 
@@ -90,12 +90,16 @@ public:
     {
       const T value = getvalue(dft[i]);
 
-      spectrum[i] = value ? std::log10(value) : -120;
+      spectrum[i] = value ? std::log10(value) : -12;
+
+      logspectrum[i] = spectrum[i].real();
     }
 
     fft.ifft(spectrum, cepstrum);
+
     logcepstrum = cepstrum;
     lowpass(cepstrum, quefrency);
+
     fft.fft(cepstrum, spectrum);
 
     for (size_t i = 1; i < dft.size() - 1; ++i)
@@ -128,34 +132,6 @@ public:
 
       value(dft[i], ok ? value(dft[i]) * envelope[i] : 0);
     }
-  }
-
-  voyx_t f0(const voyx::vector<T> logcepstrum, std::pair<voyx_t, voyx_t> roi) const
-  {
-    const size_t nmin = size_t(0);
-    const size_t nmax = logcepstrum.size() / 2;
-
-    const size_t qmin = static_cast<size_t>(samplerate / roi.first);
-    const size_t qmax = static_cast<size_t>(samplerate / roi.second);
-
-    const voyx_t imin = std::clamp(std::min(qmin, qmax), nmin, nmax);
-    const voyx_t imax = std::clamp(std::max(qmin, qmax), nmin, nmax);
-
-    voyxassert(imin < imax);
-
-    T value = std::numeric_limits<T>::lowest();
-    ptrdiff_t index = -1;
-
-    for (size_t i = imin; i < imax; ++i)
-    {
-      if (logcepstrum[i] > value)
-      {
-        value = logcepstrum[i];
-        index = i;
-      }
-    }
-
-    return index ? samplerate / index : 0;
   }
 
 private:
