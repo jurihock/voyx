@@ -133,7 +133,7 @@ public:
   voyx_t f0(const voyx::vector<T> logcepstrum, std::pair<voyx_t, voyx_t> roi) const
   {
     const size_t nmin = size_t(0);
-    const size_t nmax = logcepstrum.size();
+    const size_t nmax = logcepstrum.size() / 2;
 
     const size_t qmin = static_cast<size_t>(samplerate / roi.first);
     const size_t qmax = static_cast<size_t>(samplerate / roi.second);
