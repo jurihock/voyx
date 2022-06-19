@@ -16,7 +16,10 @@ namespace $$
     T operator()(const T value) const { return value; };
 
     template<typename T>
-    T operator()(const std::complex<T>& value) const { return std::real(value); };
+    T operator()(const std::complex<T>& value) const { return value.real(); };
+
+    template<typename T>
+    void operator()(std::complex<T>& value, const T realvalue) const { value.real(realvalue); };
   };
 
   struct imag
@@ -25,7 +28,10 @@ namespace $$
     T operator()(const T value) const { return T(0); };
 
     template<typename T>
-    T operator()(const std::complex<T>& value) const { return std::imag(value); };
+    T operator()(const std::complex<T>& value) const { return value.imag(); };
+
+    template<typename T>
+    void operator()(std::complex<T>& value, const T imagvalue) const { value.imag(imagvalue); };
   };
 
   struct abs
