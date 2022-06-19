@@ -24,27 +24,29 @@ public:
     return envelope;
   }
 
-  void lowpass(const voyx::vector<T>& dft, std::span<T> envelope)
+  void lowpass(const voyx::vector<T> dft, voyx::vector<T> envelope)
   {
     voyxassert(dft.size() == envelope.size());
 
-    for (size_t i = 0; i < dft.size(); ++i)
+    for (size_t i = 1; i < dft.size() - 1; ++i)
     {
-      spectrum[i] = std::log10(dft[i]);
+      const T value = dft[i];
+
+      spectrum[i] = value ? std::log10(value) : -120;
     }
 
     fft.ifft(spectrum, cepstrum);
     lowpass(cepstrum, quefrency);
     fft.fft(cepstrum, spectrum);
 
-    for (size_t i = 0; i < dft.size(); ++i)
+    for (size_t i = 1; i < dft.size() - 1; ++i)
     {
       envelope[i] = std::pow(T(10), spectrum[i].real());
     }
   }
 
   template<typename value_getter_t>
-  std::vector<T> lowpass(const voyx::vector<std::complex<T>>& dft)
+  std::vector<T> lowpass(const voyx::vector<std::complex<T>> dft)
   {
     std::vector<T> envelope(dft.size());
     lowpass<value_getter_t>(dft, envelope);
@@ -52,24 +54,52 @@ public:
   }
 
   template<typename value_getter_t>
-  void lowpass(const voyx::vector<std::complex<T>>& dft, std::span<T> envelope)
+  void lowpass(const voyx::vector<std::complex<T>> dft, voyx::vector<T> envelope)
   {
     const value_getter_t getvalue;
 
     voyxassert(dft.size() == envelope.size());
 
-    for (size_t i = 0; i < dft.size(); ++i)
+    for (size_t i = 1; i < dft.size() - 1; ++i)
     {
-      spectrum[i] = std::log10(getvalue(dft[i]));
+      const T value = getvalue(dft[i]);
+
+      spectrum[i] = value ? std::log10(value) : -120;
     }
 
     fft.ifft(spectrum, cepstrum);
     lowpass(cepstrum, quefrency);
     fft.fft(cepstrum, spectrum);
 
-    for (size_t i = 0; i < dft.size(); ++i)
+    for (size_t i = 1; i < dft.size() - 1; ++i)
     {
       envelope[i] = std::pow(T(10), spectrum[i].real());
+    }
+  }
+
+  template<typename value_getter_setter_t>
+  void divide(voyx::vector<std::complex<T>> dft, const voyx::vector<T> envelope) const
+  {
+    const value_getter_setter_t value;
+
+    for (size_t i = 0; i < dft.size(); ++i)
+    {
+      const bool ok = std::isnormal(envelope[i]);
+
+      value(dft[i], ok ? value(dft[i]) / envelope[i] : 0);
+    }
+  }
+
+  template<typename value_getter_setter_t>
+  void multiply(voyx::vector<std::complex<T>> dft, const voyx::vector<T> envelope) const
+  {
+    const value_getter_setter_t value;
+
+    for (size_t i = 0; i < dft.size(); ++i)
+    {
+      const bool ok = std::isnormal(envelope[i]);
+
+      value(dft[i], ok ? value(dft[i]) * envelope[i] : 0);
     }
   }
 
